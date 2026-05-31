@@ -1,478 +1,467 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Carnes Ecológicas Mundo Verde</title>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; background: #f7f7f5; }
-    input, select, button { font-family: inherit; }
-    ::-webkit-scrollbar { display: none; }
-  </style>
-</head>
-<body>
-  <div id="root"></div>
-  <script>
-    emailjs.init({ publicKey: "z790C6rjbbv3l6XoD" });
-  </script>
-  <script type="text/babel">
-    const { useState, useMemo } = React;
+import { useState, useMemo } from "react";
+
+const CATEGORIAS = [
+  { id: "pollo", nombre: "Pollo", emoji: "🐔", productos: [
+    { id: "p1", nombre: "Pollo entero", bandeja: 2, pBandeja: 33.38, pKilo: 16.64 },
+    { id: "p2", nombre: "Medio pollo", bandeja: 1, pBandeja: 17.89, pKilo: 17.89 },
+    { id: "p3", nombre: "Pollo troceado", bandeja: 1, pBandeja: 19.67, pKilo: 19.67 },
+    { id: "p4", nombre: "Pechuga entera", bandeja: 0.38, pBandeja: 14.31, pKilo: 37.66 },
+    { id: "p5", nombre: "Pechuga fileteada", bandeja: 0.38, pBandeja: 14.90, pKilo: 39.21 },
+    { id: "p6", nombre: "Picada de pollo", bandeja: 0.38, pBandeja: 10.60, pKilo: 27.89 },
+    { id: "p7", nombre: "Contramuslo s/hueso s/piel", bandeja: 0.38, pBandeja: 10.00, pKilo: 26.34 },
+    { id: "p8", nombre: "Contramuslo c/hueso c/piel", bandeja: 0.4, pBandeja: 9.07, pKilo: 22.69 },
+    { id: "p9", nombre: "Jamoncitos (Cat A)", bandeja: 0.4, pBandeja: 8.52, pKilo: 21.30 },
+    { id: "p10", nombre: "Muslo de pollo", bandeja: 0.36, pBandeja: 7.66, pKilo: 21.30 },
+    { id: "p11", nombre: "Churrasco de pollo", bandeja: 0.38, pBandeja: 10.15, pKilo: 26.72 },
+    { id: "p12", nombre: "Alas de pollo", bandeja: 0.4, pBandeja: 7.00, pKilo: 17.50 },
+    { id: "p13", nombre: "Carcasa de pollo", bandeja: 0.25, pBandeja: 2.05, pKilo: 8.19 },
+  ]},
+  { id: "pavo", nombre: "Pavo", emoji: "🦃", productos: [
+    { id: "pv1", nombre: "Pechuga entera de pavo", bandeja: 0.4, pBandeja: 14.72, pKilo: 36.80 },
+    { id: "pv2", nombre: "Pechuga fileteada de pavo", bandeja: 0.38, pBandeja: 14.72, pKilo: 38.74 },
+    { id: "pv3", nombre: "Contramuslo deshuesado de pavo", bandeja: 0.38, pBandeja: 9.10, pKilo: 23.93 },
+    { id: "pv4", nombre: "Picada de pavo", bandeja: 0.38, pBandeja: 9.42, pKilo: 24.79 },
+    { id: "pv5", nombre: "Estofado de pavo", bandeja: 0.38, pBandeja: 9.30, pKilo: 24.48 },
+  ]},
+  { id: "cerdo", nombre: "Cerdo", emoji: "🐷", productos: [
+    { id: "c1", nombre: "Solomillo de cerdo", bandeja: 0.5, pBandeja: 15.45, pKilo: 30.91 },
+    { id: "c2", nombre: "Presa de cerdo", bandeja: 0.38, pBandeja: 10.56, pKilo: 27.81 },
+    { id: "c3", nombre: "Secreto de cerdo", bandeja: 0.38, pBandeja: 12.45, pKilo: 32.77 },
+    { id: "c4", nombre: "Pluma de cerdo", bandeja: 0.38, pBandeja: 11.51, pKilo: 30.29 },
+    { id: "c5", nombre: "Lomo de cerdo", bandeja: 0.38, pBandeja: 11.18, pKilo: 29.44 },
+    { id: "c6", nombre: "Lomo fileteado de cerdo", bandeja: 0.38, pBandeja: 11.77, pKilo: 30.99 },
+    { id: "c7", nombre: "Jamón de cerdo", bandeja: 0.38, pBandeja: 10.33, pKilo: 27.19 },
+    { id: "c8", nombre: "Jamón fileteado de cerdo", bandeja: 0.38, pBandeja: 11.18, pKilo: 29.44 },
+    { id: "c9", nombre: "Chuletas de cerdo", bandeja: 0.38, pBandeja: 10.00, pKilo: 26.34 },
+    { id: "c10", nombre: "Cabeza de lomo", bandeja: 0.38, pBandeja: 9.15, pKilo: 24.09 },
+    { id: "c11", nombre: "Cabeza de lomo fileteada", bandeja: 0.38, pBandeja: 9.74, pKilo: 25.64 },
+    { id: "c12", nombre: "Magro pieza de cerdo", bandeja: 0.38, pBandeja: 8.21, pKilo: 21.61 },
+    { id: "c13", nombre: "Magro troceado de cerdo", bandeja: 0.38, pBandeja: 8.41, pKilo: 22.15 },
+    { id: "c14", nombre: "Picada de cerdo", bandeja: 0.38, pBandeja: 8.56, pKilo: 22.54 },
+    { id: "c15", nombre: "Costillas de cerdo", bandeja: 0.38, pBandeja: 7.59, pKilo: 19.98 },
+    { id: "c16", nombre: "Panceta de cerdo", bandeja: 0.38, pBandeja: 7.20, pKilo: 18.97 },
+    { id: "c17", nombre: "Tocino de papada", bandeja: 0.38, pBandeja: 4.41, pKilo: 11.62 },
+    { id: "c18", nombre: "Carrillera de cerdo", bandeja: 0.38, pBandeja: 11.46, pKilo: 30.17 },
+    { id: "c19", nombre: "Manitas de cerdo", bandeja: 0.5, pBandeja: 6.20, pKilo: 12.40 },
+  ]},
+  { id: "ternera", nombre: "Ternera", emoji: "🐄", productos: [
+    { id: "t1", nombre: "Solomillo cortado 400g", bandeja: 0.38, pBandeja: 35.50, pKilo: 93.48 },
+    { id: "t2", nombre: "Vacío de ternera", bandeja: 0.75, pBandeja: 27.83, pKilo: 37.11 },
+    { id: "t3", nombre: "Lomo fileteado", bandeja: 0.38, pBandeja: 24.62, pKilo: 64.79 },
+    { id: "t4", nombre: "Lomo entrecot", bandeja: 0.38, pBandeja: 25.65, pKilo: 67.51 },
+    { id: "t5", nombre: "Chuletón", bandeja: 0.7, pBandeja: 27.75, pKilo: 39.67 },
+    { id: "t6", nombre: "Extra pieza", bandeja: 0.38, pBandeja: 11.95, pKilo: 31.45 },
+    { id: "t7", nombre: "Extra fileteada", bandeja: 0.38, pBandeja: 12.95, pKilo: 34.09 },
+    { id: "t8", nombre: "Primera pieza", bandeja: 0.38, pBandeja: 11.20, pKilo: 29.44 },
+    { id: "t9", nombre: "Carpaccio de ternera", bandeja: 0.2, pBandeja: 6.90, pKilo: 34.55 },
+    { id: "t10", nombre: "Primera fileteada", bandeja: 0.38, pBandeja: 12.24, pKilo: 32.23 },
+    { id: "t11", nombre: "Magro troceado de ternera", bandeja: 0.38, pBandeja: 10.77, pKilo: 28.35 },
+    { id: "t12", nombre: "Magro pieza de ternera", bandeja: 0.38, pBandeja: 10.48, pKilo: 27.58 },
+    { id: "t13", nombre: "Aguja pieza", bandeja: 0.38, pBandeja: 10.60, pKilo: 27.89 },
+    { id: "t14", nombre: "Aguja fileteada", bandeja: 0.38, pBandeja: 11.50, pKilo: 30.29 },
+    { id: "t15", nombre: "Picada de ternera (<10% grasa)", bandeja: 0.38, pBandeja: 10.89, pKilo: 28.66 },
+    { id: "t16", nombre: "Falda pieza de ternera", bandeja: 0.38, pBandeja: 9.15, pKilo: 24.09 },
+    { id: "t17", nombre: "Osobuco de ternera", bandeja: 0.4, pBandeja: 10.40, pKilo: 26.03 },
+    { id: "t18", nombre: "Jarrete pieza", bandeja: 0.38, pBandeja: 10.24, pKilo: 26.96 },
+    { id: "t19", nombre: "Churrasco de ternera", bandeja: 0.4, pBandeja: 8.86, pKilo: 22.15 },
+    { id: "t20", nombre: "Costilla centro de ternera", bandeja: 0.4, pBandeja: 8.54, pKilo: 21.37 },
+    { id: "t21", nombre: "Menudo de ternera", bandeja: 0.38, pBandeja: 4.70, pKilo: 12.38 },
+    { id: "t22", nombre: "Rabo de ternera", bandeja: 0.4, pBandeja: 12.30, pKilo: 30.75 },
+    { id: "t23", nombre: "Lengua de ternera", bandeja: 0.38, pBandeja: 10.71, pKilo: 28.20 },
+    { id: "t24", nombre: "Riñones de ternera", bandeja: 0.38, pBandeja: 5.89, pKilo: 15.48 },
+    { id: "t25", nombre: "Hígado fileteado de ternera", bandeja: 0.38, pBandeja: 8.23, pKilo: 21.68 },
+    { id: "t26", nombre: "Hueso de ternera (canilla)", bandeja: 0.4, pBandeja: 4.75, pKilo: 11.83 },
+    { id: "t27", nombre: "Carrillera de ternera", bandeja: 0.4, pBandeja: 20.67, pKilo: 51.69 },
+    { id: "t28", nombre: "Picaña de ternera", bandeja: 0.4, pBandeja: 23.40, pKilo: 58.82 },
+    { id: "t29", nombre: "Entraña de ternera", bandeja: 0.38, pBandeja: 13.89, pKilo: 36.57 },
+    { id: "t30", nombre: "Tomahawk madurado retinta", bandeja: 1, pBandeja: 39.59, pKilo: 39.59 },
+    { id: "t31", nombre: "Lingote de presa retinta", bandeja: 0.38, pBandeja: 15.20, pKilo: 39.98 },
+  ]},
+  { id: "cordero", nombre: "Cordero", emoji: "🐑", productos: [
+    { id: "co1", nombre: "Chuletas de cordero", bandeja: 0.38, pBandeja: 18.25, pKilo: 48.05 },
+    { id: "co2", nombre: "Pierna de cordero", bandeja: 1.4, pBandeja: 52.38, pKilo: 37.42 },
+    { id: "co3", nombre: "Chuletas pierna de cordero", bandeja: 0.38, pBandeja: 16.66, pKilo: 43.86 },
+    { id: "co4", nombre: "Brazuelo de cordero", bandeja: 1, pBandeja: 43.78, pKilo: 43.78 },
+    { id: "co5", nombre: "Falda de cordero", bandeja: 0.38, pBandeja: 8.12, pKilo: 21.37 },
+    { id: "co6", nombre: "Chuletitas de cuello", bandeja: 0.38, pBandeja: 8.35, pKilo: 21.99 },
+    { id: "co7", nombre: "Hígado de cordero", bandeja: 0.38, pBandeja: 5.70, pKilo: 15.02 },
+  ]},
+  { id: "elaborados", nombre: "Elaborados", emoji: "🥩", productos: [
+    { id: "e1", nombre: "Hamburguesa de ternera", bandeja: 0.4, pBandeja: 5.00, pKilo: 25.64, nota: "4 ud/bandeja" },
+    { id: "e2", nombre: "Hamburguesa de pollo", bandeja: 0.4, pBandeja: 4.57, pKilo: 22.85, nota: "4 ud/bandeja" },
+    { id: "e3", nombre: "Hamburguesa de pavo", bandeja: 0.4, pBandeja: 4.57, pKilo: 22.85, nota: "4 ud/bandeja" },
+    { id: "e4", nombre: "Albóndigas de ternera y cerdo", bandeja: 0.38, pBandeja: 9.45, pKilo: 24.79 },
+    { id: "e5", nombre: "Pinchos de pollo", bandeja: 0.38, pBandeja: 15.25, pKilo: 40.14 },
+    { id: "e6", nombre: "Pinchos de cordero", bandeja: 0.38, pBandeja: 21.76, pKilo: 57.27 },
+    { id: "e7", nombre: "Salchichas de pollo", bandeja: 0.3, pBandeja: 8.73, pKilo: 29.13 },
+    { id: "e8", nombre: "Chorizo criollo", bandeja: 0.38, pBandeja: 9.97, pKilo: 26.26 },
+    { id: "e9", nombre: "Lomo de cerdo adobado fileteado", bandeja: 0.38, pBandeja: 13.55, pKilo: 35.64 },
+    { id: "e10", nombre: "Salchichas de cerdo", bandeja: 0.3, pBandeja: 7.32, pKilo: 24.40 },
+    { id: "e11", nombre: "Longaniza de pavo", bandeja: 0.38, pBandeja: 9.80, pKilo: 25.79 },
+    { id: "e12", nombre: "Chistorra de cerdo", bandeja: 0.2, pBandeja: 4.81, pKilo: 24.09 },
+    { id: "e13", nombre: "Butifarra de cerdo", bandeja: 0.38, pBandeja: 9.27, pKilo: 24.40 },
+    { id: "e14", nombre: "Manteca de cerdo", bandeja: 0.5, pBandeja: 7.70, pKilo: 15.40 },
+    { id: "e15", nombre: "Preparado para legumbres", bandeja: null, pBandeja: 8.20, pKilo: 8.20, nota: "1 unidad" },
+    { id: "e16", nombre: "Preparado para puchero", bandeja: null, pBandeja: 12.09, pKilo: 12.09, nota: "1 unidad" },
+    { id: "e17", nombre: "Preparado para caldos", bandeja: null, pBandeja: 11.56, pKilo: 11.56, nota: "1 unidad" },
+  ]},
+];
 
     const EMAILJS_SERVICE = "service_5er53zp";
     const EMAILJS_TEMPLATE = "template_kn1hv9s";
+    const EMAILJS_KEY = "z790C6rjbbv3l6XoD";
+
+    const EMAILJS_TEMPLATE_CLIENTE = "template_a6hk65p";
 
     const sendEmail = (pedido) => {
       const productos = pedido.productos.map(p =>
         `• ${p.nombre} — ${p.bandejas} bandeja${p.bandejas>1?"s":""}${p.kgTotal?` (≈${p.kgTotal} kg)`:""} — ${eur(p.subtotal)}`
       ).join("\n");
-      emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
+      const params = {
         cliente_nombre: pedido.nombre,
         cliente_telefono: pedido.telefono,
         cliente_email: pedido.email || "No indicado",
         productos,
         total: eur(pedido.total),
-        nota: pedido.nota || "Sin nota",
-      }).catch(e => console.error("EmailJS error:", e));
+        nota: pedido.nota || "",
+      };
+      // Email a la tienda
+      window.emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, params)
+        .catch(e => console.error("EmailJS tienda error:", e));
+      // Email al cliente (solo si dejó su email)
+      if (pedido.email) {
+        window.emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_CLIENTE, params)
+          .catch(e => console.error("EmailJS cliente error:", e));
+      }
     };
 
-    const CATEGORIAS = [
-      { id: "pollo", nombre: "Pollo", emoji: "🐔", productos: [
-        { id: "p1", nombre: "Pollo entero", bandeja: 2, pBandeja: 33.38, pKilo: 16.64 },
-        { id: "p2", nombre: "Medio pollo", bandeja: 1, pBandeja: 17.89, pKilo: 17.89 },
-        { id: "p3", nombre: "Pollo troceado", bandeja: 1, pBandeja: 19.67, pKilo: 19.67 },
-        { id: "p4", nombre: "Pechuga entera", bandeja: 0.38, pBandeja: 14.31, pKilo: 37.66 },
-        { id: "p5", nombre: "Pechuga fileteada", bandeja: 0.38, pBandeja: 14.90, pKilo: 39.21 },
-        { id: "p6", nombre: "Picada de pollo", bandeja: 0.38, pBandeja: 10.60, pKilo: 27.89 },
-        { id: "p7", nombre: "Contramuslo s/hueso s/piel", bandeja: 0.38, pBandeja: 10.00, pKilo: 26.34 },
-        { id: "p8", nombre: "Contramuslo c/hueso c/piel", bandeja: 0.4, pBandeja: 9.07, pKilo: 22.69 },
-        { id: "p9", nombre: "Jamoncitos (Cat A)", bandeja: 0.4, pBandeja: 8.52, pKilo: 21.30 },
-        { id: "p10", nombre: "Muslo de pollo", bandeja: 0.36, pBandeja: 7.66, pKilo: 21.30 },
-        { id: "p11", nombre: "Churrasco de pollo", bandeja: 0.38, pBandeja: 10.15, pKilo: 26.72 },
-        { id: "p12", nombre: "Alas de pollo", bandeja: 0.4, pBandeja: 7.00, pKilo: 17.50 },
-        { id: "p13", nombre: "Carcasa de pollo", bandeja: 0.25, pBandeja: 2.05, pKilo: 8.19 },
-      ]},
-      { id: "pavo", nombre: "Pavo", emoji: "🦃", productos: [
-        { id: "pv1", nombre: "Pechuga entera de pavo", bandeja: 0.4, pBandeja: 14.72, pKilo: 36.80 },
-        { id: "pv2", nombre: "Pechuga fileteada de pavo", bandeja: 0.38, pBandeja: 14.72, pKilo: 38.74 },
-        { id: "pv3", nombre: "Contramuslo deshuesado de pavo", bandeja: 0.38, pBandeja: 9.10, pKilo: 23.93 },
-        { id: "pv4", nombre: "Picada de pavo", bandeja: 0.38, pBandeja: 9.42, pKilo: 24.79 },
-        { id: "pv5", nombre: "Estofado de pavo", bandeja: 0.38, pBandeja: 9.30, pKilo: 24.48 },
-      ]},
-      { id: "cerdo", nombre: "Cerdo", emoji: "🐷", productos: [
-        { id: "c1", nombre: "Solomillo de cerdo", bandeja: 0.5, pBandeja: 15.45, pKilo: 30.91 },
-        { id: "c2", nombre: "Presa de cerdo", bandeja: 0.38, pBandeja: 10.56, pKilo: 27.81 },
-        { id: "c3", nombre: "Secreto de cerdo", bandeja: 0.38, pBandeja: 12.45, pKilo: 32.77 },
-        { id: "c4", nombre: "Pluma de cerdo", bandeja: 0.38, pBandeja: 11.51, pKilo: 30.29 },
-        { id: "c5", nombre: "Lomo de cerdo", bandeja: 0.38, pBandeja: 11.18, pKilo: 29.44 },
-        { id: "c6", nombre: "Lomo fileteado de cerdo", bandeja: 0.38, pBandeja: 11.77, pKilo: 30.99 },
-        { id: "c7", nombre: "Jamón de cerdo", bandeja: 0.38, pBandeja: 10.33, pKilo: 27.19 },
-        { id: "c8", nombre: "Jamón fileteado de cerdo", bandeja: 0.38, pBandeja: 11.18, pKilo: 29.44 },
-        { id: "c9", nombre: "Chuletas de cerdo", bandeja: 0.38, pBandeja: 10.00, pKilo: 26.34 },
-        { id: "c10", nombre: "Cabeza de lomo", bandeja: 0.38, pBandeja: 9.15, pKilo: 24.09 },
-        { id: "c11", nombre: "Cabeza de lomo fileteada", bandeja: 0.38, pBandeja: 9.74, pKilo: 25.64 },
-        { id: "c12", nombre: "Magro pieza de cerdo", bandeja: 0.38, pBandeja: 8.21, pKilo: 21.61 },
-        { id: "c13", nombre: "Magro troceado de cerdo", bandeja: 0.38, pBandeja: 8.41, pKilo: 22.15 },
-        { id: "c14", nombre: "Picada de cerdo", bandeja: 0.38, pBandeja: 8.56, pKilo: 22.54 },
-        { id: "c15", nombre: "Costillas de cerdo", bandeja: 0.38, pBandeja: 7.59, pKilo: 19.98 },
-        { id: "c16", nombre: "Panceta de cerdo", bandeja: 0.38, pBandeja: 7.20, pKilo: 18.97 },
-        { id: "c17", nombre: "Tocino de papada", bandeja: 0.38, pBandeja: 4.41, pKilo: 11.62 },
-        { id: "c18", nombre: "Carrillera de cerdo", bandeja: 0.38, pBandeja: 11.46, pKilo: 30.17 },
-        { id: "c19", nombre: "Manitas de cerdo", bandeja: 0.5, pBandeja: 6.20, pKilo: 12.40 },
-      ]},
-      { id: "ternera", nombre: "Ternera", emoji: "🐄", productos: [
-        { id: "t1", nombre: "Solomillo cortado 400g", bandeja: 0.38, pBandeja: 35.50, pKilo: 93.48 },
-        { id: "t2", nombre: "Vacío de ternera", bandeja: 0.75, pBandeja: 27.83, pKilo: 37.11 },
-        { id: "t3", nombre: "Lomo fileteado", bandeja: 0.38, pBandeja: 24.62, pKilo: 64.79 },
-        { id: "t4", nombre: "Lomo entrecot", bandeja: 0.38, pBandeja: 25.65, pKilo: 67.51 },
-        { id: "t5", nombre: "Chuletón", bandeja: 0.7, pBandeja: 27.75, pKilo: 39.67 },
-        { id: "t6", nombre: "Extra pieza", bandeja: 0.38, pBandeja: 11.95, pKilo: 31.45 },
-        { id: "t7", nombre: "Extra fileteada", bandeja: 0.38, pBandeja: 12.95, pKilo: 34.09 },
-        { id: "t8", nombre: "Primera pieza", bandeja: 0.38, pBandeja: 11.20, pKilo: 29.44 },
-        { id: "t9", nombre: "Carpaccio de ternera", bandeja: 0.2, pBandeja: 6.90, pKilo: 34.55 },
-        { id: "t10", nombre: "Primera fileteada", bandeja: 0.38, pBandeja: 12.24, pKilo: 32.23 },
-        { id: "t11", nombre: "Magro troceado de ternera", bandeja: 0.38, pBandeja: 10.77, pKilo: 28.35 },
-        { id: "t12", nombre: "Magro pieza de ternera", bandeja: 0.38, pBandeja: 10.48, pKilo: 27.58 },
-        { id: "t13", nombre: "Aguja pieza", bandeja: 0.38, pBandeja: 10.60, pKilo: 27.89 },
-        { id: "t14", nombre: "Aguja fileteada", bandeja: 0.38, pBandeja: 11.50, pKilo: 30.29 },
-        { id: "t15", nombre: "Picada de ternera (<10% grasa)", bandeja: 0.38, pBandeja: 10.89, pKilo: 28.66 },
-        { id: "t16", nombre: "Falda pieza de ternera", bandeja: 0.38, pBandeja: 9.15, pKilo: 24.09 },
-        { id: "t17", nombre: "Osobuco de ternera", bandeja: 0.4, pBandeja: 10.40, pKilo: 26.03 },
-        { id: "t18", nombre: "Jarrete pieza", bandeja: 0.38, pBandeja: 10.24, pKilo: 26.96 },
-        { id: "t19", nombre: "Churrasco de ternera", bandeja: 0.4, pBandeja: 8.86, pKilo: 22.15 },
-        { id: "t20", nombre: "Costilla centro de ternera", bandeja: 0.4, pBandeja: 8.54, pKilo: 21.37 },
-        { id: "t21", nombre: "Menudo de ternera", bandeja: 0.38, pBandeja: 4.70, pKilo: 12.38 },
-        { id: "t22", nombre: "Rabo de ternera", bandeja: 0.4, pBandeja: 12.30, pKilo: 30.75 },
-        { id: "t23", nombre: "Lengua de ternera", bandeja: 0.38, pBandeja: 10.71, pKilo: 28.20 },
-        { id: "t24", nombre: "Riñones de ternera", bandeja: 0.38, pBandeja: 5.89, pKilo: 15.48 },
-        { id: "t25", nombre: "Hígado fileteado de ternera", bandeja: 0.38, pBandeja: 8.23, pKilo: 21.68 },
-        { id: "t26", nombre: "Hueso de ternera (canilla)", bandeja: 0.4, pBandeja: 4.75, pKilo: 11.83 },
-        { id: "t27", nombre: "Carrillera de ternera", bandeja: 0.4, pBandeja: 20.67, pKilo: 51.69 },
-        { id: "t28", nombre: "Picaña de ternera", bandeja: 0.4, pBandeja: 23.40, pKilo: 58.82 },
-        { id: "t29", nombre: "Entraña de ternera", bandeja: 0.38, pBandeja: 13.89, pKilo: 36.57 },
-        { id: "t30", nombre: "Tomahawk madurado retinta", bandeja: 1, pBandeja: 39.59, pKilo: 39.59 },
-        { id: "t31", nombre: "Lingote de presa retinta", bandeja: 0.38, pBandeja: 15.20, pKilo: 39.98 },
-      ]},
-      { id: "cordero", nombre: "Cordero", emoji: "🐑", productos: [
-        { id: "co1", nombre: "Chuletas de cordero", bandeja: 0.38, pBandeja: 18.25, pKilo: 48.05 },
-        { id: "co2", nombre: "Pierna de cordero", bandeja: 1.4, pBandeja: 52.38, pKilo: 37.42 },
-        { id: "co3", nombre: "Chuletas pierna de cordero", bandeja: 0.38, pBandeja: 16.66, pKilo: 43.86 },
-        { id: "co4", nombre: "Brazuelo de cordero", bandeja: 1, pBandeja: 43.78, pKilo: 43.78 },
-        { id: "co5", nombre: "Falda de cordero", bandeja: 0.38, pBandeja: 8.12, pKilo: 21.37 },
-        { id: "co6", nombre: "Chuletitas de cuello", bandeja: 0.38, pBandeja: 8.35, pKilo: 21.99 },
-        { id: "co7", nombre: "Hígado de cordero", bandeja: 0.38, pBandeja: 5.70, pKilo: 15.02 },
-      ]},
-      { id: "elaborados", nombre: "Elaborados", emoji: "🥩", productos: [
-        { id: "e1", nombre: "Hamburguesa de ternera", bandeja: 0.4, pBandeja: 5.00, pKilo: 25.64, nota: "4 ud/bandeja" },
-        { id: "e2", nombre: "Hamburguesa de pollo", bandeja: 0.4, pBandeja: 4.57, pKilo: 22.85, nota: "4 ud/bandeja" },
-        { id: "e3", nombre: "Hamburguesa de pavo", bandeja: 0.4, pBandeja: 4.57, pKilo: 22.85, nota: "4 ud/bandeja" },
-        { id: "e4", nombre: "Albóndigas de ternera y cerdo", bandeja: 0.38, pBandeja: 9.45, pKilo: 24.79 },
-        { id: "e5", nombre: "Pinchos de pollo", bandeja: 0.38, pBandeja: 15.25, pKilo: 40.14 },
-        { id: "e6", nombre: "Pinchos de cordero", bandeja: 0.38, pBandeja: 21.76, pKilo: 57.27 },
-        { id: "e7", nombre: "Salchichas de pollo", bandeja: 0.3, pBandeja: 8.73, pKilo: 29.13 },
-        { id: "e8", nombre: "Chorizo criollo", bandeja: 0.38, pBandeja: 9.97, pKilo: 26.26 },
-        { id: "e9", nombre: "Lomo de cerdo adobado fileteado", bandeja: 0.38, pBandeja: 13.55, pKilo: 35.64 },
-        { id: "e10", nombre: "Salchichas de cerdo", bandeja: 0.3, pBandeja: 7.32, pKilo: 24.40 },
-        { id: "e11", nombre: "Longaniza de pavo", bandeja: 0.38, pBandeja: 9.80, pKilo: 25.79 },
-        { id: "e12", nombre: "Chistorra de cerdo", bandeja: 0.2, pBandeja: 4.81, pKilo: 24.09 },
-        { id: "e13", nombre: "Butifarra de cerdo", bandeja: 0.38, pBandeja: 9.27, pKilo: 24.40 },
-        { id: "e14", nombre: "Manteca de cerdo", bandeja: 0.5, pBandeja: 7.70, pKilo: 15.40 },
-        { id: "e15", nombre: "Preparado para legumbres", bandeja: null, pBandeja: 8.20, pKilo: 8.20, nota: "1 unidad" },
-        { id: "e16", nombre: "Preparado para puchero", bandeja: null, pBandeja: 12.09, pKilo: 12.09, nota: "1 unidad" },
-        { id: "e17", nombre: "Preparado para caldos", bandeja: null, pBandeja: 11.56, pKilo: 11.56, nota: "1 unidad" },
-      ]},
-    ];
-
     const COLOR = "#2D6A4F";
-    const COLOR_LIGHT = "#E1F5EE";
-    const PASS = "carnes2024";
-    const todayISO = new Date().toISOString().slice(0, 10);
-    const eur = n => n.toFixed(2).replace(".", ",") + " €";
+const COLOR_LIGHT = "#E1F5EE";
+const PASS = "carnes2024";
+const todayISO = new Date().toISOString().slice(0, 10);
+const eur = n => n.toFixed(2).replace(".", ",") + " €";
 
-    const Aviso = () => (
-      <div style={{ background:"#FFF8E1", border:"1px solid #FFE082", borderRadius:10, padding:"10px 14px", display:"flex", alignItems:"flex-start", gap:8 }}>
+const Stat = ({ n, label, color }) => (
+  <div style={{ textAlign: "center" }}>
+    <div style={{ fontSize: 28, fontWeight: 700, color: color || "#222" }}>{n}</div>
+    <div style={{ fontSize: 12, color: "#888", marginTop: 2 }}>{label}</div>
+  </div>
+);
+
+function Panel({ pedidos, setPedidos, onBack }) {
+  const [tab, setTab] = useState("totales");
+  const [filtroEstado, setFiltroEstado] = useState("todos");
+  const [filtroDia, setFiltroDia] = useState(todayISO);
+
+  const total = pedidos.length;
+  const pendientes = pedidos.filter(p => p.estado === "pendiente").length;
+  const confirmados = pedidos.filter(p => p.estado === "preparando").length;
+  const gestionados = pedidos.filter(p => p.estado === "listo").length;
+
+  const filtrados = useMemo(() => pedidos.filter(p => {
+    const estadoOk = filtroEstado === "todos" || p.estado === filtroEstado;
+    const diaOk = !filtroDia || p.isoDate === filtroDia;
+    return estadoOk && diaOk;
+  }), [pedidos, filtroEstado, filtroDia]);
+
+  const totalesProd = useMemo(() => {
+    const map = {};
+    filtrados.forEach(p => p.productos.forEach(pr => {
+      if (!map[pr.nombre]) map[pr.nombre] = { nombre: pr.nombre, bandejas: 0, kg: 0, importe: 0 };
+      map[pr.nombre].bandejas += pr.bandejas;
+      map[pr.nombre].kg += pr.kgTotal || 0;
+      map[pr.nombre].importe += pr.subtotal || 0;
+    }));
+    return Object.values(map).sort((a, b) => b.bandejas - a.bandejas);
+  }, [filtrados]);
+
+  const cambiarEstado = (id, estado) => setPedidos(prev => prev.map(p => p.id === id ? { ...p, estado } : p));
+
+  const exportCSV = () => {
+    const rows = [["Cliente","Teléfono","Email","Fecha","Estado","Producto","Bandejas","Kg aprox","Subtotal","Nota"]];
+    filtrados.forEach(p => p.productos.forEach(pr =>
+      rows.push([p.nombre, p.telefono, p.email||"", p.fecha, p.estado, pr.nombre, pr.bandejas, (pr.kgTotal||"").toString(), pr.subtotal ? eur(pr.subtotal) : "", p.nota||""])
+    ));
+    const csv = rows.map(r => r.map(c => `"${c}"`).join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+    a.download = "pedidos_carnes.csv"; a.click();
+  };
+
+  const tabBtn = (id, label) => (
+    <button onClick={() => setTab(id)} style={{ padding: "7px 16px", borderRadius: 20, border: `1.5px solid ${tab===id?COLOR:"#ddd"}`, background: tab===id?COLOR:"#fff", color: tab===id?"#fff":"#555", fontSize: 13, cursor: "pointer", fontWeight: tab===id?600:400 }}>{label}</button>
+  );
+
+  return (
+    <div style={{ fontFamily: "system-ui,sans-serif", maxWidth: 780, margin: "0 auto", paddingBottom: 40 }}>
+      <div style={{ background: COLOR, padding: "20px", borderRadius: "0 0 16px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div>
+          <div style={{ color: "#fff", fontSize: 20, fontWeight: 700 }}>📋 Panel de la tienda</div>
+          <div style={{ color: "rgba(255,255,255,0.82)", fontSize: 13, marginTop: 3 }}>Carnes Ecológicas Mundo Verde</div>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={exportCSV} style={{ background: "rgba(255,255,255,0.18)", border: "none", color: "#fff", borderRadius: 20, padding: "7px 14px", cursor: "pointer", fontSize: 13 }}>⬇ CSV</button>
+          <button onClick={onBack} style={{ background: "rgba(255,255,255,0.18)", border: "none", color: "#fff", borderRadius: 20, padding: "7px 14px", cursor: "pointer", fontSize: 13 }}>← Tienda</button>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, padding: "24px 20px 8px" }}>
+        <Stat n={total} label="Total" />
+        <Stat n={pendientes} label="Pendientes" color="#E74C3C" />
+        <Stat n={confirmados} label="Confirmados" color={COLOR} />
+        <Stat n={gestionados} label="Gestionados" color="#3498DB" />
+      </div>
+
+      <div style={{ display: "flex", gap: 8, padding: "16px 20px 8px" }}>
+        {tabBtn("totales","📊 Totales")}
+        {tabBtn("pedidos","📦 Pedidos")}
+        {tabBtn("productos","🛍 Productos")}
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 20px", flexWrap: "wrap" }}>
+        <select value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)} style={{ padding: "7px 12px", borderRadius: 10, border: "1.5px solid #ddd", fontSize: 13, background: "#fff", color: "#333", cursor: "pointer" }}>
+          {["todos","pendiente","preparando","listo"].map(e => <option key={e} value={e}>{{ todos:"Todos los estados", pendiente:"Pendiente", preparando:"Preparando", listo:"Listo" }[e]}</option>)}
+        </select>
+        <input type="date" value={filtroDia} onChange={e => setFiltroDia(e.target.value)} style={{ padding: "7px 12px", borderRadius: 10, border: "1.5px solid #ddd", fontSize: 13, background: "#fff", color: "#333" }} />
+        {filtroDia && <button onClick={() => setFiltroDia("")} style={{ fontSize: 12, color: "#aaa", background: "none", border: "none", cursor: "pointer" }}>Limpiar fecha</button>}
+        <span style={{ marginLeft: "auto", fontSize: 13, color: "#aaa" }}>{filtrados.length} pedido{filtrados.length!==1?"s":""}</span>
+      </div>
+
+      <div style={{ padding: "8px 20px" }}>
+        {filtrados.length === 0 && <div style={{ textAlign: "center", padding: 40, color: "#bbb", fontSize: 14 }}>No hay datos</div>}
+
+        {(tab === "totales" || tab === "productos") && filtrados.length > 0 && (
+          <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto auto", gap: 8, padding: "10px 16px", background: "#f9f9f9", fontSize: 12, fontWeight: 600, color: "#888" }}>
+              <span>Producto</span><span style={{ textAlign:"right" }}>Bandejas</span><span style={{ textAlign:"right" }}>Kg</span><span style={{ textAlign:"right" }}>Importe</span>
+            </div>
+            {totalesProd.map((pr, i) => (
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr auto auto auto", gap: 8, padding: "10px 16px", borderTop: "1px solid #f2f2f2" }}>
+                <span style={{ fontSize: 13.5, color: "#222" }}>{pr.nombre}</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: COLOR, textAlign:"right" }}>{pr.bandejas}</span>
+                <span style={{ fontSize: 13, color: "#888", textAlign:"right", minWidth: 55 }}>{pr.kg>0?`≈${pr.kg.toFixed(2)}`:"—"}</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: "#333", textAlign:"right", minWidth: 70 }}>{pr.importe>0?eur(pr.importe):"—"}</span>
+              </div>
+            ))}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto auto", gap: 8, padding: "12px 16px", borderTop: "2px solid #eee", background: "#f9f9f9" }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#333" }}>TOTAL</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: COLOR, textAlign:"right" }}>{totalesProd.reduce((a,p)=>a+p.bandejas,0)}</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#555", textAlign:"right" }}>≈{totalesProd.reduce((a,p)=>a+p.kg,0).toFixed(2)}</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: COLOR, textAlign:"right" }}>{eur(totalesProd.reduce((a,p)=>a+p.importe,0))}</span>
+            </div>
+          </div>
+        )}
+
+        {tab === "pedidos" && filtrados.map(p => (
+          <div key={p.id} style={{ background: "#fff", border: "1px solid #eee", borderRadius: 14, padding: "14px 16px", marginBottom: 10 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: 14, color: "#222" }}>{p.nombre}</div>
+                <div style={{ fontSize: 12, color: "#888", marginTop: 2 }}>{p.telefono}{p.email?` · ${p.email}`:""} · {p.fecha}</div>
+              </div>
+              <span style={{ display:"inline-block", padding:"3px 12px", borderRadius:20, fontSize:11, fontWeight:600, background:p.estado==="listo"?"#eafaf1":p.estado==="preparando"?"#fff8e1":COLOR_LIGHT, color:p.estado==="listo"?"#1a7a3c":p.estado==="preparando"?"#b8860b":COLOR }}>{p.estado}</span>
+            </div>
+            <div style={{ fontSize: 13, color: "#555", marginTop: 8 }}>
+              {p.productos.map((pr, i) => (
+                <div key={i} style={{ display:"flex", justifyContent:"space-between" }}>
+                  <span>• {pr.nombre} — {pr.bandejas} bandeja{pr.bandejas>1?"s":""}{pr.kgTotal?` (≈${pr.kgTotal} kg)`:""}</span>
+                  {pr.subtotal ? <span style={{ color:COLOR, fontWeight:600 }}>{eur(pr.subtotal)}</span> : null}
+                </div>
+              ))}
+            </div>
+            {p.nota && <div style={{ fontSize: 12, color: "#999", marginTop: 4 }}>Nota: {p.nota}</div>}
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:10 }}>
+              <div style={{ display:"flex", gap:6 }}>
+                {["pendiente","preparando","listo"].map(e => (
+                  <button key={e} onClick={() => cambiarEstado(p.id,e)} style={{ padding:"4px 12px", borderRadius:20, border:`1.5px solid ${p.estado===e?COLOR:"#ddd"}`, background:p.estado===e?COLOR_LIGHT:"#fff", color:p.estado===e?COLOR:"#888", fontSize:12, cursor:"pointer", fontWeight:p.estado===e?600:400 }}>{e}</button>
+                ))}
+              </div>
+              <span style={{ fontSize:14, fontWeight:700, color:COLOR }}>{eur(p.total)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const [bandejas, setBandejas] = useState({});
+  const [catActiva, setCatActiva] = useState("todas");
+  const [modal, setModal] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+  const [form, setForm] = useState({ nombre: "", telefono: "", email: "", nota: "" });
+  const [pedidos, setPedidos] = useState([]);
+  const [panel, setPanel] = useState(false);
+  const [panelPass, setPanelPass] = useState(false);
+  const [passInput, setPassInput] = useState("");
+  const [passError, setPassError] = useState(false);
+
+  const allProds = CATEGORIAS.flatMap(c => c.productos);
+  const seleccionados = allProds.filter(p => (bandejas[p.id]||0) > 0);
+
+  const totalPedido = useMemo(() =>
+    seleccionados.reduce((acc, p) => acc + (bandejas[p.id]||0) * p.pBandeja, 0),
+    [seleccionados, bandejas]
+  );
+
+  const cats = catActiva === "todas" ? CATEGORIAS : CATEGORIAS.filter(c => c.id === catActiva);
+  const setCant = (id, val) => setBandejas(prev => ({ ...prev, [id]: Math.max(0, Math.round(parseFloat(val)||0)) }));
+
+  const enviar = () => {
+    if (!form.nombre || !form.telefono) return;
+    setPedidos(prev => [{
+      id: Date.now(), nombre: form.nombre, telefono: form.telefono, email: form.email, nota: form.nota,
+      fecha: new Date().toLocaleString("es-ES"), isoDate: new Date().toISOString().slice(0,10),
+      estado: "pendiente",
+      total: totalPedido,
+      productos: seleccionados.map(p => ({
+        nombre: p.nombre, bandejas: bandejas[p.id],
+        kgTotal: p.bandeja ? +(bandejas[p.id]*p.bandeja).toFixed(2) : null,
+        subtotal: +(bandejas[p.id]*p.pBandeja).toFixed(2)
+      }))
+    }, ...prev]);
+    sendEmail(nuevo);
+        setEnviado(true);
+  };
+
+  const entrarPanel = () => {
+    if (passInput === PASS) { setPanel(true); setPassError(false); setPanelPass(false); setPassInput(""); }
+    else setPassError(true);
+  };
+
+  if (panel) return <Panel pedidos={pedidos} setPedidos={setPedidos} onBack={() => setPanel(false)} />;
+
+  const C = COLOR;
+  return (
+    <div style={{ fontFamily:"system-ui,sans-serif", maxWidth:780, margin:"0 auto", paddingBottom:80 }}>
+      <div style={{ background:C, padding:"22px 20px 18px", borderRadius:"0 0 16px 16px" }}>
+        <div style={{ color:"#fff", fontSize:22, fontWeight:600 }}>🌿 Carnes Ecológicas Mundo Verde</div>
+        <div style={{ color:"rgba(255,255,255,0.82)", fontSize:13, marginTop:4 }}>Reserva de carnes frescas de producción ecológica · Pontevedra</div>
+        <span style={{ display:"inline-block", background:"rgba(255,255,255,0.18)", color:"#fff", fontSize:11, padding:"2px 10px", borderRadius:20, marginTop:10 }}>Producción 100% ecológica</span>
+      </div>
+
+      <div style={{ display:"flex", justifyContent:"flex-end", padding:"10px 16px 0" }}>
+        <span onClick={() => setPanelPass(v=>!v)} style={{ fontSize:12, color:"#aaa", cursor:"pointer", textDecoration:"underline" }}>Acceso panel</span>
+      </div>
+
+      {panelPass && (
+        <div style={{ margin:"8px 16px", background:"#fff", border:"1px solid #eee", borderRadius:12, padding:"14px 16px" }}>
+          <div style={{ fontSize:13, fontWeight:600, marginBottom:8, color:"#333" }}>Contraseña del panel</div>
+          <div style={{ display:"flex", gap:8 }}>
+            <input type="password" value={passInput} onChange={e=>setPassInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&entrarPanel()} placeholder="Contraseña" style={{ flex:1, padding:"10px 14px", borderRadius:10, border:"1.5px solid #ddd", fontSize:14, outline:"none" }} />
+            <button onClick={entrarPanel} style={{ background:C, color:"#fff", border:"none", borderRadius:10, padding:"0 16px", cursor:"pointer", fontSize:14 }}>Entrar</button>
+          </div>
+          {passError && <div style={{ fontSize:12, color:"#c0392b", marginTop:6 }}>Contraseña incorrecta</div>}
+        </div>
+      )}
+
+      <div style={{ margin:"12px 16px 0", background:"#FFF8E1", border:"1px solid #FFE082", borderRadius:10, padding:"10px 14px", display:"flex", alignItems:"flex-start", gap:8 }}>
         <span style={{ fontSize:16 }}>⚠️</span>
         <span style={{ fontSize:12.5, color:"#7a6000", lineHeight:1.5 }}>Los pesos indicados por bandeja son <strong>orientativos</strong>. El peso final puede variar según la pieza, ya que en muchos cortes es difícil ajustarse al gramaje exacto. El precio definitivo se calculará sobre el peso real.</span>
       </div>
-    );
 
-    const Stat = ({ n, label, color }) => (
-      <div style={{ textAlign:"center" }}>
-        <div style={{ fontSize:28, fontWeight:700, color:color||"#222" }}>{n}</div>
-        <div style={{ fontSize:12, color:"#888", marginTop:2 }}>{label}</div>
+      <div style={{ display:"flex", gap:8, overflowX:"auto", padding:"14px 16px 4px", scrollbarWidth:"none" }}>
+        {[{ id:"todas", nombre:"Todas", emoji:"" }, ...CATEGORIAS].map(c => (
+          <button key={c.id} onClick={() => setCatActiva(c.id)} style={{ flexShrink:0, padding:"6px 14px", borderRadius:20, border:`1.5px solid ${catActiva===c.id?C:"#ddd"}`, background:catActiva===c.id?C:"#fff", color:catActiva===c.id?"#fff":"#555", fontSize:13, cursor:"pointer", fontWeight:catActiva===c.id?600:400 }}>
+            {c.emoji?`${c.emoji} `:""}{c.nombre}
+          </button>
+        ))}
       </div>
-    );
 
-    function Panel({ pedidos, setPedidos, onBack }) {
-      const [tab, setTab] = useState("totales");
-      const [filtroEstado, setFiltroEstado] = useState("todos");
-      const [filtroDia, setFiltroDia] = useState(todayISO);
-
-      const total = pedidos.length;
-      const pendientes = pedidos.filter(p => p.estado === "pendiente").length;
-      const confirmados = pedidos.filter(p => p.estado === "preparando").length;
-      const gestionados = pedidos.filter(p => p.estado === "listo").length;
-
-      const filtrados = useMemo(() => pedidos.filter(p => {
-        const estadoOk = filtroEstado === "todos" || p.estado === filtroEstado;
-        const diaOk = !filtroDia || p.isoDate === filtroDia;
-        return estadoOk && diaOk;
-      }), [pedidos, filtroEstado, filtroDia]);
-
-      const totalesProd = useMemo(() => {
-        const map = {};
-        filtrados.forEach(p => p.productos.forEach(pr => {
-          if (!map[pr.nombre]) map[pr.nombre] = { nombre: pr.nombre, bandejas: 0, kg: 0, importe: 0 };
-          map[pr.nombre].bandejas += pr.bandejas;
-          map[pr.nombre].kg += pr.kgTotal || 0;
-          map[pr.nombre].importe += pr.subtotal || 0;
-        }));
-        return Object.values(map).sort((a, b) => b.bandejas - a.bandejas);
-      }, [filtrados]);
-
-      const cambiarEstado = (id, estado) => setPedidos(prev => prev.map(p => p.id === id ? { ...p, estado } : p));
-
-      const exportCSV = () => {
-        const rows = [["Cliente","Teléfono","Email","Fecha","Estado","Producto","Bandejas","Kg aprox","Subtotal","Nota"]];
-        filtrados.forEach(p => p.productos.forEach(pr =>
-          rows.push([p.nombre, p.telefono, p.email||"", p.fecha, p.estado, pr.nombre, pr.bandejas, (pr.kgTotal||"").toString(), pr.subtotal ? eur(pr.subtotal) : "", p.nota||""])
-        ));
-        const csv = rows.map(r => r.map(c => `"${c}"`).join(",")).join("\n");
-        const a = document.createElement("a");
-        a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-        a.download = "pedidos_carnes.csv"; a.click();
-      };
-
-      const tabBtn = (id, label) => (
-        <button onClick={() => setTab(id)} style={{ padding:"7px 16px", borderRadius:20, border:`1.5px solid ${tab===id?COLOR:"#ddd"}`, background:tab===id?COLOR:"#fff", color:tab===id?"#fff":"#555", fontSize:13, cursor:"pointer", fontWeight:tab===id?600:400 }}>{label}</button>
-      );
-
-      return (
-        <div style={{ fontFamily:"system-ui,sans-serif", maxWidth:780, margin:"0 auto", paddingBottom:40 }}>
-          <div style={{ background:COLOR, padding:"20px", borderRadius:"0 0 16px 16px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-            <div>
-              <div style={{ color:"#fff", fontSize:20, fontWeight:700 }}>📋 Panel de la tienda</div>
-              <div style={{ color:"rgba(255,255,255,0.82)", fontSize:13, marginTop:3 }}>Carnes Ecológicas Mundo Verde</div>
-            </div>
-            <div style={{ display:"flex", gap:8 }}>
-              <button onClick={exportCSV} style={{ background:"rgba(255,255,255,0.18)", border:"none", color:"#fff", borderRadius:20, padding:"7px 14px", cursor:"pointer", fontSize:13 }}>⬇ CSV</button>
-              <button onClick={onBack} style={{ background:"rgba(255,255,255,0.18)", border:"none", color:"#fff", borderRadius:20, padding:"7px 14px", cursor:"pointer", fontSize:13 }}>← Tienda</button>
-            </div>
-          </div>
-
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, padding:"24px 20px 8px" }}>
-            <Stat n={total} label="Total" />
-            <Stat n={pendientes} label="Pendientes" color="#E74C3C" />
-            <Stat n={confirmados} label="Confirmados" color={COLOR} />
-            <Stat n={gestionados} label="Gestionados" color="#3498DB" />
-          </div>
-
-          <div style={{ display:"flex", gap:8, padding:"16px 20px 8px" }}>
-            {tabBtn("totales","📊 Totales")}
-            {tabBtn("pedidos","📦 Pedidos")}
-            {tabBtn("productos","🛍 Productos")}
-          </div>
-
-          <div style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 20px", flexWrap:"wrap" }}>
-            <select value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)} style={{ padding:"7px 12px", borderRadius:10, border:"1.5px solid #ddd", fontSize:13, background:"#fff", color:"#333", cursor:"pointer" }}>
-              {["todos","pendiente","preparando","listo"].map(e => <option key={e} value={e}>{{ todos:"Todos los estados", pendiente:"Pendiente", preparando:"Preparando", listo:"Listo" }[e]}</option>)}
-            </select>
-            <input type="date" value={filtroDia} onChange={e => setFiltroDia(e.target.value)} style={{ padding:"7px 12px", borderRadius:10, border:"1.5px solid #ddd", fontSize:13, background:"#fff", color:"#333" }} />
-            {filtroDia && <button onClick={() => setFiltroDia("")} style={{ fontSize:12, color:"#aaa", background:"none", border:"none", cursor:"pointer" }}>Limpiar fecha</button>}
-            <span style={{ marginLeft:"auto", fontSize:13, color:"#aaa" }}>{filtrados.length} pedido{filtrados.length!==1?"s":""}</span>
-          </div>
-
-          <div style={{ padding:"8px 20px" }}>
-            {filtrados.length === 0 && <div style={{ textAlign:"center", padding:40, color:"#bbb", fontSize:14 }}>No hay datos</div>}
-            {(tab === "totales" || tab === "productos") && filtrados.length > 0 && (
-              <div style={{ background:"#fff", border:"1px solid #eee", borderRadius:14, overflow:"hidden" }}>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr auto auto auto", gap:8, padding:"10px 16px", background:"#f9f9f9", fontSize:12, fontWeight:600, color:"#888" }}>
-                  <span>Producto</span><span style={{ textAlign:"right" }}>Bandejas</span><span style={{ textAlign:"right" }}>Kg</span><span style={{ textAlign:"right" }}>Importe</span>
-                </div>
-                {totalesProd.map((pr, i) => (
-                  <div key={i} style={{ display:"grid", gridTemplateColumns:"1fr auto auto auto", gap:8, padding:"10px 16px", borderTop:"1px solid #f2f2f2" }}>
-                    <span style={{ fontSize:13.5, color:"#222" }}>{pr.nombre}</span>
-                    <span style={{ fontSize:13, fontWeight:600, color:COLOR, textAlign:"right" }}>{pr.bandejas}</span>
-                    <span style={{ fontSize:13, color:"#888", textAlign:"right", minWidth:55 }}>{pr.kg>0?`≈${pr.kg.toFixed(2)}`:"—"}</span>
-                    <span style={{ fontSize:13, fontWeight:600, color:"#333", textAlign:"right", minWidth:70 }}>{pr.importe>0?eur(pr.importe):"—"}</span>
+      {cats.map(cat => (
+        <div key={cat.id} style={{ margin:"18px 16px 0" }}>
+          <div style={{ fontSize:15, fontWeight:600, color:C, marginBottom:10 }}>{cat.emoji} {cat.nombre} · producción ecológica</div>
+          {cat.productos.map(prod => {
+            const qty = bandejas[prod.id]||0;
+            const kg = prod.bandeja ? +(qty*prod.bandeja).toFixed(2) : null;
+            const sub = +(qty*prod.pBandeja).toFixed(2);
+            return (
+              <div key={prod.id} style={{ background:"#fff", border:qty>0?`1.5px solid ${C}`:"1px solid #eee", borderRadius:12, padding:"11px 14px", marginBottom:8, display:"flex", alignItems:"center", gap:10 }}>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:13.5, color:"#222", fontWeight:500 }}>{prod.nombre}</div>
+                  <div style={{ fontSize:11, color:"#888", marginTop:2 }}>
+                    {prod.bandeja ? <span style={{ color:"#888" }}>Bandeja ≈ {prod.bandeja} kg · </span> : null}
+                    <span style={{ color:"#555" }}>{eur(prod.pBandeja)}/bandeja</span>
+                    <span style={{ margin:"0 6px", color:"#ddd" }}>|</span>
+                    <span style={{ color:"#555" }}>{eur(prod.pKilo)}/kg</span>
+                    {prod.nota ? <span> · {prod.nota}</span> : null}
                   </div>
-                ))}
-                <div style={{ display:"grid", gridTemplateColumns:"1fr auto auto auto", gap:8, padding:"12px 16px", borderTop:"2px solid #eee", background:"#f9f9f9" }}>
-                  <span style={{ fontSize:13, fontWeight:700, color:"#333" }}>TOTAL</span>
-                  <span style={{ fontSize:13, fontWeight:700, color:COLOR, textAlign:"right" }}>{totalesProd.reduce((a,p)=>a+p.bandejas,0)}</span>
-                  <span style={{ fontSize:13, fontWeight:700, color:"#555", textAlign:"right" }}>≈{totalesProd.reduce((a,p)=>a+p.kg,0).toFixed(2)}</span>
-                  <span style={{ fontSize:13, fontWeight:700, color:COLOR, textAlign:"right" }}>{eur(totalesProd.reduce((a,p)=>a+p.importe,0))}</span>
+                  {qty > 0 && (
+                    <div style={{ fontSize:11, marginTop:3 }}>
+                      {kg ? <span style={{ color:"#888" }}>≈ {kg} kg · </span> : null}
+                      <span style={{ color:C, fontWeight:700 }}>{eur(sub)}</span>
+                    </div>
+                  )}
                 </div>
+                <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                  <button onClick={() => setCant(prod.id,qty-1)} style={{ width:28, height:28, borderRadius:8, border:`1.5px solid ${C}`, background:"#fff", color:C, fontSize:16, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700 }}>−</button>
+                  <div style={{ textAlign:"center" }}>
+                    <div style={{ fontSize:14, fontWeight:600, minWidth:22, textAlign:"center", color:"#222" }}>{qty}</div>
+                    <div style={{ fontSize:10, color:"#aaa", lineHeight:1 }}>bandeja{qty!==1?"s":""}</div>
+                  </div>
+                  <button onClick={() => setCant(prod.id,qty+1)} style={{ width:28, height:28, borderRadius:8, border:`1.5px solid ${C}`, background:"#fff", color:C, fontSize:16, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700 }}>+</button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+
+      {seleccionados.length > 0 && (
+        <button onClick={() => { setModal(true); setEnviado(false); }} style={{ position:"fixed", bottom:16, left:"50%", transform:"translateX(-50%)", background:C, color:"#fff", border:"none", borderRadius:24, padding:"13px 28px", fontSize:15, fontWeight:600, cursor:"pointer", boxShadow:"0 4px 16px rgba(45,106,79,0.35)", zIndex:100, whiteSpace:"nowrap" }}>
+          Ver reserva ({seleccionados.length} prod.) · {eur(totalPedido)} →
+        </button>
+      )}
+
+      {modal && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.45)", display:"flex", alignItems:"flex-end", justifyContent:"center", zIndex:200 }} onClick={e=>e.target===e.currentTarget&&setModal(false)}>
+          <div style={{ background:"#fff", borderRadius:"20px 20px 0 0", padding:"24px 20px 32px", width:"100%", maxWidth:780, maxHeight:"85vh", overflowY:"auto" }}>
+            {!enviado ? (
+              <>
+                <div style={{ fontSize:17, fontWeight:700, color:"#222", marginBottom:16 }}>Tu reserva</div>
+                {seleccionados.map(p => {
+                  const qty = bandejas[p.id];
+                  const kg = p.bandeja ? +(qty*p.bandeja).toFixed(2) : null;
+                  const sub = +(qty*p.pBandeja).toFixed(2);
+                  return (
+                    <div key={p.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", padding:"8px 0", borderBottom:"1px solid #f2f2f2", fontSize:13.5, gap:8 }}>
+                      <div style={{ flex:1 }}>
+                        <div style={{ color:"#333" }}>{p.nombre}</div>
+                        <div style={{ fontSize:11, color:"#888" }}>{qty} bandeja{qty>1?"s":""}{kg?` · ≈${kg} kg`:""}</div>
+                      </div>
+                      <span style={{ color:C, fontWeight:600, flexShrink:0 }}>{eur(sub)}</span>
+                    </div>
+                  );
+                })}
+                <div style={{ display:"flex", justifyContent:"space-between", padding:"12px 0 4px", fontSize:15, fontWeight:700, borderTop:"2px solid #eee", marginTop:4 }}>
+                  <span style={{ color:"#333" }}>Total orientativo</span>
+                  <span style={{ color:C }}>{eur(totalPedido)}</span>
+                </div>
+                <div style={{ background:"#FFF8E1", border:"1px solid #FFE082", borderRadius:10, padding:"10px 14px", display:"flex", alignItems:"flex-start", gap:8, margin:"12px 0 16px" }}>
+                  <span style={{ fontSize:16 }}>⚠️</span>
+                  <span style={{ fontSize:12, color:"#7a6000", lineHeight:1.5 }}>Los pesos indicados por bandeja son <strong>orientativos</strong>. El peso final puede variar según la pieza y el precio definitivo se calculará sobre el peso real.</span>
+                </div>
+                <div style={{ marginBottom:6, fontSize:14, fontWeight:600, color:"#333" }}>Tus datos</div>
+                {["nombre","telefono","email","nota"].map(f => (
+                  <input key={f} style={{ width:"100%", padding:"11px 14px", borderRadius:10, border:"1.5px solid #ddd", fontSize:14, marginBottom:12, boxSizing:"border-box", outline:"none" }}
+                    placeholder={f==="nombre"?"Nombre *":f==="telefono"?"Teléfono *":f==="email"?"Email (opcional)":"Nota o indicación (opcional)"}
+                    value={form[f]} onChange={e=>setForm(prev=>({...prev,[f]:e.target.value}))} />
+                ))}
+                <button onClick={enviar} disabled={!form.nombre||!form.telefono} style={{ width:"100%", background:form.nombre&&form.telefono?C:"#ccc", color:"#fff", border:"none", borderRadius:12, padding:"14px", fontSize:15, fontWeight:700, cursor:form.nombre&&form.telefono?"pointer":"not-allowed" }}>Confirmar reserva</button>
+                <button onClick={()=>setModal(false)} style={{ width:"100%", background:"#f5f5f5", color:"#555", border:"none", borderRadius:12, padding:"12px", fontSize:14, cursor:"pointer", marginTop:8 }}>Seguir eligiendo</button>
+              </>
+            ) : (
+              <div style={{ textAlign:"center", padding:"20px 10px" }}>
+                <div style={{ fontSize:48, marginBottom:12 }}>✅</div>
+                <div style={{ fontSize:20, fontWeight:700, color:C, marginBottom:8 }}>¡Reserva confirmada!</div>
+                <div style={{ fontSize:14, color:"#666" }}>Hemos recibido tu pedido, {form.nombre}. Nos pondremos en contacto contigo pronto para coordinar la recogida.</div>
+                <button onClick={()=>{setModal(false);setBandejas({});setForm({nombre:"",telefono:"",email:"",nota:""}); }} style={{ width:"100%", background:C, color:"#fff", border:"none", borderRadius:12, padding:"14px", fontSize:15, fontWeight:700, cursor:"pointer", marginTop:20 }}>Nueva reserva</button>
               </div>
             )}
-            {tab === "pedidos" && filtrados.map(p => (
-              <div key={p.id} style={{ background:"#fff", border:"1px solid #eee", borderRadius:14, padding:"14px 16px", marginBottom:10 }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
-                  <div>
-                    <div style={{ fontWeight:600, fontSize:14, color:"#222" }}>{p.nombre}</div>
-                    <div style={{ fontSize:12, color:"#888", marginTop:2 }}>{p.telefono}{p.email?` · ${p.email}`:""} · {p.fecha}</div>
-                  </div>
-                  <span style={{ display:"inline-block", padding:"3px 12px", borderRadius:20, fontSize:11, fontWeight:600, background:p.estado==="listo"?"#eafaf1":p.estado==="preparando"?"#fff8e1":COLOR_LIGHT, color:p.estado==="listo"?"#1a7a3c":p.estado==="preparando"?"#b8860b":COLOR }}>{p.estado}</span>
-                </div>
-                <div style={{ fontSize:13, color:"#555", marginTop:8 }}>
-                  {p.productos.map((pr, i) => (
-                    <div key={i} style={{ display:"flex", justifyContent:"space-between" }}>
-                      <span>• {pr.nombre} — {pr.bandejas} bandeja{pr.bandejas>1?"s":""}{pr.kgTotal?` (≈${pr.kgTotal} kg)`:""}</span>
-                      {pr.subtotal ? <span style={{ color:COLOR, fontWeight:600 }}>{eur(pr.subtotal)}</span> : null}
-                    </div>
-                  ))}
-                </div>
-                {p.nota && <div style={{ fontSize:12, color:"#999", marginTop:4 }}>Nota: {p.nota}</div>}
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:10 }}>
-                  <div style={{ display:"flex", gap:6 }}>
-                    {["pendiente","preparando","listo"].map(e => (
-                      <button key={e} onClick={() => cambiarEstado(p.id,e)} style={{ padding:"4px 12px", borderRadius:20, border:`1.5px solid ${p.estado===e?COLOR:"#ddd"}`, background:p.estado===e?COLOR_LIGHT:"#fff", color:p.estado===e?COLOR:"#888", fontSize:12, cursor:"pointer", fontWeight:p.estado===e?600:400 }}>{e}</button>
-                    ))}
-                  </div>
-                  <span style={{ fontSize:14, fontWeight:700, color:COLOR }}>{eur(p.total)}</span>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
-      );
-    }
-
-    function App() {
-      const [bandejas, setBandejas] = useState({});
-      const [catActiva, setCatActiva] = useState("todas");
-      const [modal, setModal] = useState(false);
-      const [enviado, setEnviado] = useState(false);
-      const [form, setForm] = useState({ nombre:"", telefono:"", email:"", nota:"" });
-      const [pedidos, setPedidos] = useState([]);
-      const [panel, setPanel] = useState(false);
-      const [panelPass, setPanelPass] = useState(false);
-      const [passInput, setPassInput] = useState("");
-      const [passError, setPassError] = useState(false);
-
-      const allProds = CATEGORIAS.flatMap(c => c.productos);
-      const seleccionados = allProds.filter(p => (bandejas[p.id]||0) > 0);
-      const totalPedido = useMemo(() => seleccionados.reduce((acc,p) => acc+(bandejas[p.id]||0)*p.pBandeja, 0), [seleccionados, bandejas]);
-      const cats = catActiva === "todas" ? CATEGORIAS : CATEGORIAS.filter(c => c.id === catActiva);
-      const setCant = (id, val) => setBandejas(prev => ({ ...prev, [id]: Math.max(0, Math.round(parseFloat(val)||0)) }));
-
-      const enviar = () => {
-        if (!form.nombre || !form.telefono) return;
-        const nuevo = {
-          id: Date.now(), nombre:form.nombre, telefono:form.telefono, email:form.email, nota:form.nota,
-          fecha: new Date().toLocaleString("es-ES"), isoDate: new Date().toISOString().slice(0,10),
-          estado: "pendiente", total: totalPedido,
-          productos: seleccionados.map(p => ({
-            nombre:p.nombre, bandejas:bandejas[p.id],
-            kgTotal: p.bandeja ? +(bandejas[p.id]*p.bandeja).toFixed(2) : null,
-            subtotal: +(bandejas[p.id]*p.pBandeja).toFixed(2)
-          }))
-        };
-        setPedidos(prev => [nuevo, ...prev]);
-        sendEmail(nuevo);
-        setEnviado(true);
-      };
-
-      const entrarPanel = () => {
-        if (passInput === PASS) { setPanel(true); setPassError(false); setPanelPass(false); setPassInput(""); }
-        else setPassError(true);
-      };
-
-      if (panel) return <Panel pedidos={pedidos} setPedidos={setPedidos} onBack={() => setPanel(false)} />;
-
-      const C = COLOR;
-      return (
-        <div style={{ fontFamily:"system-ui,sans-serif", maxWidth:780, margin:"0 auto", paddingBottom:80 }}>
-          <div style={{ background:C, padding:"22px 20px 18px", borderRadius:"0 0 16px 16px" }}>
-            <div style={{ color:"#fff", fontSize:22, fontWeight:600 }}>🌿 Carnes Ecológicas Mundo Verde</div>
-            <div style={{ color:"rgba(255,255,255,0.82)", fontSize:13, marginTop:4 }}>Reserva de carnes frescas de producción ecológica · Pontevedra</div>
-            <span style={{ display:"inline-block", background:"rgba(255,255,255,0.18)", color:"#fff", fontSize:11, padding:"2px 10px", borderRadius:20, marginTop:10 }}>Producción 100% ecológica</span>
-          </div>
-
-          <div style={{ display:"flex", justifyContent:"flex-end", padding:"10px 16px 0" }}>
-            <span onClick={() => setPanelPass(v=>!v)} style={{ fontSize:12, color:"#aaa", cursor:"pointer", textDecoration:"underline" }}>Acceso panel</span>
-          </div>
-
-          {panelPass && (
-            <div style={{ margin:"8px 16px", background:"#fff", border:"1px solid #eee", borderRadius:12, padding:"14px 16px" }}>
-              <div style={{ fontSize:13, fontWeight:600, marginBottom:8, color:"#333" }}>Contraseña del panel</div>
-              <div style={{ display:"flex", gap:8 }}>
-                <input type="password" value={passInput} onChange={e=>setPassInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&entrarPanel()} placeholder="Contraseña" style={{ flex:1, padding:"10px 14px", borderRadius:10, border:"1.5px solid #ddd", fontSize:14, outline:"none" }} />
-                <button onClick={entrarPanel} style={{ background:C, color:"#fff", border:"none", borderRadius:10, padding:"0 16px", cursor:"pointer", fontSize:14 }}>Entrar</button>
-              </div>
-              {passError && <div style={{ fontSize:12, color:"#c0392b", marginTop:6 }}>Contraseña incorrecta</div>}
-            </div>
-          )}
-
-          <div style={{ margin:"12px 16px 0" }}><Aviso /></div>
-
-          <div style={{ display:"flex", gap:8, overflowX:"auto", padding:"14px 16px 4px", scrollbarWidth:"none" }}>
-            {[{ id:"todas", nombre:"Todas", emoji:"" }, ...CATEGORIAS].map(c => (
-              <button key={c.id} onClick={() => setCatActiva(c.id)} style={{ flexShrink:0, padding:"6px 14px", borderRadius:20, border:`1.5px solid ${catActiva===c.id?C:"#ddd"}`, background:catActiva===c.id?C:"#fff", color:catActiva===c.id?"#fff":"#555", fontSize:13, cursor:"pointer", fontWeight:catActiva===c.id?600:400 }}>
-                {c.emoji?`${c.emoji} `:""}{c.nombre}
-              </button>
-            ))}
-          </div>
-
-          {cats.map(cat => (
-            <div key={cat.id} style={{ margin:"18px 16px 0" }}>
-              <div style={{ fontSize:15, fontWeight:600, color:C, marginBottom:10 }}>{cat.emoji} {cat.nombre} · producción ecológica</div>
-              {cat.productos.map(prod => {
-                const qty = bandejas[prod.id]||0;
-                const kg = prod.bandeja ? +(qty*prod.bandeja).toFixed(2) : null;
-                const sub = +(qty*prod.pBandeja).toFixed(2);
-                return (
-                  <div key={prod.id} style={{ background:"#fff", border:qty>0?`1.5px solid ${C}`:"1px solid #eee", borderRadius:12, padding:"11px 14px", marginBottom:8, display:"flex", alignItems:"center", gap:10 }}>
-                    <div style={{ flex:1 }}>
-                      <div style={{ fontSize:13.5, color:"#222", fontWeight:500 }}>{prod.nombre}</div>
-                      <div style={{ fontSize:11, color:"#888", marginTop:2 }}>
-                        {prod.bandeja ? <span>Bandeja ≈ {prod.bandeja} kg · </span> : null}
-                        <span>{eur(prod.pBandeja)}/bandeja</span>
-                        <span style={{ margin:"0 6px", color:"#ddd" }}>|</span>
-                        <span>{eur(prod.pKilo)}/kg</span>
-                        {prod.nota ? <span> · {prod.nota}</span> : null}
-                      </div>
-                      {qty > 0 && (
-                        <div style={{ fontSize:11, marginTop:3 }}>
-                          {kg ? <span style={{ color:"#888" }}>≈ {kg} kg · </span> : null}
-                          <span style={{ color:C, fontWeight:700 }}>{eur(sub)}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                      <button onClick={() => setCant(prod.id,qty-1)} style={{ width:28, height:28, borderRadius:8, border:`1.5px solid ${C}`, background:"#fff", color:C, fontSize:16, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700 }}>−</button>
-                      <div style={{ textAlign:"center" }}>
-                        <div style={{ fontSize:14, fontWeight:600, minWidth:22, textAlign:"center", color:"#222" }}>{qty}</div>
-                        <div style={{ fontSize:10, color:"#aaa", lineHeight:1 }}>bandeja{qty!==1?"s":""}</div>
-                      </div>
-                      <button onClick={() => setCant(prod.id,qty+1)} style={{ width:28, height:28, borderRadius:8, border:`1.5px solid ${C}`, background:"#fff", color:C, fontSize:16, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700 }}>+</button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ))}
-
-          {seleccionados.length > 0 && (
-            <button onClick={() => { setModal(true); setEnviado(false); }} style={{ position:"fixed", bottom:16, left:"50%", transform:"translateX(-50%)", background:C, color:"#fff", border:"none", borderRadius:24, padding:"13px 28px", fontSize:15, fontWeight:600, cursor:"pointer", boxShadow:"0 4px 16px rgba(45,106,79,0.35)", zIndex:100, whiteSpace:"nowrap" }}>
-              Ver reserva ({seleccionados.length} prod.) · {eur(totalPedido)} →
-            </button>
-          )}
-
-          {modal && (
-            <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.45)", display:"flex", alignItems:"flex-end", justifyContent:"center", zIndex:200 }} onClick={e=>e.target===e.currentTarget&&setModal(false)}>
-              <div style={{ background:"#fff", borderRadius:"20px 20px 0 0", padding:"24px 20px 32px", width:"100%", maxWidth:780, maxHeight:"85vh", overflowY:"auto" }}>
-                {!enviado ? (
-                  <>
-                    <div style={{ fontSize:17, fontWeight:700, color:"#222", marginBottom:16 }}>Tu reserva</div>
-                    {seleccionados.map(p => {
-                      const qty = bandejas[p.id];
-                      const kg = p.bandeja ? +(qty*p.bandeja).toFixed(2) : null;
-                      const sub = +(qty*p.pBandeja).toFixed(2);
-                      return (
-                        <div key={p.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", padding:"8px 0", borderBottom:"1px solid #f2f2f2", fontSize:13.5, gap:8 }}>
-                          <div style={{ flex:1 }}>
-                            <div style={{ color:"#333" }}>{p.nombre}</div>
-                            <div style={{ fontSize:11, color:"#888" }}>{qty} bandeja{qty>1?"s":""}{kg?` · ≈${kg} kg`:""}</div>
-                          </div>
-                          <span style={{ color:C, fontWeight:600, flexShrink:0 }}>{eur(sub)}</span>
-                        </div>
-                      );
-                    })}
-                    <div style={{ display:"flex", justifyContent:"space-between", padding:"12px 0 4px", fontSize:15, fontWeight:700, borderTop:"2px solid #eee", marginTop:4 }}>
-                      <span style={{ color:"#333" }}>Total orientativo</span>
-                      <span style={{ color:C }}>{eur(totalPedido)}</span>
-                    </div>
-                    <div style={{ margin:"12px 0 16px" }}><Aviso /></div>
-                    <div style={{ marginBottom:6, fontSize:14, fontWeight:600, color:"#333" }}>Tus datos</div>
-                    {["nombre","telefono","email","nota"].map(f => (
-                      <input key={f} style={{ width:"100%", padding:"11px 14px", borderRadius:10, border:"1.5px solid #ddd", fontSize:14, marginBottom:12, boxSizing:"border-box", outline:"none" }}
-                        placeholder={f==="nombre"?"Nombre *":f==="telefono"?"Teléfono *":f==="email"?"Email (opcional)":"Nota o indicación (opcional)"}
-                        value={form[f]} onChange={e=>setForm(prev=>({...prev,[f]:e.target.value}))} />
-                    ))}
-                    <button onClick={enviar} disabled={!form.nombre||!form.telefono} style={{ width:"100%", background:form.nombre&&form.telefono?C:"#ccc", color:"#fff", border:"none", borderRadius:12, padding:"14px", fontSize:15, fontWeight:700, cursor:form.nombre&&form.telefono?"pointer":"not-allowed" }}>Confirmar reserva</button>
-                    <button onClick={()=>setModal(false)} style={{ width:"100%", background:"#f5f5f5", color:"#555", border:"none", borderRadius:12, padding:"12px", fontSize:14, cursor:"pointer", marginTop:8 }}>Seguir eligiendo</button>
-                  </>
-                ) : (
-                  <div style={{ textAlign:"center", padding:"20px 10px" }}>
-                    <div style={{ fontSize:48, marginBottom:12 }}>✅</div>
-                    <div style={{ fontSize:20, fontWeight:700, color:C, marginBottom:8 }}>¡Reserva confirmada!</div>
-                    <div style={{ fontSize:14, color:"#666" }}>Hemos recibido tu pedido. En breve nos pondremos en contacto contigo para coordinar la recogida.</div>
-                    <button onClick={()=>{setModal(false);setBandejas({});setForm({nombre:"",telefono:"",email:"",nota:""});}} style={{ width:"100%", background:C, color:"#fff", border:"none", borderRadius:12, padding:"14px", fontSize:15, fontWeight:700, cursor:"pointer", marginTop:20 }}>Nueva reserva</button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-  </script>
-</body>
-</html>
+      )}
+    </div>
+  );
+}
