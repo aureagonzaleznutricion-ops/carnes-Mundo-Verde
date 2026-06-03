@@ -22,7 +22,8 @@
     emailjs.init({ publicKey: "z790C6rjbbv3l6XoD" });
     const SUPA_URL = "https://khismajlbrwyzxclzrlj.supabase.co";
     const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaXNtYWpsYnJ3eXp4Y2x6cmxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MDMyNTgsImV4cCI6MjA5NjA3OTI1OH0.nS1wBFsDLKfFx1h-A7QVFaLOtbS6CcSZvqD_fDC82bw";
-    const supabase = supabase.createClient(SUPA_URL, SUPA_KEY);
+    const db = supabase.createClient(SUPA_URL, SUPA_KEY);
+    window.db = db;
   </script>
   <script type="text/babel">
     const { useState, useMemo, useEffect } = React;
@@ -252,7 +253,7 @@
 
       const cargarPedidos = async () => {
         setCargando(true);
-        const { data, error } = await window.supabase.from("pedidos").select("*").order("id", { ascending: false });
+        const { data, error } = await window.db.from("pedidos").select("*").order("id", { ascending: false });
         if (!error) setPedidos(data || []);
         setCargando(false);
       };
@@ -295,19 +296,19 @@
       };
 
       const cambiarEstado = async (id, estado) => {
-        await window.supabase.from("pedidos").update({ estado }).eq("id", id);
+        await window.db.from("pedidos").update({ estado }).eq("id", id);
         setPedidos(prev => prev.map(p => p.id === id ? { ...p, estado } : p));
       };
 
       const eliminarPedido = async (id) => {
         if (!window.confirm("¿Eliminar este pedido?")) return;
-        await window.supabase.from("pedidos").delete().eq("id", id);
+        await window.db.from("pedidos").delete().eq("id", id);
         setPedidos(prev => prev.filter(p => p.id !== id));
       };
 
       const eliminarGestionados = async () => {
         if (!window.confirm("¿Eliminar todos los pedidos gestionados?")) return;
-        await window.supabase.from("pedidos").delete().eq("estado", "listo");
+        await window.db.from("pedidos").delete().eq("estado", "listo");
         setPedidos(prev => prev.filter(p => p.estado !== "listo"));
       };
 
@@ -519,7 +520,7 @@
             opcion: opcionesLote[p.id] ? Object.values(opcionesLote[p.id]).join(" + ") : null
           }))
         };
-        await window.supabase.from("pedidos").insert([nuevo]);
+        await window.db.from("pedidos").insert([nuevo]);
         sendEmail({ ...nuevo, total: nuevo.total });
         setEnviado(true);
       };
