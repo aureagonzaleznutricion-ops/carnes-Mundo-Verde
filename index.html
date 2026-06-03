@@ -23,32 +23,6 @@
   <script type="text/babel">
     const { useState, useMemo } = React;
 
-    const EMAILJS_SERVICE = "service_lobqqc4";
-    const EMAILJS_TIENDA  = "mundo verde tenda";
-    const EMAILJS_CLIENTE = "mundo verde_cliente";
-
-    const eur = n => n.toFixed(2).replace(".", ",") + " €";
-
-    const sendEmail = (pedido) => {
-      const productos = pedido.productos.map(p =>
-        `• ${p.nombre} — ${p.bandejas} bandeja${p.bandejas>1?"s":""}${p.kgTotal?` (≈${p.kgTotal} kg)`:""} — ${eur(p.subtotal)}`
-      ).join("\n");
-      const params = {
-        cliente_nombre:   pedido.nombre,
-        cliente_telefono: pedido.telefono,
-        cliente_email:    pedido.email || "No indicado",
-        productos,
-        total: eur(pedido.total),
-        nota:  pedido.nota || "",
-      };
-      emailjs.send(EMAILJS_SERVICE, EMAILJS_TIENDA, params)
-        .catch(e => console.error("EmailJS tienda:", e));
-      if (pedido.email) {
-        emailjs.send(EMAILJS_SERVICE, EMAILJS_CLIENTE, params)
-          .catch(e => console.error("EmailJS cliente:", e));
-      }
-    };
-
     const CATEGORIAS = [
       { id: "pollo", nombre: "Pollo", emoji: "🐔", productos: [
         { id: "p1",  nombre: "Pollo entero",                    bandeja: 2,    pBandeja: 33.38, pKilo: 16.64 },
@@ -135,6 +109,32 @@
         { id: "co6", nombre: "Chuletitas de cuello",            bandeja: 0.38, pBandeja:  8.35, pKilo: 21.99 },
         { id: "co7", nombre: "Hígado de cordero",               bandeja: 0.38, pBandeja:  5.70, pKilo: 15.02 },
       ]},
+      { id: "chotoiba", nombre: "Chotoiba", emoji: "🐂", productos: [
+        { id: "ch1", nombre: "Lote A — 3 kg", bandeja: 3, pBandeja: 61.50, pKilo: 20.50, nota: "guisar + asar fijos · 20,50€/kg",
+          opciones: [{ label: "Elige 1 kg:", choices: ["Chuletas", "Filetes"] }] },
+        { id: "ch2", nombre: "Lote B — 3 kg", bandeja: 3, pBandeja: 65.85, pKilo: 21.95, nota: "chuletas + filetes fijos · 21,95€/kg",
+          opciones: [{ label: "Elige 1 kg:", choices: ["Carne para asar", "Carne para guisar"] }] },
+        { id: "ch3", nombre: "Lote C — 3 kg", bandeja: 3, pBandeja: 61.50, pKilo: 20.50, nota: "picada fija · 20,50€/kg",
+          opciones: [{ label: "Elige 1 kg:", choices: ["Chuletas", "Filetes"] }, { label: "Elige 1 kg:", choices: ["Carne para asar", "Carne para guisar"] }] },
+        { id: "ch4",  nombre: "Lote D — 5 kg",          bandeja: 5, pBandeja: 97.50, pKilo: 19.50, nota: "todo fijo · 19,50€/kg" },
+        { id: "ch5",  nombre: "Chuleta / Chuletón",      bandeja: 1, pBandeja: 25.50, pKilo: 25.50, nota: "mínimo 1 kg" },
+        { id: "ch6",  nombre: "Filete",                  bandeja: 1, pBandeja: 22.50, pKilo: 22.50, nota: "mínimo 1 kg" },
+        { id: "ch7",  nombre: "Carne de asar sin hueso", bandeja: 1, pBandeja: 20.95, pKilo: 20.95, nota: "mínimo 1 kg" },
+        { id: "ch8",  nombre: "Carne guisar con hueso",  bandeja: 1, pBandeja: 17.95, pKilo: 17.95, nota: "mínimo 1 kg" },
+        { id: "ch9",  nombre: "Carne picada",             bandeja: 1, pBandeja: 20.95, pKilo: 20.95, nota: "mínimo 1 kg" },
+        { id: "ch10", nombre: "Falda",                   bandeja: 1, pBandeja: 17.95, pKilo: 17.95, nota: "mínimo 1 kg" },
+        { id: "ch11", nombre: "Croca / Picaña",          bandeja: 1, pBandeja: 28.00, pKilo: 28.00, nota: "mínimo 1 kg" },
+        { id: "ch12", nombre: "Solomillo",               bandeja: 1, pBandeja: 48.00, pKilo: 48.00, nota: "mínimo 1 kg" },
+        { id: "ch13", nombre: "Entrecot",                bandeja: 1, pBandeja: 33.50, pKilo: 33.50, nota: "mínimo 1 kg" },
+        { id: "ch14", nombre: "Redondo / Blanquita",     bandeja: 1, pBandeja: 22.50, pKilo: 22.50, nota: "mínimo 1 kg" },
+        { id: "ch15", nombre: "Rabo",                    bandeja: 1, pBandeja: 20.95, pKilo: 20.95, nota: "mínimo 1 kg" },
+        { id: "ch16", nombre: "Fígado",                  bandeja: 1, pBandeja: 15.40, pKilo: 15.40, nota: "mínimo 1 kg" },
+        { id: "ch17", nombre: "Lingua",                  bandeja: 1, pBandeja: 14.00, pKilo: 14.00, nota: "mínimo 1 kg" },
+        { id: "ch18", nombre: "Xarrete",                 bandeja: 1, pBandeja: 23.80, pKilo: 23.80, nota: "mínimo 1 kg" },
+        { id: "ch19", nombre: "Corazón",                 bandeja: 1, pBandeja: 11.50, pKilo: 11.50, nota: "mínimo 1 kg" },
+        { id: "ch20", nombre: "Osos sin envasar",        bandeja: 1, pBandeja:  5.60, pKilo:  5.60, nota: "mínimo 1 kg" },
+        { id: "ch21", nombre: "Osos envasados",          bandeja: 1, pBandeja:  8.50, pKilo:  8.50, nota: "mínimo 1 kg" },
+      ]},
       { id: "elaborados", nombre: "Elaborados", emoji: "🥩", productos: [
         { id: "e1",  nombre: "Hamburguesa de ternera",          bandeja: 0.4,  pBandeja:  5.00, pKilo: 25.64, nota: "4 ud/bandeja" },
         { id: "e2",  nombre: "Hamburguesa de pollo",            bandeja: 0.4,  pBandeja:  4.57, pKilo: 22.85, nota: "4 ud/bandeja" },
@@ -160,6 +160,24 @@
     const COLOR_LIGHT = "#E1F5EE";
     const PASS = "carnes2024";
     const todayISO = new Date().toISOString().slice(0, 10);
+    const eur = n => n.toFixed(2).replace(".", ",") + " €";
+
+    const EMAILJS_SERVICE = "service_lobqqc4";
+    const EMAILJS_TIENDA  = "template_kn1hv9s";
+    const EMAILJS_CLIENTE = "template_a6hk65p";
+
+    const sendEmail = (pedido) => {
+      const productos = pedido.productos.map(p =>
+        `• ${p.nombre}${p.opcion ? ` (${p.opcion})` : ""} — ${p.bandejas} ${p.esLote ? "lote(s)" : "bandeja(s)"}${p.kgTotal ? ` (≈${p.kgTotal} kg)` : ""} — ${eur(p.subtotal)}`
+      ).join("\n");
+      const params = {
+        cliente_nombre: pedido.nombre, cliente_telefono: pedido.telefono,
+        cliente_email: pedido.email || "No indicado", productos,
+        total: eur(pedido.total), nota: pedido.nota || "",
+      };
+      emailjs.send(EMAILJS_SERVICE, EMAILJS_TIENDA, params).catch(e => console.error("EmailJS tienda:", e));
+      if (pedido.email) emailjs.send(EMAILJS_SERVICE, EMAILJS_CLIENTE, params).catch(e => console.error("EmailJS cliente:", e));
+    };
 
     const Aviso = () => (
       <div style={{ background:"#FFF8E1", border:"1px solid #FFE082", borderRadius:10, padding:"10px 14px", display:"flex", alignItems:"flex-start", gap:8 }}>
@@ -174,6 +192,59 @@
         <div style={{ fontSize:12, color:"#888", marginTop:2 }}>{label}</div>
       </div>
     );
+
+    function ProductCard({ prod, qty, setCant, opcionesLote, setOpcionesLote }) {
+      const C = COLOR;
+      const kg = prod.bandeja ? +(qty * prod.bandeja).toFixed(2) : null;
+      const sub = +(qty * prod.pBandeja).toFixed(2);
+      const esLote = !!prod.opciones;
+      return (
+        <div style={{ background:"#fff", border: qty>0 ? `1.5px solid ${C}` : "1px solid #eee", borderRadius:12, padding:"11px 14px", marginBottom:8 }}>
+          <div style={{ display:"flex", alignItems:"flex-start", gap:10 }}>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:13.5, color:"#222", fontWeight:500 }}>{prod.nombre}</div>
+              <div style={{ fontSize:11, color:"#888", marginTop:2 }}>
+                {prod.bandeja ? <span>≈ {prod.bandeja} kg · </span> : null}
+                <span>{eur(prod.pBandeja)}/{esLote ? "lote" : "bandeja"}</span>
+                <span style={{ margin:"0 6px", color:"#ddd" }}>|</span>
+                <span>{eur(prod.pKilo)}/kg</span>
+                {prod.nota ? <span> · {prod.nota}</span> : null}
+              </div>
+              {qty > 0 && (
+                <div style={{ fontSize:11, marginTop:3 }}>
+                  {!esLote && kg ? <span style={{ color:"#888" }}>≈ {kg} kg · </span> : null}
+                  <span style={{ color:C, fontWeight:700 }}>{eur(sub)}</span>
+                </div>
+              )}
+            </div>
+            <div style={{ display:"flex", alignItems:"center", gap:6, flexShrink:0 }}>
+              <button onClick={() => setCant(prod.id, qty-1)} style={{ width:28, height:28, borderRadius:8, border:`1.5px solid ${C}`, background:"#fff", color:C, fontSize:16, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700 }}>−</button>
+              <div style={{ textAlign:"center" }}>
+                <div style={{ fontSize:14, fontWeight:600, minWidth:22, textAlign:"center", color:"#222" }}>{qty}</div>
+                <div style={{ fontSize:10, color:"#aaa", lineHeight:1 }}>{esLote ? "lote(s)" : `bandeja${qty!==1?"s":""}`}</div>
+              </div>
+              <button onClick={() => setCant(prod.id, qty+1)} style={{ width:28, height:28, borderRadius:8, border:`1.5px solid ${C}`, background:"#fff", color:C, fontSize:16, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700 }}>+</button>
+            </div>
+          </div>
+          {esLote && qty > 0 && (
+            <div style={{ marginTop:10, paddingTop:8, borderTop:"1px solid #f2f2f2" }}>
+              {prod.opciones.map((op, oi) => (
+                <div key={oi} style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
+                  <span style={{ fontSize:12, color:"#555", flexShrink:0 }}>{op.label}</span>
+                  <select
+                    value={(opcionesLote[prod.id] || {})[oi] || ""}
+                    onChange={e => setOpcionesLote(prev => ({ ...prev, [prod.id]: { ...(prev[prod.id]||{}), [oi]: e.target.value } }))}
+                    style={{ fontSize:12, padding:"4px 10px", borderRadius:8, border:`1.5px solid ${C}`, color:"#333", background:"#fff", flex:1 }}>
+                    <option value="">-- elige --</option>
+                    {op.choices.map(ch => <option key={ch} value={ch}>{ch}</option>)}
+                  </select>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
 
     function Panel({ pedidos, setPedidos, onBack }) {
       const [tab, setTab] = useState("totales");
@@ -207,9 +278,9 @@
       const eliminarGestionados = () => { if (window.confirm("¿Eliminar todos los pedidos gestionados?")) setPedidos(prev => prev.filter(p => p.estado !== "listo")); };
 
       const exportCSV = () => {
-        const rows = [["Cliente","Teléfono","Email","Fecha","Estado","Producto","Bandejas","Kg aprox","Subtotal","Nota"]];
+        const rows = [["Cliente","Teléfono","Email","Fecha","Estado","Producto","Opciones","Bandejas","Kg","Subtotal","Nota"]];
         filtrados.forEach(p => p.productos.forEach(pr =>
-          rows.push([p.nombre, p.telefono, p.email||"", p.fecha, p.estado, pr.nombre, pr.bandejas, (pr.kgTotal||"").toString(), pr.subtotal ? eur(pr.subtotal) : "", p.nota||""])
+          rows.push([p.nombre, p.telefono, p.email||"", p.fecha, p.estado, pr.nombre, pr.opcion||"", pr.bandejas, (pr.kgTotal||"").toString(), pr.subtotal ? eur(pr.subtotal) : "", p.nota||""])
         ));
         const csv = rows.map(r => r.map(c => `"${c}"`).join(",")).join("\n");
         const a = document.createElement("a");
@@ -248,7 +319,7 @@
           </div>
 
           <div style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 20px", flexWrap:"wrap" }}>
-            <select value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)} style={{ padding:"7px 12px", borderRadius:10, border:"1.5px solid #ddd", fontSize:13, background:"#fff", color:"#333", cursor:"pointer" }}>
+            <select value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)} style={{ padding:"7px 12px", borderRadius:10, border:"1.5px solid #ddd", fontSize:13, background:"#fff", color:"#333" }}>
               {["todos","pendiente","preparando","listo"].map(e => <option key={e} value={e}>{{ todos:"Todos los estados", pendiente:"Pendiente", preparando:"Preparando", listo:"Listo" }[e]}</option>)}
             </select>
             <input type="date" value={filtroDia} onChange={e => setFiltroDia(e.target.value)} style={{ padding:"7px 12px", borderRadius:10, border:"1.5px solid #ddd", fontSize:13, background:"#fff", color:"#333" }} />
@@ -264,7 +335,7 @@
             {(tab === "totales" || tab === "productos") && filtrados.length > 0 && (
               <div style={{ background:"#fff", border:"1px solid #eee", borderRadius:14, overflow:"hidden" }}>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr auto auto auto", gap:8, padding:"10px 16px", background:"#f9f9f9", fontSize:12, fontWeight:600, color:"#888" }}>
-                  <span>Producto</span><span style={{ textAlign:"right" }}>Bandejas</span><span style={{ textAlign:"right" }}>Kg</span><span style={{ textAlign:"right" }}>Importe</span>
+                  <span>Producto</span><span style={{ textAlign:"right" }}>Uds</span><span style={{ textAlign:"right" }}>Kg</span><span style={{ textAlign:"right" }}>Importe</span>
                 </div>
                 {totalesProd.map((pr, i) => (
                   <div key={i} style={{ display:"grid", gridTemplateColumns:"1fr auto auto auto", gap:8, padding:"10px 16px", borderTop:"1px solid #f2f2f2" }}>
@@ -293,8 +364,8 @@
                 </div>
                 <div style={{ fontSize:13, color:"#555", marginTop:8 }}>
                   {p.productos.map((pr, i) => (
-                    <div key={i} style={{ display:"flex", justifyContent:"space-between" }}>
-                      <span>• {pr.nombre} — {pr.bandejas} bandeja{pr.bandejas>1?"s":""}{pr.kgTotal?` (≈${pr.kgTotal} kg)`:""}</span>
+                    <div key={i} style={{ display:"flex", justifyContent:"space-between", marginBottom:2 }}>
+                      <span>• {pr.nombre}{pr.opcion ? ` · ${pr.opcion}` : ""} — {pr.bandejas} {pr.esLote?"lote(s)":"bandeja(s)"}{pr.kgTotal?` (≈${pr.kgTotal} kg)`:""}</span>
                       {pr.subtotal ? <span style={{ color:COLOR, fontWeight:600 }}>{eur(pr.subtotal)}</span> : null}
                     </div>
                   ))}
@@ -308,7 +379,7 @@
                   </div>
                   <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                     <span style={{ fontSize:14, fontWeight:700, color:COLOR }}>{eur(p.total)}</span>
-                    <button onClick={() => eliminarPedido(p.id)} style={{ background:"none", border:"none", color:"#ccc", fontSize:16, cursor:"pointer", padding:"0 4px" }} title="Eliminar pedido">🗑</button>
+                    <button onClick={() => eliminarPedido(p.id)} style={{ background:"none", border:"none", color:"#ccc", fontSize:16, cursor:"pointer" }}>🗑</button>
                   </div>
                 </div>
               </div>
@@ -320,6 +391,7 @@
 
     function App() {
       const [bandejas, setBandejas] = useState({});
+      const [opcionesLote, setOpcionesLote] = useState({});
       const [catActiva, setCatActiva] = useState("todas");
       const [modal, setModal] = useState(false);
       const [enviado, setEnviado] = useState(false);
@@ -343,9 +415,10 @@
           fecha: new Date().toLocaleString("es-ES"), isoDate: new Date().toISOString().slice(0,10),
           estado: "pendiente", total: totalPedido,
           productos: seleccionados.map(p => ({
-            nombre:p.nombre, bandejas:bandejas[p.id],
+            nombre: p.nombre, bandejas: bandejas[p.id], esLote: !!p.opciones,
             kgTotal: p.bandeja ? +(bandejas[p.id]*p.bandeja).toFixed(2) : null,
-            subtotal: +(bandejas[p.id]*p.pBandeja).toFixed(2)
+            subtotal: +(bandejas[p.id]*p.pBandeja).toFixed(2),
+            opcion: opcionesLote[p.id] ? Object.values(opcionesLote[p.id]).join(" + ") : null
           }))
         };
         setPedidos(prev => [nuevo, ...prev]);
@@ -397,39 +470,15 @@
           {cats.map(cat => (
             <div key={cat.id} style={{ margin:"18px 16px 0" }}>
               <div style={{ fontSize:15, fontWeight:600, color:C, marginBottom:10 }}>{cat.emoji} {cat.nombre} · producción ecológica</div>
-              {cat.productos.map(prod => {
-                const qty = bandejas[prod.id]||0;
-                const kg = prod.bandeja ? +(qty*prod.bandeja).toFixed(2) : null;
-                const sub = +(qty*prod.pBandeja).toFixed(2);
-                return (
-                  <div key={prod.id} style={{ background:"#fff", border:qty>0?`1.5px solid ${C}`:"1px solid #eee", borderRadius:12, padding:"11px 14px", marginBottom:8, display:"flex", alignItems:"center", gap:10 }}>
-                    <div style={{ flex:1 }}>
-                      <div style={{ fontSize:13.5, color:"#222", fontWeight:500 }}>{prod.nombre}</div>
-                      <div style={{ fontSize:11, color:"#888", marginTop:2 }}>
-                        {prod.bandeja ? <span>Bandeja ≈ {prod.bandeja} kg · </span> : null}
-                        <span>{eur(prod.pBandeja)}/bandeja</span>
-                        <span style={{ margin:"0 6px", color:"#ddd" }}>|</span>
-                        <span>{eur(prod.pKilo)}/kg</span>
-                        {prod.nota ? <span> · {prod.nota}</span> : null}
-                      </div>
-                      {qty > 0 && (
-                        <div style={{ fontSize:11, marginTop:3 }}>
-                          {kg ? <span style={{ color:"#888" }}>≈ {kg} kg · </span> : null}
-                          <span style={{ color:C, fontWeight:700 }}>{eur(sub)}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                      <button onClick={() => setCant(prod.id,qty-1)} style={{ width:28, height:28, borderRadius:8, border:`1.5px solid ${C}`, background:"#fff", color:C, fontSize:16, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700 }}>−</button>
-                      <div style={{ textAlign:"center" }}>
-                        <div style={{ fontSize:14, fontWeight:600, minWidth:22, textAlign:"center", color:"#222" }}>{qty}</div>
-                        <div style={{ fontSize:10, color:"#aaa", lineHeight:1 }}>bandeja{qty!==1?"s":""}</div>
-                      </div>
-                      <button onClick={() => setCant(prod.id,qty+1)} style={{ width:28, height:28, borderRadius:8, border:`1.5px solid ${C}`, background:"#fff", color:C, fontSize:16, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700 }}>+</button>
-                    </div>
-                  </div>
-                );
-              })}
+              {cat.productos.map(prod => (
+                <ProductCard
+                  key={prod.id} prod={prod}
+                  qty={bandejas[prod.id]||0}
+                  setCant={setCant}
+                  opcionesLote={opcionesLote}
+                  setOpcionesLote={setOpcionesLote}
+                />
+              ))}
             </div>
           ))}
 
@@ -449,13 +498,17 @@
                       const qty = bandejas[p.id];
                       const kg = p.bandeja ? +(qty*p.bandeja).toFixed(2) : null;
                       const sub = +(qty*p.pBandeja).toFixed(2);
+                      const opcion = opcionesLote[p.id] ? Object.values(opcionesLote[p.id]).join(" + ") : null;
                       return (
-                        <div key={p.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", padding:"8px 0", borderBottom:"1px solid #f2f2f2", fontSize:13.5, gap:8 }}>
-                          <div style={{ flex:1 }}>
-                            <div style={{ color:"#333" }}>{p.nombre}</div>
-                            <div style={{ fontSize:11, color:"#888" }}>{qty} bandeja{qty>1?"s":""}{kg?` · ≈${kg} kg`:""}</div>
+                        <div key={p.id} style={{ padding:"8px 0", borderBottom:"1px solid #f2f2f2", fontSize:13.5 }}>
+                          <div style={{ display:"flex", justifyContent:"space-between", gap:8 }}>
+                            <div style={{ flex:1 }}>
+                              <div style={{ color:"#333" }}>{p.nombre}</div>
+                              <div style={{ fontSize:11, color:"#888" }}>{qty} {p.opciones?"lote(s)":`bandeja${qty>1?"s":""}`}{kg?` · ≈${kg} kg`:""}</div>
+                              {opcion && <div style={{ fontSize:11, color:C, fontWeight:600, marginTop:2 }}>→ {opcion}</div>}
+                            </div>
+                            <span style={{ color:C, fontWeight:600, flexShrink:0 }}>{eur(sub)}</span>
                           </div>
-                          <span style={{ color:C, fontWeight:600, flexShrink:0 }}>{eur(sub)}</span>
                         </div>
                       );
                     })}
@@ -478,7 +531,7 @@
                     <div style={{ fontSize:48, marginBottom:12 }}>✅</div>
                     <div style={{ fontSize:20, fontWeight:700, color:C, marginBottom:8 }}>¡Reserva confirmada!</div>
                     <div style={{ fontSize:14, color:"#666" }}>Hemos recibido tu pedido{form.nombre?`, ${form.nombre}`:""}. En breve nos pondremos en contacto contigo para coordinar la recogida.{form.email?" Te hemos enviado un email de confirmación.":""}</div>
-                    <button onClick={()=>{setModal(false);setBandejas({});setForm({nombre:"",telefono:"",email:"",nota:""});}} style={{ width:"100%", background:C, color:"#fff", border:"none", borderRadius:12, padding:"14px", fontSize:15, fontWeight:700, cursor:"pointer", marginTop:20 }}>Nueva reserva</button>
+                    <button onClick={()=>{setModal(false);setBandejas({});setOpcionesLote({});setForm({nombre:"",telefono:"",email:"",nota:""});}} style={{ width:"100%", background:C, color:"#fff", border:"none", borderRadius:12, padding:"14px", fontSize:15, fontWeight:700, cursor:"pointer", marginTop:20 }}>Nueva reserva</button>
                   </div>
                 )}
               </div>
