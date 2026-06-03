@@ -247,9 +247,7 @@
       const [editando, setEditando] = useState(null);
       const [formProd, setFormProd] = useState({ nombre:"", bandeja:"", pBandeja:"", pKilo:"", nota:"" });
 
-      useEffect(() => {
-        cargarPedidos();
-      }, []);
+      useEffect(() => { cargarPedidos(); }, []);
 
       const cargarPedidos = async () => {
         setCargando(true);
@@ -282,17 +280,19 @@
         const pKilo = parseFloat(String(formProd.pKilo).replace(",","."));
         const bandeja = formProd.bandeja ? parseFloat(String(formProd.bandeja).replace(",",".")) : null;
         if (!nombre || isNaN(pBandeja) || isNaN(pKilo)) { alert("Rellena: Nombre, Precio bandeja y Precio kilo."); return; }
-        setCats(prev => prev.map(cat => {
+        const nuevasCats = cats.map(cat => {
           if (cat.id !== editando.catId) return cat;
           if (editando.nuevo) return { ...cat, productos: [...cat.productos, { id:"custom_"+Date.now(), nombre, bandeja, pBandeja, pKilo, nota: formProd.nota||undefined }] };
           return { ...cat, productos: cat.productos.map(p => p.id === editando.prodId ? { ...p, nombre, bandeja, pBandeja, pKilo, nota: formProd.nota||undefined } : p) };
-        }));
+        });
+        setCats(nuevasCats);
         setEditando(null);
       };
 
       const eliminarProd = (catId, prodId) => {
         if (!window.confirm("¿Eliminar este producto?")) return;
-        setCats(prev => prev.map(cat => cat.id !== catId ? cat : { ...cat, productos: cat.productos.filter(p => p.id !== prodId) }));
+        const nuevasCats = cats.map(cat => cat.id !== catId ? cat : { ...cat, productos: cat.productos.filter(p => p.id !== prodId) });
+        setCats(nuevasCats);
       };
 
       const cambiarEstado = async (id, estado) => {
@@ -490,29 +490,7 @@
 
     function App() {
       const [cats, setCatsState] = useState(CATEGORIAS_INIT);
-      const [catsId, setCatsId] = useState(null); // ID del registro en Supabase
-
-      const setCats = async (updater) => {
-        const nuevasCats = typeof updater === "function" ? updater(cats) : updater;
-        setCatsState(nuevasCats);
-        // Guardar en Supabase
-        if (catsId) {
-          await window.db.from("categorias").update({ data: nuevasCats }).eq("id", catsId);
-        } else {
-          const { data } = await window.db.from("categorias").insert([{ data: nuevasCats }]).select();
-          if (data?.[0]) setCatsId(data[0].id);
-        }
-      };
-
-      useEffect(() => {
-        // Cargar categorias desde Supabase al iniciar
-        window.db.from("categorias").select("*").limit(1).then(({ data }) => {
-          if (data && data.length > 0) {
-            setCatsState(data[0].data);
-            setCatsId(data[0].id);
-          }
-        });
-      }, []);
+      const [catsId, setCatsId] = useState(null);
       const [bandejas, setBandejas] = useState({});
       const [opcionesLote, setOpcionesLote] = useState({});
       const [catActiva, setCatActiva] = useState("todas");
@@ -523,6 +501,25 @@
       const [panelPass, setPanelPass] = useState(false);
       const [passInput, setPassInput] = useState("");
       const [passError, setPassError] = useState(false);
+
+      useEffect(() => {
+        window.db.from("categorias").select("*").limit(1).then(({ data }) => {
+          if (data && data.length > 0) {
+            setCatsState(data[0].data);
+            setCatsId(data[0].id);
+          }
+        });
+      }, []);
+
+      const setCats = async (nuevasCats) => {
+        setCatsState(nuevasCats);
+        if (catsId) {
+          await window.db.from("categorias").update({ data: nuevasCats }).eq("id", catsId);
+        } else {
+          const { data } = await window.db.from("categorias").insert([{ data: nuevasCats }]).select();
+          if (data?.[0]) setCatsId(data[0].id);
+        }
+      };
 
       const allProds = cats.flatMap(c => c.productos);
       const seleccionados = allProds.filter(p => (bandejas[p.id]||0) > 0);
@@ -544,7 +541,7 @@
           }))
         };
         await window.db.from("pedidos").insert([nuevo]);
-        sendEmail({ ...nuevo, total: nuevo.total });
+        sendEmail({ ...nuevo });
         setEnviado(true);
       };
 
