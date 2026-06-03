@@ -162,8 +162,8 @@
     const todayISO = new Date().toISOString().slice(0, 10);
     const eur = n => n.toFixed(2).replace(".", ",") + " €";
     const EMAILJS_SERVICE = "service_lobqqc4";
-    const EMAILJS_TIENDA  = "mundo verde tenda";
-    const EMAILJS_CLIENTE = "mundo verde_cliente";
+    const EMAILJS_TIENDA  = "mundo_verde_tenda";
+    const EMAILJS_CLIENTE = "mundo_verde_cliente";
 
     const sendEmail = (pedido) => {
       const productos = pedido.productos.map(p =>
