@@ -8,6 +8,7 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: system-ui, sans-serif; background: #f7f7f5; }
@@ -19,9 +20,12 @@
   <div id="root"></div>
   <script>
     emailjs.init({ publicKey: "z790C6rjbbv3l6XoD" });
+    const SUPA_URL = "https://khismajlbrwyzxclzrlj.supabase.co";
+    const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaXNtYWpsYnJ3eXp4Y2x6cmxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MDMyNTgsImV4cCI6MjA5NjA3OTI1OH0.nS1wBFsDLKfFx1h-A7QVFaLOtbS6CcSZvqD_fDC82bw";
+    const supabase = supabase.createClient(SUPA_URL, SUPA_KEY);
   </script>
   <script type="text/babel">
-    const { useState, useMemo } = React;
+    const { useState, useMemo, useEffect } = React;
 
     const CATEGORIAS_INIT = [
       { id: "pollo", nombre: "Pollo", emoji: "🐔", productos: [
@@ -233,12 +237,25 @@
       );
     }
 
-    function Panel({ pedidos, setPedidos, cats, setCats, onBack }) {
+    function Panel({ cats, setCats, onBack }) {
       const [tabP, setTabP] = useState("totales");
       const [filtroEstado, setFiltroEstado] = useState("todos");
       const [filtroDia, setFiltroDia] = useState(todayISO);
+      const [pedidos, setPedidos] = useState([]);
+      const [cargando, setCargando] = useState(true);
       const [editando, setEditando] = useState(null);
       const [formProd, setFormProd] = useState({ nombre:"", bandeja:"", pBandeja:"", pKilo:"", nota:"" });
+
+      useEffect(() => {
+        cargarPedidos();
+      }, []);
+
+      const cargarPedidos = async () => {
+        setCargando(true);
+        const { data, error } = await window.supabase.from("pedidos").select("*").order("id", { ascending: false });
+        if (!error) setPedidos(data || []);
+        setCargando(false);
+      };
 
       const CAMPOS = [
         { key:"nombre", label:"Nombre *", type:"text" },
@@ -263,15 +280,10 @@
         const pBandeja = parseFloat(String(formProd.pBandeja).replace(",","."));
         const pKilo = parseFloat(String(formProd.pKilo).replace(",","."));
         const bandeja = formProd.bandeja ? parseFloat(String(formProd.bandeja).replace(",",".")) : null;
-        if (!nombre || isNaN(pBandeja) || isNaN(pKilo)) {
-          alert("Rellena: Nombre, Precio bandeja y Precio kilo.");
-          return;
-        }
+        if (!nombre || isNaN(pBandeja) || isNaN(pKilo)) { alert("Rellena: Nombre, Precio bandeja y Precio kilo."); return; }
         setCats(prev => prev.map(cat => {
           if (cat.id !== editando.catId) return cat;
-          if (editando.nuevo) {
-            return { ...cat, productos: [...cat.productos, { id:"custom_"+Date.now(), nombre, bandeja, pBandeja, pKilo, nota: formProd.nota||undefined }] };
-          }
+          if (editando.nuevo) return { ...cat, productos: [...cat.productos, { id:"custom_"+Date.now(), nombre, bandeja, pBandeja, pKilo, nota: formProd.nota||undefined }] };
           return { ...cat, productos: cat.productos.map(p => p.id === editando.prodId ? { ...p, nombre, bandeja, pBandeja, pKilo, nota: formProd.nota||undefined } : p) };
         }));
         setEditando(null);
@@ -282,20 +294,32 @@
         setCats(prev => prev.map(cat => cat.id !== catId ? cat : { ...cat, productos: cat.productos.filter(p => p.id !== prodId) }));
       };
 
-      const total = pedidos.length;
-      const pendientes = pedidos.filter(p => p.estado==="pendiente").length;
-      const confirmados = pedidos.filter(p => p.estado==="preparando").length;
-      const gestionados = pedidos.filter(p => p.estado==="listo").length;
+      const cambiarEstado = async (id, estado) => {
+        await window.supabase.from("pedidos").update({ estado }).eq("id", id);
+        setPedidos(prev => prev.map(p => p.id === id ? { ...p, estado } : p));
+      };
+
+      const eliminarPedido = async (id) => {
+        if (!window.confirm("¿Eliminar este pedido?")) return;
+        await window.supabase.from("pedidos").delete().eq("id", id);
+        setPedidos(prev => prev.filter(p => p.id !== id));
+      };
+
+      const eliminarGestionados = async () => {
+        if (!window.confirm("¿Eliminar todos los pedidos gestionados?")) return;
+        await window.supabase.from("pedidos").delete().eq("estado", "listo");
+        setPedidos(prev => prev.filter(p => p.estado !== "listo"));
+      };
 
       const filtrados = useMemo(() => pedidos.filter(p => {
-        const eOk = filtroEstado==="todos" || p.estado===filtroEstado;
-        const dOk = !filtroDia || p.isoDate===filtroDia;
+        const eOk = filtroEstado === "todos" || p.estado === filtroEstado;
+        const dOk = !filtroDia || p.iso_date === filtroDia;
         return eOk && dOk;
       }), [pedidos, filtroEstado, filtroDia]);
 
       const totalesProd = useMemo(() => {
         const map = {};
-        filtrados.forEach(p => p.productos.forEach(pr => {
+        filtrados.forEach(p => (p.productos||[]).forEach(pr => {
           if (!map[pr.nombre]) map[pr.nombre] = { nombre:pr.nombre, bandejas:0, kg:0, importe:0 };
           map[pr.nombre].bandejas += pr.bandejas;
           map[pr.nombre].kg += pr.kgTotal||0;
@@ -304,16 +328,17 @@
         return Object.values(map).sort((a,b) => b.bandejas - a.bandejas);
       }, [filtrados]);
 
-      const cambiarEstado = (id, estado) => setPedidos(prev => prev.map(p => p.id===id ? {...p, estado} : p));
-      const eliminarPedido = (id) => { if (window.confirm("¿Eliminar este pedido?")) setPedidos(prev => prev.filter(p => p.id!==id)); };
-      const eliminarGestionados = () => { if (window.confirm("¿Eliminar todos los gestionados?")) setPedidos(prev => prev.filter(p => p.estado!=="listo")); };
-
       const exportCSV = () => {
         const rows = [["Cliente","Teléfono","Email","Fecha","Estado","Producto","Opciones","Uds","Kg","Subtotal","Nota"]];
-        filtrados.forEach(p => p.productos.forEach(pr => rows.push([p.nombre, p.telefono, p.email||"", p.fecha, p.estado, pr.nombre, pr.opcion||"", pr.bandejas, (pr.kgTotal||"").toString(), pr.subtotal?eur(pr.subtotal):"", p.nota||""])));
+        filtrados.forEach(p => (p.productos||[]).forEach(pr => rows.push([p.nombre, p.telefono, p.email||"", p.fecha, p.estado, pr.nombre, pr.opcion||"", pr.bandejas, (pr.kgTotal||"").toString(), pr.subtotal?eur(pr.subtotal):"", p.nota||""])));
         const csv = rows.map(r => r.map(c => `"${c}"`).join(",")).join("\n");
         const a = document.createElement("a"); a.href = "data:text/csv;charset=utf-8,"+encodeURIComponent(csv); a.download="pedidos_carnes.csv"; a.click();
       };
+
+      const total = pedidos.length;
+      const pendientes = pedidos.filter(p => p.estado==="pendiente").length;
+      const confirmados = pedidos.filter(p => p.estado==="preparando").length;
+      const gestionados = pedidos.filter(p => p.estado==="listo").length;
 
       const tabBtn = (id, lbl) => (
         <button onClick={() => setTabP(id)} style={{ padding:"7px 16px", borderRadius:20, border:`1.5px solid ${tabP===id?COLOR:"#ddd"}`, background:tabP===id?COLOR:"#fff", color:tabP===id?"#fff":"#555", fontSize:13, cursor:"pointer", fontWeight:tabP===id?600:400, flexShrink:0 }}>{lbl}</button>
@@ -327,6 +352,7 @@
               <div style={{ color:"rgba(255,255,255,0.82)", fontSize:13, marginTop:3 }}>Carnes Ecológicas Mundo Verde</div>
             </div>
             <div style={{ display:"flex", gap:8 }}>
+              <button onClick={cargarPedidos} style={{ background:"rgba(255,255,255,0.18)", border:"none", color:"#fff", borderRadius:20, padding:"7px 14px", cursor:"pointer", fontSize:13 }}>🔄</button>
               <button onClick={exportCSV} style={{ background:"rgba(255,255,255,0.18)", border:"none", color:"#fff", borderRadius:20, padding:"7px 14px", cursor:"pointer", fontSize:13 }}>⬇ CSV</button>
               <button onClick={onBack} style={{ background:"rgba(255,255,255,0.18)", border:"none", color:"#fff", borderRadius:20, padding:"7px 14px", cursor:"pointer", fontSize:13 }}>← Tienda</button>
             </div>
@@ -361,9 +387,10 @@
           )}
 
           <div style={{ padding:"8px 20px" }}>
-            {tabP !== "gestionar" && filtrados.length === 0 && <div style={{ textAlign:"center", padding:40, color:"#bbb", fontSize:14 }}>No hay datos</div>}
+            {cargando && <div style={{ textAlign:"center", padding:40, color:"#aaa", fontSize:14 }}>Cargando pedidos...</div>}
+            {!cargando && tabP !== "gestionar" && filtrados.length === 0 && <div style={{ textAlign:"center", padding:40, color:"#bbb", fontSize:14 }}>No hay datos</div>}
 
-            {(tabP === "totales" || tabP === "productos") && filtrados.length > 0 && (
+            {!cargando && (tabP === "totales" || tabP === "productos") && filtrados.length > 0 && (
               <div style={{ background:"#fff", border:"1px solid #eee", borderRadius:14, overflow:"hidden" }}>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr auto auto auto", gap:8, padding:"10px 16px", background:"#f9f9f9", fontSize:12, fontWeight:600, color:"#888" }}>
                   <span>Producto</span><span style={{ textAlign:"right" }}>Uds</span><span style={{ textAlign:"right" }}>Kg</span><span style={{ textAlign:"right" }}>Importe</span>
@@ -385,7 +412,7 @@
               </div>
             )}
 
-            {tabP === "pedidos" && filtrados.map(p => (
+            {!cargando && tabP === "pedidos" && filtrados.map(p => (
               <div key={p.id} style={{ background:"#fff", border:"1px solid #eee", borderRadius:14, padding:"14px 16px", marginBottom:10 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
                   <div>
@@ -395,7 +422,7 @@
                   <span style={{ display:"inline-block", padding:"3px 12px", borderRadius:20, fontSize:11, fontWeight:600, background:p.estado==="listo"?"#eafaf1":p.estado==="preparando"?"#fff8e1":COLOR_LIGHT, color:p.estado==="listo"?"#1a7a3c":p.estado==="preparando"?"#b8860b":COLOR }}>{p.estado}</span>
                 </div>
                 <div style={{ fontSize:13, color:"#555", marginTop:8 }}>
-                  {p.productos.map((pr, i) => (
+                  {(p.productos||[]).map((pr, i) => (
                     <div key={i} style={{ display:"flex", justifyContent:"space-between", marginBottom:2 }}>
                       <span>• {pr.nombre}{pr.opcion?` · ${pr.opcion}`:""} — {pr.bandejas} {pr.esLote?"lote(s)":"bandeja(s)"}{pr.kgTotal?` (≈${pr.kgTotal} kg)`:""}</span>
                       {pr.subtotal ? <span style={{ color:COLOR, fontWeight:600 }}>{eur(pr.subtotal)}</span> : null}
@@ -468,7 +495,6 @@
       const [modal, setModal] = useState(false);
       const [enviado, setEnviado] = useState(false);
       const [form, setForm] = useState({ nombre:"", telefono:"", email:"", nota:"" });
-      const [pedidos, setPedidos] = useState([]);
       const [panel, setPanel] = useState(false);
       const [panelPass, setPanelPass] = useState(false);
       const [passInput, setPassInput] = useState("");
@@ -480,11 +506,11 @@
       const catsFiltradas = catActiva === "todas" ? cats : cats.filter(c => c.id === catActiva);
       const setCant = (id, val) => setBandejas(prev => ({ ...prev, [id]: Math.max(0, Math.round(parseFloat(val)||0)) }));
 
-      const enviar = () => {
+      const enviar = async () => {
         if (!form.nombre || !form.telefono) return;
         const nuevo = {
-          id: Date.now(), nombre:form.nombre, telefono:form.telefono, email:form.email, nota:form.nota,
-          fecha: new Date().toLocaleString("es-ES"), isoDate: new Date().toISOString().slice(0,10),
+          nombre: form.nombre, telefono: form.telefono, email: form.email, nota: form.nota,
+          fecha: new Date().toLocaleString("es-ES"), iso_date: new Date().toISOString().slice(0,10),
           estado: "pendiente", total: totalPedido,
           productos: seleccionados.map(p => ({
             nombre:p.nombre, bandejas:bandejas[p.id], esLote:!!p.opciones,
@@ -493,8 +519,8 @@
             opcion: opcionesLote[p.id] ? Object.values(opcionesLote[p.id]).join(" + ") : null
           }))
         };
-        setPedidos(prev => [nuevo, ...prev]);
-        sendEmail(nuevo);
+        await window.supabase.from("pedidos").insert([nuevo]);
+        sendEmail({ ...nuevo, total: nuevo.total });
         setEnviado(true);
       };
 
@@ -503,7 +529,7 @@
         else setPassError(true);
       };
 
-      if (panel) return <Panel pedidos={pedidos} setPedidos={setPedidos} cats={cats} setCats={setCats} onBack={() => setPanel(false)} />;
+      if (panel) return <Panel cats={cats} setCats={setCats} onBack={() => setPanel(false)} />;
 
       const C = COLOR;
       return (
