@@ -489,7 +489,30 @@
     }
 
     function App() {
-      const [cats, setCats] = useState(CATEGORIAS_INIT);
+      const [cats, setCatsState] = useState(CATEGORIAS_INIT);
+      const [catsId, setCatsId] = useState(null); // ID del registro en Supabase
+
+      const setCats = async (updater) => {
+        const nuevasCats = typeof updater === "function" ? updater(cats) : updater;
+        setCatsState(nuevasCats);
+        // Guardar en Supabase
+        if (catsId) {
+          await window.db.from("categorias").update({ data: nuevasCats }).eq("id", catsId);
+        } else {
+          const { data } = await window.db.from("categorias").insert([{ data: nuevasCats }]).select();
+          if (data?.[0]) setCatsId(data[0].id);
+        }
+      };
+
+      useEffect(() => {
+        // Cargar categorias desde Supabase al iniciar
+        window.db.from("categorias").select("*").limit(1).then(({ data }) => {
+          if (data && data.length > 0) {
+            setCatsState(data[0].data);
+            setCatsId(data[0].id);
+          }
+        });
+      }, []);
       const [bandejas, setBandejas] = useState({});
       const [opcionesLote, setOpcionesLote] = useState({});
       const [catActiva, setCatActiva] = useState("todas");
