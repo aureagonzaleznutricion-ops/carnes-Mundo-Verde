@@ -29,7 +29,7 @@
     const { useState, useMemo, useEffect } = React;
 
     const CATEGORIAS_INIT = [
-      { id: "pollo", nombre: "Pollo", emoji: "🐔", productos: [
+      { id: "pollo", nombre: "Pollo", emoji: "🐔", activa: true, productos: [
         { id: "p1",  nombre: "Pollo entero",                    bandeja: 2,    pBandeja: 33.38, pKilo: 16.64 },
         { id: "p2",  nombre: "Medio pollo",                     bandeja: 1,    pBandeja: 17.89, pKilo: 17.89 },
         { id: "p3",  nombre: "Pollo troceado",                  bandeja: 1,    pBandeja: 19.67, pKilo: 19.67 },
@@ -44,14 +44,14 @@
         { id: "p12", nombre: "Alas de pollo",                   bandeja: 0.4,  pBandeja:  7.00, pKilo: 17.50 },
         { id: "p13", nombre: "Carcasa de pollo",                bandeja: 0.25, pBandeja:  2.05, pKilo:  8.19 },
       ]},
-      { id: "pavo", nombre: "Pavo", emoji: "🦃", productos: [
+      { id: "pavo", nombre: "Pavo", emoji: "🦃", activa: true, productos: [
         { id: "pv1", nombre: "Pechuga entera de pavo",          bandeja: 0.4,  pBandeja: 14.72, pKilo: 36.80 },
         { id: "pv2", nombre: "Pechuga fileteada de pavo",       bandeja: 0.38, pBandeja: 14.72, pKilo: 38.74 },
         { id: "pv3", nombre: "Contramuslo deshuesado de pavo",  bandeja: 0.38, pBandeja:  9.10, pKilo: 23.93 },
         { id: "pv4", nombre: "Picada de pavo",                  bandeja: 0.38, pBandeja:  9.42, pKilo: 24.79 },
         { id: "pv5", nombre: "Estofado de pavo",                bandeja: 0.38, pBandeja:  9.30, pKilo: 24.48 },
       ]},
-      { id: "cerdo", nombre: "Cerdo", emoji: "🐷", productos: [
+      { id: "cerdo", nombre: "Cerdo", emoji: "🐷", activa: true, productos: [
         { id: "c1",  nombre: "Solomillo de cerdo",              bandeja: 0.5,  pBandeja: 15.45, pKilo: 30.91 },
         { id: "c2",  nombre: "Presa de cerdo",                  bandeja: 0.38, pBandeja: 10.56, pKilo: 27.81 },
         { id: "c3",  nombre: "Secreto de cerdo",                bandeja: 0.38, pBandeja: 12.45, pKilo: 32.77 },
@@ -72,7 +72,7 @@
         { id: "c18", nombre: "Carrillera de cerdo",             bandeja: 0.38, pBandeja: 11.46, pKilo: 30.17 },
         { id: "c19", nombre: "Manitas de cerdo",                bandeja: 0.5,  pBandeja:  6.20, pKilo: 12.40 },
       ]},
-      { id: "ternera", nombre: "Ternera", emoji: "🐄", productos: [
+      { id: "ternera", nombre: "Ternera", emoji: "🐄", activa: true, productos: [
         { id: "t1",  nombre: "Solomillo cortado 400g",          bandeja: 0.38, pBandeja: 35.50, pKilo: 93.48 },
         { id: "t2",  nombre: "Vacío de ternera",                bandeja: 0.75, pBandeja: 27.83, pKilo: 37.11 },
         { id: "t3",  nombre: "Lomo fileteado",                  bandeja: 0.38, pBandeja: 24.62, pKilo: 64.79 },
@@ -105,7 +105,7 @@
         { id: "t30", nombre: "Tomahawk madurado retinta",       bandeja: 1,    pBandeja: 39.59, pKilo: 39.59 },
         { id: "t31", nombre: "Lingote de presa retinta",        bandeja: 0.38, pBandeja: 15.20, pKilo: 39.98 },
       ]},
-      { id: "cordero", nombre: "Cordero", emoji: "🐑", productos: [
+      { id: "cordero", nombre: "Cordero", emoji: "🐑", activa: true, productos: [
         { id: "co1", nombre: "Chuletas de cordero",             bandeja: 0.38, pBandeja: 18.25, pKilo: 48.05 },
         { id: "co2", nombre: "Pierna de cordero",               bandeja: 1.4,  pBandeja: 52.38, pKilo: 37.42 },
         { id: "co3", nombre: "Chuletas pierna de cordero",      bandeja: 0.38, pBandeja: 16.66, pKilo: 43.86 },
@@ -114,7 +114,7 @@
         { id: "co6", nombre: "Chuletitas de cuello",            bandeja: 0.38, pBandeja:  8.35, pKilo: 21.99 },
         { id: "co7", nombre: "Hígado de cordero",               bandeja: 0.38, pBandeja:  5.70, pKilo: 15.02 },
       ]},
-      { id: "chotoiba", nombre: "Chotoiba", emoji: "🐂", productos: [
+      { id: "chotoiba", nombre: "Chotoiba", emoji: "🐂", activa: true, productos: [
         { id: "ch1", nombre: "Lote A — 3 kg", bandeja: 3, pBandeja: 61.50, pKilo: 20.50, nota: "guisar + asar fijos · 20,50€/kg",
           opciones: [{ label: "Elige 1 kg:", choices: ["Chuletas", "Filetes"] }] },
         { id: "ch2", nombre: "Lote B — 3 kg", bandeja: 3, pBandeja: 65.85, pKilo: 21.95, nota: "chuletas + filetes fijos · 21,95€/kg",
@@ -140,7 +140,7 @@
         { id: "ch20", nombre: "Osos sin envasar",        bandeja: 1, pBandeja:  5.60, pKilo:  5.60, nota: "mínimo 1 kg" },
         { id: "ch21", nombre: "Osos envasados",          bandeja: 1, pBandeja:  8.50, pKilo:  8.50, nota: "mínimo 1 kg" },
       ]},
-      { id: "elaborados", nombre: "Elaborados", emoji: "🥩", productos: [
+      { id: "elaborados", nombre: "Elaborados", emoji: "🥩", activa: true, productos: [
         { id: "e1",  nombre: "Hamburguesa de ternera",          bandeja: 0.4,  pBandeja:  5.00, pKilo: 25.64, nota: "4 ud/bandeja" },
         { id: "e2",  nombre: "Hamburguesa de pollo",            bandeja: 0.4,  pBandeja:  4.57, pKilo: 22.85, nota: "4 ud/bandeja" },
         { id: "e3",  nombre: "Hamburguesa de pavo",             bandeja: 0.4,  pBandeja:  4.57, pKilo: 22.85, nota: "4 ud/bandeja" },
@@ -289,7 +289,10 @@
         setEditando(null);
       };
 
-      const eliminarProd = (catId, prodId) => {
+      const toggleCategoria = (catId) => {
+        const nuevasCats = cats.map(cat => cat.id === catId ? { ...cat, activa: !cat.activa } : cat);
+        setCats(nuevasCats);
+      };
         if (!window.confirm("¿Eliminar este producto?")) return;
         const nuevasCats = cats.map(cat => cat.id !== catId ? cat : { ...cat, productos: cat.productos.filter(p => p.id !== prodId) });
         setCats(nuevasCats);
@@ -466,8 +469,13 @@
                 {cats.map(cat => (
                   <div key={cat.id} style={{ marginBottom:20 }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color:COLOR }}>{cat.emoji} {cat.nombre}</div>
-                      <button onClick={() => abrirNuevo(cat.id)} style={{ fontSize:12, background:COLOR, color:"#fff", border:"none", borderRadius:8, padding:"5px 14px", cursor:"pointer" }}>+ Añadir</button>
+                      <div style={{ fontSize:14, fontWeight:700, color: cat.activa!==false ? COLOR : "#aaa" }}>{cat.emoji} {cat.nombre} {cat.activa===false ? <span style={{ fontSize:11, color:"#aaa" }}>(oculta)</span> : null}</div>
+                      <div style={{ display:"flex", gap:6 }}>
+                        <button onClick={() => toggleCategoria(cat.id)} style={{ fontSize:12, background: cat.activa!==false ? "#fff8e1" : COLOR_LIGHT, color: cat.activa!==false ? "#b8860b" : COLOR, border: `1px solid ${cat.activa!==false ? "#FFE082" : COLOR}`, borderRadius:8, padding:"4px 12px", cursor:"pointer" }}>
+                          {cat.activa!==false ? "🙈 Ocultar" : "👁 Mostrar"}
+                        </button>
+                        <button onClick={() => abrirNuevo(cat.id)} style={{ fontSize:12, background:COLOR, color:"#fff", border:"none", borderRadius:8, padding:"5px 14px", cursor:"pointer" }}>+ Añadir</button>
+                      </div>
                     </div>
                     {cat.productos.map(prod => (
                       <div key={prod.id} style={{ background:"#fff", border:"1px solid #eee", borderRadius:10, padding:"10px 14px", marginBottom:6, display:"flex", alignItems:"center", gap:8 }}>
@@ -524,7 +532,8 @@
       const allProds = cats.flatMap(c => c.productos);
       const seleccionados = allProds.filter(p => (bandejas[p.id]||0) > 0);
       const totalPedido = useMemo(() => seleccionados.reduce((acc,p) => acc+(bandejas[p.id]||0)*p.pBandeja, 0), [seleccionados, bandejas]);
-      const catsFiltradas = catActiva === "todas" ? cats : cats.filter(c => c.id === catActiva);
+      const catsActivas = cats.filter(c => c.activa !== false);
+      const catsFiltradas = catActiva === "todas" ? catsActivas : catsActivas.filter(c => c.id === catActiva);
       const setCant = (id, val) => setBandejas(prev => ({ ...prev, [id]: Math.max(0, Math.round(parseFloat(val)||0)) }));
 
       const enviar = async () => {
@@ -579,7 +588,7 @@
           <div style={{ margin:"12px 16px 0" }}><Aviso /></div>
 
           <div style={{ display:"flex", gap:8, overflowX:"auto", padding:"14px 16px 4px", scrollbarWidth:"none" }}>
-            {[{ id:"todas", nombre:"Todas", emoji:"" }, ...cats].map(c => (
+            {[{ id:"todas", nombre:"Todas", emoji:"" }, ...catsActivas].map(c => (
               <button key={c.id} onClick={() => setCatActiva(c.id)} style={{ flexShrink:0, padding:"6px 14px", borderRadius:20, border:`1.5px solid ${catActiva===c.id?C:"#ddd"}`, background:catActiva===c.id?C:"#fff", color:catActiva===c.id?"#fff":"#555", fontSize:13, cursor:"pointer", fontWeight:catActiva===c.id?600:400 }}>
                 {c.emoji?`${c.emoji} `:""}{c.nombre}
               </button>
