@@ -293,6 +293,8 @@
         const nuevasCats = cats.map(cat => cat.id === catId ? { ...cat, activa: !cat.activa } : cat);
         setCats(nuevasCats);
       };
+
+      const eliminarProd = (catId, prodId) => {
         if (!window.confirm("¿Eliminar este producto?")) return;
         const nuevasCats = cats.map(cat => cat.id !== catId ? cat : { ...cat, productos: cat.productos.filter(p => p.id !== prodId) });
         setCats(nuevasCats);
@@ -469,16 +471,18 @@
                 {cats.map(cat => (
                   <div key={cat.id} style={{ marginBottom:20 }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color: cat.activa!==false ? COLOR : "#aaa" }}>{cat.emoji} {cat.nombre} {cat.activa===false ? <span style={{ fontSize:11, color:"#aaa" }}>(oculta)</span> : null}</div>
+                      <div style={{ fontSize:14, fontWeight:700, color: cat.activa!==false ? COLOR : "#aaa" }}>
+                        {cat.emoji} {cat.nombre} {cat.activa===false && <span style={{ fontSize:11, fontWeight:400 }}>(oculta)</span>}
+                      </div>
                       <div style={{ display:"flex", gap:6 }}>
-                        <button onClick={() => toggleCategoria(cat.id)} style={{ fontSize:12, background: cat.activa!==false ? "#fff8e1" : COLOR_LIGHT, color: cat.activa!==false ? "#b8860b" : COLOR, border: `1px solid ${cat.activa!==false ? "#FFE082" : COLOR}`, borderRadius:8, padding:"4px 12px", cursor:"pointer" }}>
+                        <button onClick={() => toggleCategoria(cat.id)} style={{ fontSize:12, background: cat.activa!==false ? "#fff8e1" : COLOR_LIGHT, color: cat.activa!==false ? "#b8860b" : COLOR, border:`1px solid ${cat.activa!==false ? "#FFE082" : COLOR}`, borderRadius:8, padding:"4px 12px", cursor:"pointer" }}>
                           {cat.activa!==false ? "🙈 Ocultar" : "👁 Mostrar"}
                         </button>
                         <button onClick={() => abrirNuevo(cat.id)} style={{ fontSize:12, background:COLOR, color:"#fff", border:"none", borderRadius:8, padding:"5px 14px", cursor:"pointer" }}>+ Añadir</button>
                       </div>
                     </div>
                     {cat.productos.map(prod => (
-                      <div key={prod.id} style={{ background:"#fff", border:"1px solid #eee", borderRadius:10, padding:"10px 14px", marginBottom:6, display:"flex", alignItems:"center", gap:8 }}>
+                      <div key={prod.id} style={{ background:"#fff", border:"1px solid #eee", borderRadius:10, padding:"10px 14px", marginBottom:6, display:"flex", alignItems:"center", gap:8, opacity: cat.activa===false ? 0.5 : 1 }}>
                         <div style={{ flex:1 }}>
                           <div style={{ fontSize:13, fontWeight:500, color:"#222" }}>{prod.nombre}</div>
                           <div style={{ fontSize:11, color:"#888" }}>{prod.bandeja?`${prod.bandeja} kg · `:""}{eur(prod.pBandeja)}/bandeja · {eur(prod.pKilo)}/kg{prod.nota?` · ${prod.nota}`:""}</div>
@@ -512,10 +516,7 @@
 
       useEffect(() => {
         window.db.from("categorias").select("*").limit(1).then(({ data }) => {
-          if (data && data.length > 0) {
-            setCatsState(data[0].data);
-            setCatsId(data[0].id);
-          }
+          if (data && data.length > 0) { setCatsState(data[0].data); setCatsId(data[0].id); }
         });
       }, []);
 
@@ -529,10 +530,10 @@
         }
       };
 
+      const catsActivas = cats.filter(c => c.activa !== false);
       const allProds = cats.flatMap(c => c.productos);
       const seleccionados = allProds.filter(p => (bandejas[p.id]||0) > 0);
       const totalPedido = useMemo(() => seleccionados.reduce((acc,p) => acc+(bandejas[p.id]||0)*p.pBandeja, 0), [seleccionados, bandejas]);
-      const catsActivas = cats.filter(c => c.activa !== false);
       const catsFiltradas = catActiva === "todas" ? catsActivas : catsActivas.filter(c => c.id === catActiva);
       const setCant = (id, val) => setBandejas(prev => ({ ...prev, [id]: Math.max(0, Math.round(parseFloat(val)||0)) }));
 
