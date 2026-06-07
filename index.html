@@ -534,7 +534,12 @@
       const allProds = cats.flatMap(c => c.productos);
       const seleccionados = allProds.filter(p => (bandejas[p.id]||0) > 0);
       const totalPedido = useMemo(() => seleccionados.reduce((acc,p) => acc+(bandejas[p.id]||0)*p.pBandeja, 0), [seleccionados, bandejas]);
-      const catsFiltradas = catActiva === "todas" ? catsActivas : catsActivas.filter(c => c.id === catActiva);
+      const catsActivas = cats.filter(c => c.activa !== false);
+      const allProds = cats.flatMap(c => c.productos);
+      const seleccionados = allProds.filter(p => (bandejas[p.id]||0) > 0);
+      const totalPedido = useMemo(() => seleccionados.reduce((acc,p) => acc+(bandejas[p.id]||0)*p.pBandeja, 0), [seleccionados, bandejas]);
+      const catsOrdenadas = catsActivas.map(c => ({ ...c, productos: [...c.productos].sort((a,b) => a.nombre.localeCompare(b.nombre, "es")) }));
+      const catsFiltradas = catActiva === "todas" ? catsOrdenadas : catsOrdenadas.filter(c => c.id === catActiva);
       const setCant = (id, val) => setBandejas(prev => ({ ...prev, [id]: Math.max(0, Math.round(parseFloat(val)||0)) }));
 
       const enviar = async () => {
