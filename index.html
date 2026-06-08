@@ -172,9 +172,29 @@
       const productos = pedido.productos.map(p =>
         `• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""} — ${eur(p.subtotal)}`
       ).join("\n");
-      const params = {cliente_nombre:pedido.nombre,cliente_telefono:pedido.telefono,cliente_email:pedido.email||"No indicado",productos,total:eur(pedido.total),nota:pedido.nota||""};
+      const params = {cliente_nombre:pedido.nombre,cliente_telefono:pedido.telefono,cliente_email:pedido.email,productos,total:eur(pedido.total),nota:pedido.nota||""};
       emailjs.send(EMAILJS_SERVICE,EMAILJS_TIENDA,params).catch(e=>console.error("EmailJS tienda:",e));
-      if(pedido.email) emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,params).catch(e=>console.error("EmailJS cliente:",e));
+      emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{
+        ...params,
+        asunto:"Reserva recibida · Mundo Verde Pontevedra",
+        mensaje:"Hemos recibido tu reserva correctamente. En breve nos pondremos en contacto contigo para coordinar la recogida."
+      }).catch(e=>console.error("EmailJS cliente:",e));
+    };
+
+    const sendEmailListo = (pedido) => {
+      if(!pedido?.email) return;
+      const productos = (pedido.productos||[]).map(p =>
+        `• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""}`
+      ).join("\n");
+      emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{
+        cliente_nombre:pedido.nombre,
+        cliente_email:pedido.email,
+        productos,
+        total:eur(pedido.total),
+        nota:pedido.nota||"",
+        asunto:"¡Tu pedido está listo para recoger! 🌿",
+        mensaje:"¡Buenas noticias! Tu pedido de Carnes Ecológicas Mundo Verde ya está listo. Puedes pasar a recogerlo por la tienda cuando quieras."
+      }).catch(e=>console.error("EmailJS listo:",e));
     };
 
     const Aviso = () => (
@@ -192,7 +212,7 @@
     );
 
     function ProductCard({prod,qty,setCant,opcionesLote,setOpcionesLote}) {
-      const C=COLOR, kg=prod.bandeja?+(qty*prod.bandeja).toFixed(2):null, sub=+(qty*prod.pBandeja).toFixed(2), esLote=!!prod.opciones;
+      const C=COLOR,kg=prod.bandeja?+(qty*prod.bandeja).toFixed(2):null,sub=+(qty*prod.pBandeja).toFixed(2),esLote=!!prod.opciones;
       return (
         <div style={{background:"#fff",border:qty>0?`1.5px solid ${C}`:"1px solid #eee",borderRadius:12,padding:"11px 14px",marginBottom:8}}>
           <div style={{display:"flex",alignItems:"flex-start",gap:10}}>
@@ -268,18 +288,26 @@
         const pKilo=parseFloat(String(formProd.pKilo).replace(",","."));
         const bandeja=formProd.bandeja?parseFloat(String(formProd.bandeja).replace(",",".")):null;
         if(!nombre||isNaN(pBandeja)||isNaN(pKilo)){alert("Rellena: Nombre, Precio bandeja y Precio kilo.");return;}
-        const nuevasCats=cats.map(cat=>{
+        const nc=cats.map(cat=>{
           if(cat.id!==editando.catId) return cat;
           if(editando.nuevo) return{...cat,productos:[...cat.productos,{id:"custom_"+Date.now(),nombre,bandeja,pBandeja,pKilo,nota:formProd.nota||undefined}]};
           return{...cat,productos:cat.productos.map(p=>p.id===editando.prodId?{...p,nombre,bandeja,pBandeja,pKilo,nota:formProd.nota||undefined}:p)};
         });
-        setCats(nuevasCats);
-        setEditando(null);
+        setCats(nc);setEditando(null);
       };
 
-      const toggleCategoria=(catId)=>{const nc=cats.map(c=>c.id===catId?{...c,activa:!c.activa}:c);setCats(nc);};
-      const eliminarProd=(catId,prodId)=>{if(!window.confirm("¿Eliminar este producto?"))return;const nc=cats.map(c=>c.id!==catId?c:{...c,productos:c.productos.filter(p=>p.id!==prodId)});setCats(nc);};
-      const cambiarEstado=async(id,estado)=>{await window.db.from("pedidos").update({estado}).eq("id",id);setPedidos(prev=>prev.map(p=>p.id===id?{...p,estado}:p));};
+      const toggleCategoria=(catId)=>{setCats(cats.map(c=>c.id===catId?{...c,activa:!c.activa}:c));};
+      const eliminarProd=(catId,prodId)=>{if(!window.confirm("¿Eliminar este producto?"))return;setCats(cats.map(c=>c.id!==catId?c:{...c,productos:c.productos.filter(p=>p.id!==prodId)}));};
+
+      const cambiarEstado=async(id,estado)=>{
+        await window.db.from("pedidos").update({estado}).eq("id",id);
+        setPedidos(prev=>prev.map(p=>p.id===id?{...p,estado}:p));
+        if(estado==="listo"){
+          const pedido=pedidos.find(p=>p.id===id);
+          sendEmailListo(pedido);
+        }
+      };
+
       const eliminarPedido=async(id)=>{if(!window.confirm("¿Eliminar este pedido?"))return;await window.db.from("pedidos").delete().eq("id",id);setPedidos(prev=>prev.filter(p=>p.id!==id));};
       const eliminarGestionados=async()=>{if(!window.confirm("¿Eliminar todos los gestionados?"))return;await window.db.from("pedidos").delete().eq("estado","listo");setPedidos(prev=>prev.filter(p=>p.estado!=="listo"));};
 
@@ -293,9 +321,7 @@
         const map={};
         filtrados.forEach(p=>(p.productos||[]).forEach(pr=>{
           if(!map[pr.nombre]) map[pr.nombre]={nombre:pr.nombre,bandejas:0,kg:0,importe:0};
-          map[pr.nombre].bandejas+=pr.bandejas;
-          map[pr.nombre].kg+=pr.kgTotal||0;
-          map[pr.nombre].importe+=pr.subtotal||0;
+          map[pr.nombre].bandejas+=pr.bandejas;map[pr.nombre].kg+=pr.kgTotal||0;map[pr.nombre].importe+=pr.subtotal||0;
         }));
         return Object.values(map).sort((a,b)=>b.bandejas-a.bandejas);
       },[filtrados]);
@@ -474,14 +500,10 @@
         });
       },[]);
 
-      const setCats=async(nuevasCats)=>{
-        setCatsState(nuevasCats);
-        if(catsId){
-          await window.db.from("categorias").update({data:nuevasCats}).eq("id",catsId);
-        } else {
-          const{data}=await window.db.from("categorias").insert([{data:nuevasCats}]).select();
-          if(data?.[0]) setCatsId(data[0].id);
-        }
+      const setCats=async(nc)=>{
+        setCatsState(nc);
+        if(catsId){await window.db.from("categorias").update({data:nc}).eq("id",catsId);}
+        else{const{data}=await window.db.from("categorias").insert([{data:nc}]).select();if(data?.[0])setCatsId(data[0].id);}
       };
 
       const catsActivas=cats.filter(c=>c.activa!==false);
@@ -493,7 +515,7 @@
       const setCant=(id,val)=>setBandejas(prev=>({...prev,[id]:Math.max(0,Math.round(parseFloat(val)||0))}));
 
       const enviar=async()=>{
-        if(!form.nombre||!form.telefono) return;
+        if(!form.nombre||!form.telefono||!form.email) return;
         const nuevo={
           nombre:form.nombre,telefono:form.telefono,email:form.email,nota:form.nota,
           fecha:new Date().toLocaleString("es-ES"),iso_date:new Date().toISOString().slice(0,10),
@@ -595,18 +617,18 @@
                     <div style={{marginBottom:6,fontSize:14,fontWeight:600,color:"#333"}}>Tus datos</div>
                     {["nombre","telefono","email","nota"].map(f=>(
                       <input key={f} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,marginBottom:12,boxSizing:"border-box",outline:"none"}}
-                        placeholder={f==="nombre"?"Nombre *":f==="telefono"?"Teléfono *":f==="email"?"Email (opcional)":"Nota o indicación (opcional)"}
+                        placeholder={f==="nombre"?"Nombre *":f==="telefono"?"Teléfono *":f==="email"?"Email *":"Nota o indicación (opcional)"}
                         value={form[f]} onChange={e=>setForm(prev=>({...prev,[f]:e.target.value}))}/>
                     ))}
-                    <button onClick={enviar} disabled={!form.nombre||!form.telefono} style={{width:"100%",background:form.nombre&&form.telefono?C:"#ccc",color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:form.nombre&&form.telefono?"pointer":"not-allowed"}}>Confirmar reserva</button>
+                    <button onClick={enviar} disabled={!form.nombre||!form.telefono||!form.email} style={{width:"100%",background:form.nombre&&form.telefono&&form.email?C:"#ccc",color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:form.nombre&&form.telefono&&form.email?"pointer":"not-allowed"}}>Confirmar reserva</button>
                     <button onClick={()=>setModal(false)} style={{width:"100%",background:"#f5f5f5",color:"#555",border:"none",borderRadius:12,padding:"12px",fontSize:14,cursor:"pointer",marginTop:8}}>Seguir eligiendo</button>
                   </>
                 ):(
                   <div style={{textAlign:"center",padding:"20px 10px"}}>
                     <div style={{fontSize:48,marginBottom:12}}>✅</div>
                     <div style={{fontSize:20,fontWeight:700,color:C,marginBottom:8}}>¡Reserva confirmada!</div>
-                    <div style={{fontSize:14,color:"#666"}}>Hemos recibido tu pedido{form.nombre?`, ${form.nombre}`:""}.{form.email?" Te hemos enviado un email de confirmación.":""}</div>
-                    <button onClick={()=>{setModal(false);setBandejas({});setOpcionesLote({});setForm({nombre:"",telefono:"",email:"",nota:""}); }} style={{width:"100%",background:C,color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:"pointer",marginTop:20}}>Nueva reserva</button>
+                    <div style={{fontSize:14,color:"#666"}}>Hemos recibido tu pedido, {form.nombre}. Te hemos enviado un email de confirmación. En breve nos pondremos en contacto contigo para coordinar la recogida.</div>
+                    <button onClick={()=>{setModal(false);setBandejas({});setOpcionesLote({});setForm({nombre:"",telefono:"",email:"",nota:""});}} style={{width:"100%",background:C,color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:"pointer",marginTop:20}}>Nueva reserva</button>
                   </div>
                 )}
               </div>
