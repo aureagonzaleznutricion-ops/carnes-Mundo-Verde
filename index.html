@@ -177,7 +177,7 @@
       emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{
         ...params,
         asunto:"Reserva recibida · Mundo Verde Pontevedra",
-        mensaje:"Hemos recibido tu reserva correctamente. En breve nos pondremos en contacto contigo para coordinar la recogida."
+        mensaje:"Xa recibimos a túa reserva correctamente. En breve poñerémonos en contacto contigo para coordinar a recollida."
       }).catch(e=>console.error("EmailJS cliente:",e));
     };
 
@@ -192,8 +192,8 @@
         productos,
         total:eur(pedido.total),
         nota:pedido.nota||"",
-        asunto:"¡Tu pedido está listo para recoger! 🌿",
-        mensaje:"¡Buenas noticias! Tu pedido de Carnes Ecológicas Mundo Verde ya está listo. Puedes pasar a recogerlo por la tienda cuando quieras."
+        asunto:"O teu pedido está listo para recoller! 🌿",
+        mensaje:"Boa nova! O teu pedido de Carnes Ecolóxicas Mundo Verde xa está listo. Podes pasar a recollelo pola tenda cando queiras."
       }).catch(e=>console.error("EmailJS listo:",e));
     };
 
