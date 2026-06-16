@@ -159,61 +159,54 @@
       ]},
     ];
 
-    const COLOR = "#2D6A4F";
-    const COLOR_LIGHT = "#E1F5EE";
-    const PASS = "carnes2024";
-    const todayISO = new Date().toISOString().slice(0,10);
-    const eur = n => n.toFixed(2).replace(".",",") + " €";
-    const EMAILJS_SERVICE = "service_lobqqc4";
-    const EMAILJS_TIENDA  = "mundo_verde_tenda";
-    const EMAILJS_CLIENTE = "mundo_verde_cliente";
+    const COLOR="#2D6A4F", COLOR_LIGHT="#E1F5EE", PASS="carnes2024";
+    const todayISO=new Date().toISOString().slice(0,10);
+    const eur=n=>n.toFixed(2).replace(".",","+" €");
+    const EMAILJS_SERVICE="service_lobqqc4", EMAILJS_TIENDA="mundo_verde_tenda", EMAILJS_CLIENTE="mundo_verde_cliente";
 
-    const sendEmail = (pedido) => {
-      const productos = pedido.productos.map(p =>
-        `• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""} — ${eur(p.subtotal)}`
-      ).join("\n");
-      const params = {cliente_nombre:pedido.nombre,cliente_telefono:pedido.telefono,cliente_email:pedido.email,productos,total:eur(pedido.total),nota:pedido.nota||""};
+    const sendEmail=(pedido)=>{
+      const productos=pedido.productos.map(p=>`• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""} — ${eur(p.subtotal)}`).join("\n");
+      const params={cliente_nombre:pedido.nombre,cliente_telefono:pedido.telefono,cliente_email:pedido.email,productos,total:eur(pedido.total),nota:pedido.nota||""};
       emailjs.send(EMAILJS_SERVICE,EMAILJS_TIENDA,params).catch(e=>console.error("EmailJS tienda:",e));
-      emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{
-        ...params,
-        asunto:"Reserva recibida · Mundo Verde Pontevedra",
-        mensaje:"Xa recibimos a túa reserva correctamente. En breve poñerémonos en contacto contigo para coordinar a recollida."
-      }).catch(e=>console.error("EmailJS cliente:",e));
+      emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{...params,asunto:"Reserva recibida · Mundo Verde Pontevedra",mensaje:"Xa recibimos a túa reserva correctamente. En breve poñerémonos en contacto contigo para coordinar a recollida."}).catch(e=>console.error("EmailJS cliente:",e));
     };
 
-    const sendEmailListo = (pedido) => {
+    const sendEmailListo=(pedido)=>{
       if(!pedido?.email) return;
-      const productos = (pedido.productos||[]).map(p =>
-        `• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""}`
-      ).join("\n");
-      emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{
-        cliente_nombre:pedido.nombre,
-        cliente_email:pedido.email,
-        productos,
-        total:eur(pedido.total),
-        nota:pedido.nota||"",
-        asunto:"O teu pedido está listo para recoller! 🌿",
-        mensaje:"Boa nova! O teu pedido de Carnes Ecolóxicas Mundo Verde xa está listo. Podes pasar a recollelo pola tenda cando queiras."
-      }).catch(e=>console.error("EmailJS listo:",e));
+      const productos=(pedido.productos||[]).map(p=>`• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""}`).join("\n");
+      emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{cliente_nombre:pedido.nombre,cliente_email:pedido.email,productos,total:eur(pedido.total),nota:pedido.nota||"",asunto:"O teu pedido está listo para recoller! 🌿",mensaje:"Boa nova! O teu pedido de Carnes Ecolóxicas Mundo Verde xa está listo. Podes pasar a recollelo pola tenda cando queiras."}).catch(e=>console.error("EmailJS listo:",e));
     };
 
-    const Aviso = () => (
+    const Aviso=()=>(
       <div style={{background:"#FFF8E1",border:"1px solid #FFE082",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"flex-start",gap:8}}>
         <span style={{fontSize:16}}>⚠️</span>
-        <span style={{fontSize:12.5,color:"#7a6000",lineHeight:1.5}}>Los pesos indicados por bandeja son <strong>orientativos</strong>. El peso final puede variar según la pieza. El precio definitivo se calculará sobre el peso real.</span>
+        <span style={{fontSize:12.5,color:"#7a6000",lineHeight:1.5}}>Os pesos indicados por bandeja son <strong>orientativos</strong>. O peso final pode variar segundo a peza. O prezo definitivo calcularase sobre o peso real.</span>
       </div>
     );
 
-    const Stat = ({n,label,color}) => (
+    const BannerFechas=({fechaEntrega,fechaLimite})=>{
+      if(!fechaEntrega&&!fechaLimite) return null;
+      return(
+        <div style={{background:"#E8F4FD",border:"1px solid #AED6F1",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"flex-start",gap:8}}>
+          <span style={{fontSize:16}}>📅</span>
+          <div style={{fontSize:12.5,color:"#1a5276",lineHeight:1.6}}>
+            {fechaEntrega&&<div><strong>Próxima entrega:</strong> {fechaEntrega}</div>}
+            {fechaLimite&&<div><strong>Prazo límite de pedido:</strong> {fechaLimite}</div>}
+          </div>
+        </div>
+      );
+    };
+
+    const Stat=({n,label,color})=>(
       <div style={{textAlign:"center"}}>
         <div style={{fontSize:28,fontWeight:700,color:color||"#222"}}>{n}</div>
         <div style={{fontSize:12,color:"#888",marginTop:2}}>{label}</div>
       </div>
     );
 
-    function ProductCard({prod,qty,setCant,opcionesLote,setOpcionesLote}) {
+    function ProductCard({prod,qty,setCant,opcionesLote,setOpcionesLote}){
       const C=COLOR,kg=prod.bandeja?+(qty*prod.bandeja).toFixed(2):null,sub=+(qty*prod.pBandeja).toFixed(2),esLote=!!prod.opciones;
-      return (
+      return(
         <div style={{background:"#fff",border:qty>0?`1.5px solid ${C}`:"1px solid #eee",borderRadius:12,padding:"11px 14px",marginBottom:8}}>
           <div style={{display:"flex",alignItems:"flex-start",gap:10}}>
             <div style={{flex:1}}>
@@ -253,7 +246,7 @@
       );
     }
 
-    function Panel({cats,setCats,onBack}) {
+    function Panel({cats,setCats,fechaEntrega,setFechaEntrega,fechaLimite,setFechaLimite,onBack}){
       const [tabP,setTabP]=useState("totales");
       const [filtroEstado,setFiltroEstado]=useState("todos");
       const [filtroDia,setFiltroDia]=useState(todayISO);
@@ -296,16 +289,18 @@
         setCats(nc);setEditando(null);
       };
 
+      const guardarFechas=async()=>{
+        await window.db.from("config").upsert([{clave:"fecha_entrega",valor:fechaEntrega},{clave:"fecha_limite",valor:fechaLimite}],{onConflict:"clave"});
+        alert("Datas gardadas correctamente ✅");
+      };
+
       const toggleCategoria=(catId)=>{setCats(cats.map(c=>c.id===catId?{...c,activa:!c.activa}:c));};
       const eliminarProd=(catId,prodId)=>{if(!window.confirm("¿Eliminar este producto?"))return;setCats(cats.map(c=>c.id!==catId?c:{...c,productos:c.productos.filter(p=>p.id!==prodId)}));};
 
       const cambiarEstado=async(id,estado)=>{
         await window.db.from("pedidos").update({estado}).eq("id",id);
         setPedidos(prev=>prev.map(p=>p.id===id?{...p,estado}:p));
-        if(estado==="listo"){
-          const pedido=pedidos.find(p=>p.id===id);
-          sendEmailListo(pedido);
-        }
+        if(estado==="listo"){const pedido=pedidos.find(p=>p.id===id);sendEmailListo(pedido);}
       };
 
       const eliminarPedido=async(id)=>{if(!window.confirm("¿Eliminar este pedido?"))return;await window.db.from("pedidos").delete().eq("id",id);setPedidos(prev=>prev.filter(p=>p.id!==id));};
@@ -336,7 +331,7 @@
       const total=pedidos.length,pendientes=pedidos.filter(p=>p.estado==="pendiente").length,confirmados=pedidos.filter(p=>p.estado==="preparando").length,gestionados=pedidos.filter(p=>p.estado==="listo").length;
       const tabBtn=(id,lbl)=>(<button onClick={()=>setTabP(id)} style={{padding:"7px 16px",borderRadius:20,border:`1.5px solid ${tabP===id?COLOR:"#ddd"}`,background:tabP===id?COLOR:"#fff",color:tabP===id?"#fff":"#555",fontSize:13,cursor:"pointer",fontWeight:tabP===id?600:400,flexShrink:0}}>{lbl}</button>);
 
-      return (
+      return(
         <div style={{fontFamily:"system-ui,sans-serif",maxWidth:780,margin:"0 auto",paddingBottom:40}}>
           <div style={{background:COLOR,padding:"20px",borderRadius:"0 0 16px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
             <div>
@@ -355,10 +350,10 @@
           </div>
 
           <div style={{display:"flex",gap:8,padding:"16px 20px 8px",overflowX:"auto"}}>
-            {tabBtn("totales","📊 Totales")}{tabBtn("pedidos","📦 Pedidos")}{tabBtn("productos","🛍 Productos")}{tabBtn("gestionar","⚙️ Gestionar")}
+            {tabBtn("totales","📊 Totales")}{tabBtn("pedidos","📦 Pedidos")}{tabBtn("productos","🛍 Produtos")}{tabBtn("gestionar","⚙️ Xestionar")}{tabBtn("fechas","📅 Datas")}
           </div>
 
-          {tabP!=="gestionar"&&(
+          {tabP!=="gestionar"&&tabP!=="fechas"&&(
             <div style={{display:"flex",alignItems:"center",gap:12,padding:"10px 20px",flexWrap:"wrap"}}>
               <select value={filtroEstado} onChange={e=>setFiltroEstado(e.target.value)} style={{padding:"7px 12px",borderRadius:10,border:"1.5px solid #ddd",fontSize:13,background:"#fff",color:"#333"}}>
                 {["todos","pendiente","preparando","listo"].map(e=><option key={e} value={e}>{{todos:"Todos los estados",pendiente:"Pendiente",preparando:"Preparando",listo:"Listo"}[e]}</option>)}
@@ -374,7 +369,7 @@
 
           <div style={{padding:"8px 20px"}}>
             {cargando&&<div style={{textAlign:"center",padding:40,color:"#aaa",fontSize:14}}>Cargando...</div>}
-            {!cargando&&tabP!=="gestionar"&&filtrados.length===0&&<div style={{textAlign:"center",padding:40,color:"#bbb",fontSize:14}}>No hay datos</div>}
+            {!cargando&&tabP!=="gestionar"&&tabP!=="fechas"&&filtrados.length===0&&<div style={{textAlign:"center",padding:40,color:"#bbb",fontSize:14}}>No hay datos</div>}
 
             {!cargando&&(tabP==="totales"||tabP==="productos")&&filtrados.length>0&&(
               <div style={{background:"#fff",border:"1px solid #eee",borderRadius:14,overflow:"hidden"}}>
@@ -430,11 +425,33 @@
               </div>
             ))}
 
+            {tabP==="fechas"&&(
+              <div style={{background:"#fff",border:"1px solid #eee",borderRadius:14,padding:"20px"}}>
+                <div style={{fontSize:15,fontWeight:700,color:COLOR,marginBottom:16}}>📅 Configuración de datas</div>
+                <div style={{marginBottom:14}}>
+                  <div style={{fontSize:13,fontWeight:600,color:"#333",marginBottom:6}}>Próxima entrega</div>
+                  <input type="text" value={fechaEntrega} onChange={e=>setFechaEntrega(e.target.value)} placeholder="Ex: venres 20 de xuño" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,outline:"none",boxSizing:"border-box"}}/>
+                </div>
+                <div style={{marginBottom:20}}>
+                  <div style={{fontSize:13,fontWeight:600,color:"#333",marginBottom:6}}>Prazo límite de pedido</div>
+                  <input type="text" value={fechaLimite} onChange={e=>setFechaLimite(e.target.value)} placeholder="Ex: mércores 18 de xuño ás 20:00h" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,outline:"none",boxSizing:"border-box"}}/>
+                </div>
+                <button onClick={guardarFechas} style={{width:"100%",background:COLOR,color:"#fff",border:"none",borderRadius:12,padding:"13px",fontSize:15,fontWeight:700,cursor:"pointer"}}>Gardar datas</button>
+                {(fechaEntrega||fechaLimite)&&(
+                  <div style={{marginTop:16,background:"#E8F4FD",border:"1px solid #AED6F1",borderRadius:10,padding:"12px 14px"}}>
+                    <div style={{fontSize:12,fontWeight:600,color:"#1a5276",marginBottom:6}}>Vista previa:</div>
+                    {fechaEntrega&&<div style={{fontSize:13,color:"#1a5276"}}>📦 Próxima entrega: {fechaEntrega}</div>}
+                    {fechaLimite&&<div style={{fontSize:13,color:"#1a5276",marginTop:2}}>⏰ Prazo límite: {fechaLimite}</div>}
+                  </div>
+                )}
+              </div>
+            )}
+
             {tabP==="gestionar"&&(
               <div>
                 {editando&&(
                   <div style={{background:"#fff",border:`1.5px solid ${COLOR}`,borderRadius:14,padding:"16px",marginBottom:16}}>
-                    <div style={{fontSize:14,fontWeight:700,color:"#222",marginBottom:4}}>{editando.nuevo?"➕ Nuevo producto":"✏️ Editar producto"}</div>
+                    <div style={{fontSize:14,fontWeight:700,color:"#222",marginBottom:4}}>{editando.nuevo?"➕ Novo produto":"✏️ Editar produto"}</div>
                     <div style={{fontSize:12,color:"#888",marginBottom:12}}>Categoría: <strong>{cats.find(c=>c.id===editando.catId)?.nombre}</strong></div>
                     {CAMPOS.map(c=>(
                       <div key={c.key} style={{marginBottom:10}}>
@@ -443,7 +460,7 @@
                       </div>
                     ))}
                     <div style={{display:"flex",gap:8,marginTop:8}}>
-                      <button onClick={guardar} style={{flex:1,background:COLOR,color:"#fff",border:"none",borderRadius:10,padding:"11px",fontSize:14,fontWeight:600,cursor:"pointer"}}>Guardar</button>
+                      <button onClick={guardar} style={{flex:1,background:COLOR,color:"#fff",border:"none",borderRadius:10,padding:"11px",fontSize:14,fontWeight:600,cursor:"pointer"}}>Gardar</button>
                       <button onClick={()=>setEditando(null)} style={{flex:1,background:"#f5f5f5",color:"#555",border:"none",borderRadius:10,padding:"11px",fontSize:14,cursor:"pointer"}}>Cancelar</button>
                     </div>
                   </div>
@@ -458,7 +475,7 @@
                         <button onClick={()=>toggleCategoria(cat.id)} style={{fontSize:12,background:cat.activa!==false?"#fff8e1":COLOR_LIGHT,color:cat.activa!==false?"#b8860b":COLOR,border:`1px solid ${cat.activa!==false?"#FFE082":COLOR}`,borderRadius:8,padding:"4px 12px",cursor:"pointer"}}>
                           {cat.activa!==false?"🙈 Ocultar":"👁 Mostrar"}
                         </button>
-                        <button onClick={()=>abrirNuevo(cat.id)} style={{fontSize:12,background:COLOR,color:"#fff",border:"none",borderRadius:8,padding:"5px 14px",cursor:"pointer"}}>+ Añadir</button>
+                        <button onClick={()=>abrirNuevo(cat.id)} style={{fontSize:12,background:COLOR,color:"#fff",border:"none",borderRadius:8,padding:"5px 14px",cursor:"pointer"}}>+ Engadir</button>
                       </div>
                     </div>
                     {cat.productos.map(prod=>(
@@ -480,7 +497,7 @@
       );
     }
 
-    function App() {
+    function App(){
       const [cats,setCatsState]=useState(CATEGORIAS_INIT);
       const [catsId,setCatsId]=useState(null);
       const [bandejas,setBandejas]=useState({});
@@ -493,10 +510,18 @@
       const [panelPass,setPanelPass]=useState(false);
       const [passInput,setPassInput]=useState("");
       const [passError,setPassError]=useState(false);
+      const [fechaEntrega,setFechaEntrega]=useState("");
+      const [fechaLimite,setFechaLimite]=useState("");
 
       useEffect(()=>{
         window.db.from("categorias").select("*").limit(1).then(({data})=>{
           if(data&&data.length>0){setCatsState(data[0].data);setCatsId(data[0].id);}
+        });
+        window.db.from("config").select("*").then(({data})=>{
+          if(data) data.forEach(r=>{
+            if(r.clave==="fecha_entrega") setFechaEntrega(r.valor||"");
+            if(r.clave==="fecha_limite") setFechaLimite(r.valor||"");
+          });
         });
       },[]);
 
@@ -537,10 +562,10 @@
         else setPassError(true);
       };
 
-      if(panel) return <Panel cats={cats} setCats={setCats} onBack={()=>setPanel(false)}/>;
+      if(panel) return <Panel cats={cats} setCats={setCats} fechaEntrega={fechaEntrega} setFechaEntrega={setFechaEntrega} fechaLimite={fechaLimite} setFechaLimite={setFechaLimite} onBack={()=>setPanel(false)}/>;
 
       const C=COLOR;
-      return (
+      return(
         <div style={{fontFamily:"system-ui,sans-serif",maxWidth:780,margin:"0 auto",paddingBottom:80}}>
           <div style={{background:C,padding:"22px 20px 18px",borderRadius:"0 0 16px 16px"}}>
             <div style={{color:"#fff",fontSize:22,fontWeight:600}}>🌿 Carnes Ecológicas Mundo Verde</div>
@@ -564,6 +589,7 @@
           )}
 
           <div style={{margin:"12px 16px 0"}}><Aviso/></div>
+          {(fechaEntrega||fechaLimite)&&<div style={{margin:"10px 16px 0"}}><BannerFechas fechaEntrega={fechaEntrega} fechaLimite={fechaLimite}/></div>}
 
           <div style={{display:"flex",gap:8,overflowX:"auto",padding:"14px 16px 4px",scrollbarWidth:"none"}}>
             {[{id:"todas",nombre:"Todas",emoji:""},...catsActivas].map(c=>(
@@ -593,7 +619,7 @@
               <div style={{background:"#fff",borderRadius:"20px 20px 0 0",padding:"24px 20px 32px",width:"100%",maxWidth:780,maxHeight:"85vh",overflowY:"auto"}}>
                 {!enviado?(
                   <>
-                    <div style={{fontSize:17,fontWeight:700,color:"#222",marginBottom:16}}>Tu reserva</div>
+                    <div style={{fontSize:17,fontWeight:700,color:"#222",marginBottom:16}}>A túa reserva</div>
                     {seleccionados.map(p=>{
                       const qty=bandejas[p.id],kg=p.bandeja?+(qty*p.bandeja).toFixed(2):null,sub=+(qty*p.pBandeja).toFixed(2),opcion=opcionesLote[p.id]?Object.values(opcionesLote[p.id]).join(" + "):null;
                       return(
@@ -613,22 +639,23 @@
                       <span style={{color:"#333"}}>Total orientativo</span>
                       <span style={{color:C}}>{eur(totalPedido)}</span>
                     </div>
-                    <div style={{margin:"12px 0 16px"}}><Aviso/></div>
-                    <div style={{marginBottom:6,fontSize:14,fontWeight:600,color:"#333"}}>Tus datos</div>
+                    <div style={{margin:"12px 0 8px"}}><Aviso/></div>
+                    {(fechaEntrega||fechaLimite)&&<div style={{marginBottom:16}}><BannerFechas fechaEntrega={fechaEntrega} fechaLimite={fechaLimite}/></div>}
+                    <div style={{marginBottom:6,fontSize:14,fontWeight:600,color:"#333"}}>Os teus datos</div>
                     {["nombre","telefono","email","nota"].map(f=>(
                       <input key={f} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,marginBottom:12,boxSizing:"border-box",outline:"none"}}
-                        placeholder={f==="nombre"?"Nombre *":f==="telefono"?"Teléfono *":f==="email"?"Email *":"Nota o indicación (opcional)"}
+                        placeholder={f==="nombre"?"Nome *":f==="telefono"?"Teléfono *":f==="email"?"Email *":"Nota ou indicación (opcional)"}
                         value={form[f]} onChange={e=>setForm(prev=>({...prev,[f]:e.target.value}))}/>
                     ))}
                     <button onClick={enviar} disabled={!form.nombre||!form.telefono||!form.email} style={{width:"100%",background:form.nombre&&form.telefono&&form.email?C:"#ccc",color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:form.nombre&&form.telefono&&form.email?"pointer":"not-allowed"}}>Confirmar reserva</button>
-                    <button onClick={()=>setModal(false)} style={{width:"100%",background:"#f5f5f5",color:"#555",border:"none",borderRadius:12,padding:"12px",fontSize:14,cursor:"pointer",marginTop:8}}>Seguir eligiendo</button>
+                    <button onClick={()=>setModal(false)} style={{width:"100%",background:"#f5f5f5",color:"#555",border:"none",borderRadius:12,padding:"12px",fontSize:14,cursor:"pointer",marginTop:8}}>Seguir escollendo</button>
                   </>
                 ):(
                   <div style={{textAlign:"center",padding:"20px 10px"}}>
                     <div style={{fontSize:48,marginBottom:12}}>✅</div>
-                    <div style={{fontSize:20,fontWeight:700,color:C,marginBottom:8}}>¡Reserva confirmada!</div>
-                    <div style={{fontSize:14,color:"#666"}}>Hemos recibido tu pedido, {form.nombre}. Te hemos enviado un email de confirmación. En breve nos pondremos en contacto contigo para coordinar la recogida.</div>
-                    <button onClick={()=>{setModal(false);setBandejas({});setOpcionesLote({});setForm({nombre:"",telefono:"",email:"",nota:""});}} style={{width:"100%",background:C,color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:"pointer",marginTop:20}}>Nueva reserva</button>
+                    <div style={{fontSize:20,fontWeight:700,color:C,marginBottom:8}}>Reserva confirmada!</div>
+                    <div style={{fontSize:14,color:"#666"}}>Xa recibimos o teu pedido, {form.nombre}. Enviámosche un email de confirmación. En breve poñerémonos en contacto contigo para coordinar a recollida.</div>
+                    <button onClick={()=>{setModal(false);setBandejas({});setOpcionesLote({});setForm({nombre:"",telefono:"",email:"",nota:""});}} style={{width:"100%",background:C,color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:"pointer",marginTop:20}}>Nova reserva</button>
                   </div>
                 )}
               </div>
