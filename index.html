@@ -12,7 +12,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: system-ui, sans-serif; background: #f7f7f5; }
-    input, select, button { font-family: inherit; }
+    input, select, button, textarea { font-family: inherit; }
     ::-webkit-scrollbar { display: none; }
   </style>
 </head>
@@ -161,14 +161,15 @@
 
     const COLOR="#2D6A4F", COLOR_LIGHT="#E1F5EE", PASS="carnes2024";
     const todayISO=new Date().toISOString().slice(0,10);
-    const eur=n=>n.toFixed(2).replace(".",","+" €");
+    const eur=n=>n.toFixed(2).replace(".",",")+" €";
     const EMAILJS_SERVICE="service_lobqqc4", EMAILJS_TIENDA="mundo_verde_tenda", EMAILJS_CLIENTE="mundo_verde_cliente";
 
     const sendEmail=(pedido)=>{
       const productos=pedido.productos.map(p=>`• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""} — ${eur(p.subtotal)}`).join("\n");
-      const params={cliente_nombre:pedido.nombre,cliente_telefono:pedido.telefono,cliente_email:pedido.email,productos,total:eur(pedido.total),nota:pedido.nota||""};
+      const entregaInfo=pedido.entregaElegida?`\n\n📅 Entrega solicitada: ${pedido.entregaElegida}`:"";
+      const params={cliente_nombre:pedido.nombre,cliente_telefono:pedido.telefono,cliente_email:pedido.email,productos,total:eur(pedido.total),nota:(pedido.nota||"")+entregaInfo};
       emailjs.send(EMAILJS_SERVICE,EMAILJS_TIENDA,params).catch(e=>console.error("EmailJS tienda:",e));
-      emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{...params,asunto:"Reserva recibida · Mundo Verde Pontevedra",mensaje:"Xa recibimos a túa reserva correctamente. En breve poñerémonos en contacto contigo para coordinar a recollida."}).catch(e=>console.error("EmailJS cliente:",e));
+      emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{...params,asunto:"Reserva recibida · Mundo Verde Pontevedra",mensaje:`Xa recibimos a túa reserva correctamente.${pedido.entregaElegida?` A túa entrega está prevista para o ${pedido.entregaElegida}.`:""} En breve poñerémonos en contacto contigo para coordinar a recollida.`}).catch(e=>console.error("EmailJS cliente:",e));
     };
 
     const sendEmailListo=(pedido)=>{
@@ -184,15 +185,57 @@
       </div>
     );
 
-    const BannerFechas=({fechaEntrega,fechaLimite})=>{
-      if(!fechaEntrega&&!fechaLimite) return null;
+    const BannerFechas=({entregas})=>{
+      if(!entregas||entregas.length===0) return null;
+      const ahora=new Date();
+      const vigentes=entregas.filter(e=>{
+        if(!e.fechaLimiteISO) return true;
+        return new Date(e.fechaLimiteISO+"T23:59:59")>=ahora;
+      });
+      if(vigentes.length===0) return null;
       return(
-        <div style={{background:"#E8F4FD",border:"1px solid #AED6F1",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"flex-start",gap:8}}>
-          <span style={{fontSize:16}}>📅</span>
-          <div style={{fontSize:12.5,color:"#1a5276",lineHeight:1.6}}>
-            {fechaEntrega&&<div><strong>Próxima entrega:</strong> {fechaEntrega}</div>}
-            {fechaLimite&&<div><strong>Prazo límite de pedido:</strong> {fechaLimite}</div>}
+        <div style={{background:"#E8F4FD",border:"1px solid #AED6F1",borderRadius:10,padding:"12px 14px",display:"flex",alignItems:"flex-start",gap:8}}>
+          <span style={{fontSize:16,flexShrink:0}}>📅</span>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:700,color:"#1a5276",marginBottom:6}}>Próximas entregas disponibles</div>
+            {vigentes.map((e,i)=>(
+              <div key={i} style={{marginBottom:i<vigentes.length-1?6:0}}>
+                <div style={{fontSize:13,color:"#1a5276",fontWeight:600}}>📦 {e.fechaEntrega}</div>
+                {e.fechaLimite&&<div style={{fontSize:11.5,color:"#2e86c1",marginTop:1}}>⏰ Prazo límite: {e.fechaLimite}</div>}
+              </div>
+            ))}
           </div>
+        </div>
+      );
+    };
+
+    const SelectorEntrega=({entregas,entregaElegida,setEntregaElegida})=>{
+      if(!entregas||entregas.length===0) return null;
+      const ahora=new Date();
+      const vigentes=entregas.filter(e=>{
+        if(!e.fechaLimiteISO) return true;
+        return new Date(e.fechaLimiteISO+"T23:59:59")>=ahora;
+      });
+      if(vigentes.length===0) return null;
+      return(
+        <div style={{marginBottom:16}}>
+          <div style={{fontSize:14,fontWeight:600,color:"#333",marginBottom:8}}>📦 Escoge tu fecha de entrega</div>
+          {vigentes.map((e,i)=>{
+            const sel=entregaElegida===e.fechaEntrega;
+            return(
+              <div key={i} onClick={()=>setEntregaElegida(e.fechaEntrega)} style={{border:`1.5px solid ${sel?COLOR:"#ddd"}`,borderRadius:10,padding:"10px 14px",marginBottom:8,cursor:"pointer",background:sel?COLOR_LIGHT:"#fff",transition:"all 0.15s"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{width:16,height:16,borderRadius:"50%",border:`2px solid ${sel?COLOR:"#bbb"}`,background:sel?COLOR:"#fff",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    {sel&&<div style={{width:6,height:6,borderRadius:"50%",background:"#fff"}}/>}
+                  </div>
+                  <div>
+                    <div style={{fontSize:13.5,fontWeight:600,color:sel?COLOR:"#333"}}>{e.fechaEntrega}</div>
+                    {e.fechaLimite&&<div style={{fontSize:11.5,color:"#888",marginTop:1}}>Prazo límite: {e.fechaLimite}</div>}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       );
     };
@@ -246,10 +289,77 @@
       );
     }
 
-    function Panel({cats,setCats,fechaEntrega,setFechaEntrega,fechaLimite,setFechaLimite,onBack}){
+    function PanelFechas({entregas,setEntregas}){
+      const [lista,setLista]=useState(entregas||[]);
+      const [guardando,setGuardando]=useState(false);
+
+      const addEntrega=()=>setLista(prev=>[...prev,{fechaEntrega:"",fechaLimite:"",fechaLimiteISO:""}]);
+      const removeEntrega=(i)=>setLista(prev=>prev.filter((_,idx)=>idx!==i));
+      const updateEntrega=(i,campo,val)=>setLista(prev=>prev.map((e,idx)=>idx===i?{...e,[campo]:val}:e));
+
+      const guardar=async()=>{
+        const validas=lista.filter(e=>e.fechaEntrega.trim());
+        setGuardando(true);
+        await window.db.from("config").upsert([{clave:"entregas_multiples",valor:JSON.stringify(validas)}],{onConflict:"clave"});
+        setEntregas(validas);
+        setGuardando(false);
+        alert("Entregas gardadas correctamente ✅");
+      };
+
+      const ahora=new Date();
+      return(
+        <div style={{background:"#fff",border:"1px solid #eee",borderRadius:14,padding:"20px"}}>
+          <div style={{fontSize:15,fontWeight:700,color:COLOR,marginBottom:4}}>📅 Xestión de entregas</div>
+          <div style={{fontSize:12.5,color:"#888",marginBottom:18,lineHeight:1.5}}>Engade todas as datas de entrega dispoñibles. Os clientes poderán escoller a que máis lles conveña. As entregas con prazo vencido ocúltanse automaticamente.</div>
+
+          {lista.map((e,i)=>{
+            const vencida=e.fechaLimiteISO&&new Date(e.fechaLimiteISO+"T23:59:59")<ahora;
+            return(
+              <div key={i} style={{background:vencida?"#fafafa":"#f8fffe",border:`1.5px solid ${vencida?"#eee":COLOR}`,borderRadius:12,padding:"14px",marginBottom:12,opacity:vencida?0.6:1}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                  <div style={{fontSize:13,fontWeight:700,color:vencida?"#aaa":COLOR}}>Entrega #{i+1} {vencida&&<span style={{fontSize:11,fontWeight:400,color:"#c0392b"}}>(prazo vencido)</span>}</div>
+                  <button onClick={()=>removeEntrega(i)} style={{background:"none",border:"none",color:"#ccc",fontSize:18,cursor:"pointer",lineHeight:1}}>×</button>
+                </div>
+                <div style={{marginBottom:10}}>
+                  <div style={{fontSize:12,color:"#555",marginBottom:4,fontWeight:600}}>Data de entrega <span style={{color:"#c0392b"}}>*</span></div>
+                  <input type="text" value={e.fechaEntrega} onChange={ev=>updateEntrega(i,"fechaEntrega",ev.target.value)} placeholder="Ex: venres 27 de xuño" style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                  <div>
+                    <div style={{fontSize:12,color:"#555",marginBottom:4,fontWeight:600}}>Prazo límite (texto)</div>
+                    <input type="text" value={e.fechaLimite} onChange={ev=>updateEntrega(i,"fechaLimite",ev.target.value)} placeholder="Ex: mércores 25 ás 20:00h" style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
+                  </div>
+                  <div>
+                    <div style={{fontSize:12,color:"#555",marginBottom:4,fontWeight:600}}>Prazo límite (data ISO)</div>
+                    <input type="date" value={e.fechaLimiteISO} onChange={ev=>updateEntrega(i,"fechaLimiteISO",ev.target.value)} style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box",color:"#333"}}/>
+                    <div style={{fontSize:10.5,color:"#aaa",marginTop:3}}>Para ocultar automáticamente</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          <button onClick={addEntrega} style={{width:"100%",background:"#f0faf5",color:COLOR,border:`1.5px dashed ${COLOR}`,borderRadius:10,padding:"11px",fontSize:14,fontWeight:600,cursor:"pointer",marginBottom:16}}>+ Engadir entrega</button>
+
+          {lista.length>0&&(
+            <div style={{background:"#E8F4FD",border:"1px solid #AED6F1",borderRadius:10,padding:"12px 14px",marginBottom:16}}>
+              <div style={{fontSize:12,fontWeight:700,color:"#1a5276",marginBottom:8}}>Vista previa do banner:</div>
+              <BannerFechas entregas={lista}/>
+            </div>
+          )}
+
+          <button onClick={guardar} disabled={guardando} style={{width:"100%",background:COLOR,color:"#fff",border:"none",borderRadius:12,padding:"13px",fontSize:15,fontWeight:700,cursor:"pointer",opacity:guardando?0.7:1}}>
+            {guardando?"Gardando...":"Gardar todas as entregas"}
+          </button>
+        </div>
+      );
+    }
+
+    function Panel({cats,setCats,entregas,setEntregas,onBack}){
       const [tabP,setTabP]=useState("totales");
       const [filtroEstado,setFiltroEstado]=useState("todos");
       const [filtroDia,setFiltroDia]=useState(todayISO);
+      const [filtroEntrega,setFiltroEntrega]=useState("");
       const [pedidos,setPedidos]=useState([]);
       const [cargando,setCargando]=useState(true);
       const [editando,setEditando]=useState(null);
@@ -289,11 +399,6 @@
         setCats(nc);setEditando(null);
       };
 
-      const guardarFechas=async()=>{
-        await window.db.from("config").upsert([{clave:"fecha_entrega",valor:fechaEntrega},{clave:"fecha_limite",valor:fechaLimite}],{onConflict:"clave"});
-        alert("Datas gardadas correctamente ✅");
-      };
-
       const toggleCategoria=(catId)=>{setCats(cats.map(c=>c.id===catId?{...c,activa:!c.activa}:c));};
       const eliminarProd=(catId,prodId)=>{if(!window.confirm("¿Eliminar este producto?"))return;setCats(cats.map(c=>c.id!==catId?c:{...c,productos:c.productos.filter(p=>p.id!==prodId)}));};
 
@@ -306,11 +411,17 @@
       const eliminarPedido=async(id)=>{if(!window.confirm("¿Eliminar este pedido?"))return;await window.db.from("pedidos").delete().eq("id",id);setPedidos(prev=>prev.filter(p=>p.id!==id));};
       const eliminarGestionados=async()=>{if(!window.confirm("¿Eliminar todos los gestionados?"))return;await window.db.from("pedidos").delete().eq("estado","listo");setPedidos(prev=>prev.filter(p=>p.estado!=="listo"));};
 
+      const entregasEnPedidos=useMemo(()=>{
+        const set=new Set(pedidos.filter(p=>p.entrega_elegida).map(p=>p.entrega_elegida));
+        return Array.from(set).sort();
+      },[pedidos]);
+
       const filtrados=useMemo(()=>pedidos.filter(p=>{
         const eOk=filtroEstado==="todos"||p.estado===filtroEstado;
         const dOk=!filtroDia||p.iso_date===filtroDia;
-        return eOk&&dOk;
-      }),[pedidos,filtroEstado,filtroDia]);
+        const enOk=!filtroEntrega||p.entrega_elegida===filtroEntrega;
+        return eOk&&dOk&&enOk;
+      }),[pedidos,filtroEstado,filtroDia,filtroEntrega]);
 
       const totalesProd=useMemo(()=>{
         const map={};
@@ -322,8 +433,8 @@
       },[filtrados]);
 
       const exportCSV=()=>{
-        const rows=[["Cliente","Teléfono","Email","Fecha","Estado","Producto","Opciones","Uds","Kg","Subtotal","Nota"]];
-        filtrados.forEach(p=>(p.productos||[]).forEach(pr=>rows.push([p.nombre,p.telefono,p.email||"",p.fecha,p.estado,pr.nombre,pr.opcion||"",pr.bandejas,(pr.kgTotal||"").toString(),pr.subtotal?eur(pr.subtotal):"",p.nota||""])));
+        const rows=[["Cliente","Teléfono","Email","Fecha","Entrega","Estado","Producto","Opciones","Uds","Kg","Subtotal","Nota"]];
+        filtrados.forEach(p=>(p.productos||[]).forEach(pr=>rows.push([p.nombre,p.telefono,p.email||"",p.fecha,p.entrega_elegida||"",p.estado,pr.nombre,pr.opcion||"",pr.bandejas,(pr.kgTotal||"").toString(),pr.subtotal?eur(pr.subtotal):"",p.nota||""])));
         const csv=rows.map(r=>r.map(c=>`"${c}"`).join(",")).join("\n");
         const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="pedidos_carnes.csv";a.click();
       };
@@ -350,16 +461,23 @@
           </div>
 
           <div style={{display:"flex",gap:8,padding:"16px 20px 8px",overflowX:"auto"}}>
-            {tabBtn("totales","📊 Totales")}{tabBtn("pedidos","📦 Pedidos")}{tabBtn("productos","🛍 Produtos")}{tabBtn("gestionar","⚙️ Xestionar")}{tabBtn("fechas","📅 Datas")}
+            {tabBtn("totales","📊 Totales")}{tabBtn("pedidos","📦 Pedidos")}{tabBtn("productos","🛍 Produtos")}{tabBtn("gestionar","⚙️ Xestionar")}{tabBtn("fechas","📅 Entregas")}
           </div>
 
           {tabP!=="gestionar"&&tabP!=="fechas"&&(
-            <div style={{display:"flex",alignItems:"center",gap:12,padding:"10px 20px",flexWrap:"wrap"}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 20px",flexWrap:"wrap"}}>
               <select value={filtroEstado} onChange={e=>setFiltroEstado(e.target.value)} style={{padding:"7px 12px",borderRadius:10,border:"1.5px solid #ddd",fontSize:13,background:"#fff",color:"#333"}}>
                 {["todos","pendiente","preparando","listo"].map(e=><option key={e} value={e}>{{todos:"Todos los estados",pendiente:"Pendiente",preparando:"Preparando",listo:"Listo"}[e]}</option>)}
               </select>
               <input type="date" value={filtroDia} onChange={e=>setFiltroDia(e.target.value)} style={{padding:"7px 12px",borderRadius:10,border:"1.5px solid #ddd",fontSize:13,background:"#fff",color:"#333"}}/>
-              {filtroDia&&<button onClick={()=>setFiltroDia("")} style={{fontSize:12,color:"#aaa",background:"none",border:"none",cursor:"pointer"}}>Limpiar</button>}
+              {filtroDia&&<button onClick={()=>setFiltroDia("")} style={{fontSize:12,color:"#aaa",background:"none",border:"none",cursor:"pointer"}}>✕ Fecha</button>}
+              {entregasEnPedidos.length>0&&(
+                <select value={filtroEntrega} onChange={e=>setFiltroEntrega(e.target.value)} style={{padding:"7px 12px",borderRadius:10,border:"1.5px solid #ddd",fontSize:13,background:"#fff",color:"#333",maxWidth:180}}>
+                  <option value="">Todas las entregas</option>
+                  {entregasEnPedidos.map(e=><option key={e} value={e}>{e}</option>)}
+                </select>
+              )}
+              {filtroEntrega&&<button onClick={()=>setFiltroEntrega("")} style={{fontSize:12,color:"#aaa",background:"none",border:"none",cursor:"pointer"}}>✕ Entrega</button>}
               <span style={{marginLeft:"auto",fontSize:13,color:"#aaa"}}>{filtrados.length} pedido{filtrados.length!==1?"s":""}</span>
               {pedidos.filter(p=>p.estado==="listo").length>0&&(
                 <button onClick={eliminarGestionados} style={{fontSize:12,color:"#c0392b",background:"none",border:"1px solid #e8b5b2",borderRadius:8,padding:"4px 10px",cursor:"pointer"}}>🗑 Borrar gestionados</button>
@@ -373,6 +491,7 @@
 
             {!cargando&&(tabP==="totales"||tabP==="productos")&&filtrados.length>0&&(
               <div style={{background:"#fff",border:"1px solid #eee",borderRadius:14,overflow:"hidden"}}>
+                {filtroEntrega&&<div style={{padding:"8px 16px",background:COLOR_LIGHT,fontSize:12,color:COLOR,fontWeight:600}}>📦 Filtrando por entrega: {filtroEntrega}</div>}
                 <div style={{display:"grid",gridTemplateColumns:"1fr auto auto auto",gap:8,padding:"10px 16px",background:"#f9f9f9",fontSize:12,fontWeight:600,color:"#888"}}>
                   <span>Producto</span><span style={{textAlign:"right"}}>Uds</span><span style={{textAlign:"right"}}>Kg</span><span style={{textAlign:"right"}}>Importe</span>
                 </div>
@@ -399,6 +518,7 @@
                   <div>
                     <div style={{fontWeight:600,fontSize:14,color:"#222"}}>{p.nombre}</div>
                     <div style={{fontSize:12,color:"#888",marginTop:2}}>{p.telefono}{p.email?` · ${p.email}`:""} · {p.fecha}</div>
+                    {p.entrega_elegida&&<div style={{fontSize:12,color:COLOR,fontWeight:600,marginTop:3}}>📦 Entrega: {p.entrega_elegida}</div>}
                   </div>
                   <span style={{display:"inline-block",padding:"3px 12px",borderRadius:20,fontSize:11,fontWeight:600,background:p.estado==="listo"?"#eafaf1":p.estado==="preparando"?"#fff8e1":COLOR_LIGHT,color:p.estado==="listo"?"#1a7a3c":p.estado==="preparando"?"#b8860b":COLOR}}>{p.estado}</span>
                 </div>
@@ -426,25 +546,7 @@
             ))}
 
             {tabP==="fechas"&&(
-              <div style={{background:"#fff",border:"1px solid #eee",borderRadius:14,padding:"20px"}}>
-                <div style={{fontSize:15,fontWeight:700,color:COLOR,marginBottom:16}}>📅 Configuración de datas</div>
-                <div style={{marginBottom:14}}>
-                  <div style={{fontSize:13,fontWeight:600,color:"#333",marginBottom:6}}>Próxima entrega</div>
-                  <input type="text" value={fechaEntrega} onChange={e=>setFechaEntrega(e.target.value)} placeholder="Ex: venres 20 de xuño" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,outline:"none",boxSizing:"border-box"}}/>
-                </div>
-                <div style={{marginBottom:20}}>
-                  <div style={{fontSize:13,fontWeight:600,color:"#333",marginBottom:6}}>Prazo límite de pedido</div>
-                  <input type="text" value={fechaLimite} onChange={e=>setFechaLimite(e.target.value)} placeholder="Ex: mércores 18 de xuño ás 20:00h" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,outline:"none",boxSizing:"border-box"}}/>
-                </div>
-                <button onClick={guardarFechas} style={{width:"100%",background:COLOR,color:"#fff",border:"none",borderRadius:12,padding:"13px",fontSize:15,fontWeight:700,cursor:"pointer"}}>Gardar datas</button>
-                {(fechaEntrega||fechaLimite)&&(
-                  <div style={{marginTop:16,background:"#E8F4FD",border:"1px solid #AED6F1",borderRadius:10,padding:"12px 14px"}}>
-                    <div style={{fontSize:12,fontWeight:600,color:"#1a5276",marginBottom:6}}>Vista previa:</div>
-                    {fechaEntrega&&<div style={{fontSize:13,color:"#1a5276"}}>📦 Próxima entrega: {fechaEntrega}</div>}
-                    {fechaLimite&&<div style={{fontSize:13,color:"#1a5276",marginTop:2}}>⏰ Prazo límite: {fechaLimite}</div>}
-                  </div>
-                )}
-              </div>
+              <PanelFechas entregas={entregas} setEntregas={setEntregas}/>
             )}
 
             {tabP==="gestionar"&&(
@@ -506,12 +608,12 @@
       const [modal,setModal]=useState(false);
       const [enviado,setEnviado]=useState(false);
       const [form,setForm]=useState({nombre:"",telefono:"",email:"",nota:""});
+      const [entregaElegida,setEntregaElegida]=useState("");
       const [panel,setPanel]=useState(false);
       const [panelPass,setPanelPass]=useState(false);
       const [passInput,setPassInput]=useState("");
       const [passError,setPassError]=useState(false);
-      const [fechaEntrega,setFechaEntrega]=useState("");
-      const [fechaLimite,setFechaLimite]=useState("");
+      const [entregas,setEntregas]=useState([]);
 
       useEffect(()=>{
         window.db.from("categorias").select("*").limit(1).then(({data})=>{
@@ -519,8 +621,15 @@
         });
         window.db.from("config").select("*").then(({data})=>{
           if(data) data.forEach(r=>{
-            if(r.clave==="fecha_entrega") setFechaEntrega(r.valor||"");
-            if(r.clave==="fecha_limite") setFechaLimite(r.valor||"");
+            if(r.clave==="entregas_multiples"){
+              try{setEntregas(JSON.parse(r.valor)||[]);}catch(e){}
+            }
+            if(r.clave==="fecha_entrega"&&r.valor){
+              setEntregas(prev=>{
+                if(prev.length>0) return prev;
+                return [{fechaEntrega:r.valor,fechaLimite:"",fechaLimiteISO:""}];
+              });
+            }
           });
         });
       },[]);
@@ -531,6 +640,14 @@
         else{const{data}=await window.db.from("categorias").insert([{data:nc}]).select();if(data?.[0])setCatsId(data[0].id);}
       };
 
+      const abrirModal=()=>{
+        const ahora=new Date();
+        const vigentes=entregas.filter(e=>!e.fechaLimiteISO||new Date(e.fechaLimiteISO+"T23:59:59")>=ahora);
+        if(vigentes.length===1) setEntregaElegida(vigentes[0].fechaEntrega);
+        else setEntregaElegida("");
+        setModal(true);setEnviado(false);
+      };
+
       const catsActivas=cats.filter(c=>c.activa!==false);
       const allProds=cats.flatMap(c=>c.productos);
       const seleccionados=allProds.filter(p=>(bandejas[p.id]||0)>0);
@@ -539,12 +656,18 @@
       const catsFiltradas=catActiva==="todas"?catsOrdenadas:catsOrdenadas.filter(c=>c.id===catActiva);
       const setCant=(id,val)=>setBandejas(prev=>({...prev,[id]:Math.max(0,Math.round(parseFloat(val)||0))}));
 
+      const ahora=new Date();
+      const entregasVigentes=entregas.filter(e=>!e.fechaLimiteISO||new Date(e.fechaLimiteISO+"T23:59:59")>=ahora);
+      const requiereEntrega=entregasVigentes.length>1;
+      const puedeEnviar=form.nombre&&form.telefono&&form.email&&(!requiereEntrega||entregaElegida);
+
       const enviar=async()=>{
-        if(!form.nombre||!form.telefono||!form.email) return;
+        if(!puedeEnviar) return;
         const nuevo={
           nombre:form.nombre,telefono:form.telefono,email:form.email,nota:form.nota,
           fecha:new Date().toLocaleString("es-ES"),iso_date:new Date().toISOString().slice(0,10),
           estado:"pendiente",total:totalPedido,
+          entrega_elegida:entregaElegida||null,
           productos:seleccionados.map(p=>({
             nombre:p.nombre,bandejas:bandejas[p.id],esLote:!!p.opciones,
             kgTotal:p.bandeja?+(bandejas[p.id]*p.bandeja).toFixed(2):null,
@@ -553,7 +676,7 @@
           }))
         };
         await window.db.from("pedidos").insert([nuevo]);
-        sendEmail({...nuevo});
+        sendEmail({...nuevo,entregaElegida:nuevo.entrega_elegida});
         setEnviado(true);
       };
 
@@ -562,7 +685,7 @@
         else setPassError(true);
       };
 
-      if(panel) return <Panel cats={cats} setCats={setCats} fechaEntrega={fechaEntrega} setFechaEntrega={setFechaEntrega} fechaLimite={fechaLimite} setFechaLimite={setFechaLimite} onBack={()=>setPanel(false)}/>;
+      if(panel) return <Panel cats={cats} setCats={setCats} entregas={entregas} setEntregas={setEntregas} onBack={()=>setPanel(false)}/>;
 
       const C=COLOR;
       return(
@@ -589,7 +712,7 @@
           )}
 
           <div style={{margin:"12px 16px 0"}}><Aviso/></div>
-          {(fechaEntrega||fechaLimite)&&<div style={{margin:"10px 16px 0"}}><BannerFechas fechaEntrega={fechaEntrega} fechaLimite={fechaLimite}/></div>}
+          {entregasVigentes.length>0&&<div style={{margin:"10px 16px 0"}}><BannerFechas entregas={entregas}/></div>}
 
           <div style={{display:"flex",gap:8,overflowX:"auto",padding:"14px 16px 4px",scrollbarWidth:"none"}}>
             {[{id:"todas",nombre:"Todas",emoji:""},...catsActivas].map(c=>(
@@ -609,7 +732,7 @@
           ))}
 
           {seleccionados.length>0&&(
-            <button onClick={()=>{setModal(true);setEnviado(false);}} style={{position:"fixed",bottom:16,left:"50%",transform:"translateX(-50%)",background:C,color:"#fff",border:"none",borderRadius:24,padding:"13px 28px",fontSize:15,fontWeight:600,cursor:"pointer",boxShadow:"0 4px 16px rgba(45,106,79,0.35)",zIndex:100,whiteSpace:"nowrap"}}>
+            <button onClick={abrirModal} style={{position:"fixed",bottom:16,left:"50%",transform:"translateX(-50%)",background:C,color:"#fff",border:"none",borderRadius:24,padding:"13px 28px",fontSize:15,fontWeight:600,cursor:"pointer",boxShadow:"0 4px 16px rgba(45,106,79,0.35)",zIndex:100,whiteSpace:"nowrap"}}>
               Ver reserva ({seleccionados.length} prod.) · {eur(totalPedido)} →
             </button>
           )}
@@ -640,22 +763,30 @@
                       <span style={{color:C}}>{eur(totalPedido)}</span>
                     </div>
                     <div style={{margin:"12px 0 8px"}}><Aviso/></div>
-                    {(fechaEntrega||fechaLimite)&&<div style={{marginBottom:16}}><BannerFechas fechaEntrega={fechaEntrega} fechaLimite={fechaLimite}/></div>}
+
+                    {entregasVigentes.length>0&&(
+                      <div style={{marginBottom:4,marginTop:8}}>
+                        <SelectorEntrega entregas={entregas} entregaElegida={entregaElegida} setEntregaElegida={setEntregaElegida}/>
+                        {requiereEntrega&&!entregaElegida&&<div style={{fontSize:12,color:"#c0392b",marginTop:-8,marginBottom:8}}>* Debes escoller unha data de entrega</div>}
+                      </div>
+                    )}
+
                     <div style={{marginBottom:6,fontSize:14,fontWeight:600,color:"#333"}}>Os teus datos</div>
                     {["nombre","telefono","email","nota"].map(f=>(
                       <input key={f} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,marginBottom:12,boxSizing:"border-box",outline:"none"}}
                         placeholder={f==="nombre"?"Nome *":f==="telefono"?"Teléfono *":f==="email"?"Email *":"Nota ou indicación (opcional)"}
                         value={form[f]} onChange={e=>setForm(prev=>({...prev,[f]:e.target.value}))}/>
                     ))}
-                    <button onClick={enviar} disabled={!form.nombre||!form.telefono||!form.email} style={{width:"100%",background:form.nombre&&form.telefono&&form.email?C:"#ccc",color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:form.nombre&&form.telefono&&form.email?"pointer":"not-allowed"}}>Confirmar reserva</button>
+                    <button onClick={enviar} disabled={!puedeEnviar} style={{width:"100%",background:puedeEnviar?C:"#ccc",color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:puedeEnviar?"pointer":"not-allowed"}}>Confirmar reserva</button>
                     <button onClick={()=>setModal(false)} style={{width:"100%",background:"#f5f5f5",color:"#555",border:"none",borderRadius:12,padding:"12px",fontSize:14,cursor:"pointer",marginTop:8}}>Seguir escollendo</button>
                   </>
                 ):(
                   <div style={{textAlign:"center",padding:"20px 10px"}}>
                     <div style={{fontSize:48,marginBottom:12}}>✅</div>
                     <div style={{fontSize:20,fontWeight:700,color:C,marginBottom:8}}>Reserva confirmada!</div>
+                    {entregaElegida&&<div style={{fontSize:14,color:C,fontWeight:600,marginBottom:8}}>📦 Entrega: {entregaElegida}</div>}
                     <div style={{fontSize:14,color:"#666"}}>Xa recibimos o teu pedido, {form.nombre}. Enviámosche un email de confirmación. En breve poñerémonos en contacto contigo para coordinar a recollida.</div>
-                    <button onClick={()=>{setModal(false);setBandejas({});setOpcionesLote({});setForm({nombre:"",telefono:"",email:"",nota:""});}} style={{width:"100%",background:C,color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:"pointer",marginTop:20}}>Nova reserva</button>
+                    <button onClick={()=>{setModal(false);setBandejas({});setOpcionesLote({});setForm({nombre:"",telefono:"",email:"",nota:""});setEntregaElegida("");}} style={{width:"100%",background:C,color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:"pointer",marginTop:20}}>Nova reserva</button>
                   </div>
                 )}
               </div>
