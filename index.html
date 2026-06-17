@@ -1,818 +1,802 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.4">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnes Ecológicas Mundo Verde</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f7f7f5; }
+    input, select, button, textarea { font-family: inherit; }
+    ::-webkit-scrollbar { display: none; }
   </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="es"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Carnes Ecológicas Mundo Verde&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/react@18/umd/react.production.min.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/@babel/standalone/babel.min.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>* { box-sizing: border-box; margin: 0; padding: 0; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>body { font-family: system-ui, sans-serif; background: #f7f7f5; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>input, select, button, textarea { font-family: inherit; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>::-webkit-scrollbar { display: none; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="root"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>emailjs.init({ publicKey: "z790C6rjbbv3l6XoD" });</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const db = supabase.createClient(</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"https://khismajlbrwyzxclzrlj.supabase.co",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaXNtYWpsYnJ3eXp4Y2x6cmxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MDMyNTgsImV4cCI6MjA5NjA3OTI1OH0.nS1wBFsDLKfFx1h-A7QVFaLOtbS6CcSZvqD_fDC82bw"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>window.db = db;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script type="text/babel"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const { useState, useMemo, useEffect } = React;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const CATEGORIAS_INIT = [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ id:"pollo", nombre:"Pollo", emoji:"🐔", activa:true, productos:[</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p1",nombre:"Pollo entero",bandeja:2,pBandeja:33.38,pKilo:16.64},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p2",nombre:"Medio pollo",bandeja:1,pBandeja:17.89,pKilo:17.89},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p3",nombre:"Pollo troceado",bandeja:1,pBandeja:19.67,pKilo:19.67},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p4",nombre:"Pechuga entera",bandeja:0.38,pBandeja:14.31,pKilo:37.66},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p5",nombre:"Pechuga fileteada",bandeja:0.38,pBandeja:14.90,pKilo:39.21},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p6",nombre:"Picada de pollo",bandeja:0.38,pBandeja:10.60,pKilo:27.89},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p7",nombre:"Contramuslo s/hueso s/piel",bandeja:0.38,pBandeja:10.00,pKilo:26.34},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p8",nombre:"Contramuslo c/hueso c/piel",bandeja:0.4,pBandeja:9.07,pKilo:22.69},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p9",nombre:"Jamoncitos (Cat A)",bandeja:0.4,pBandeja:8.52,pKilo:21.30},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p10",nombre:"Muslo de pollo",bandeja:0.36,pBandeja:7.66,pKilo:21.30},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p11",nombre:"Churrasco de pollo",bandeja:0.38,pBandeja:10.15,pKilo:26.72},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p12",nombre:"Alas de pollo",bandeja:0.4,pBandeja:7.00,pKilo:17.50},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"p13",nombre:"Carcasa de pollo",bandeja:0.25,pBandeja:2.05,pKilo:8.19},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>]},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ id:"pavo", nombre:"Pavo", emoji:"🦃", activa:true, productos:[</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"pv1",nombre:"Pechuga entera de pavo",bandeja:0.4,pBandeja:14.72,pKilo:36.80},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"pv2",nombre:"Pechuga fileteada de pavo",bandeja:0.38,pBandeja:14.72,pKilo:38.74},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"pv3",nombre:"Contramuslo deshuesado de pavo",bandeja:0.38,pBandeja:9.10,pKilo:23.93},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"pv4",nombre:"Picada de pavo",bandeja:0.38,pBandeja:9.42,pKilo:24.79},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"pv5",nombre:"Estofado de pavo",bandeja:0.38,pBandeja:9.30,pKilo:24.48},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>]},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ id:"cerdo", nombre:"Cerdo", emoji:"🐷", activa:true, productos:[</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c1",nombre:"Solomillo de cerdo",bandeja:0.5,pBandeja:15.45,pKilo:30.91},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c2",nombre:"Presa de cerdo",bandeja:0.38,pBandeja:10.56,pKilo:27.81},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c3",nombre:"Secreto de cerdo",bandeja:0.38,pBandeja:12.45,pKilo:32.77},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c4",nombre:"Pluma de cerdo",bandeja:0.38,pBandeja:11.51,pKilo:30.29},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c5",nombre:"Lomo de cerdo",bandeja:0.38,pBandeja:11.18,pKilo:29.44},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c6",nombre:"Lomo fileteado de cerdo",bandeja:0.38,pBandeja:11.77,pKilo:30.99},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c7",nombre:"Jamón de cerdo",bandeja:0.38,pBandeja:10.33,pKilo:27.19},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c8",nombre:"Jamón fileteado de cerdo",bandeja:0.38,pBandeja:11.18,pKilo:29.44},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c9",nombre:"Chuletas de cerdo",bandeja:0.38,pBandeja:10.00,pKilo:26.34},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c10",nombre:"Cabeza de lomo",bandeja:0.38,pBandeja:9.15,pKilo:24.09},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c11",nombre:"Cabeza de lomo fileteada",bandeja:0.38,pBandeja:9.74,pKilo:25.64},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c12",nombre:"Magro pieza de cerdo",bandeja:0.38,pBandeja:8.21,pKilo:21.61},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c13",nombre:"Magro troceado de cerdo",bandeja:0.38,pBandeja:8.41,pKilo:22.15},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c14",nombre:"Picada de cerdo",bandeja:0.38,pBandeja:8.56,pKilo:22.54},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c15",nombre:"Costillas de cerdo",bandeja:0.38,pBandeja:7.59,pKilo:19.98},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c16",nombre:"Panceta de cerdo",bandeja:0.38,pBandeja:7.20,pKilo:18.97},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c17",nombre:"Tocino de papada",bandeja:0.38,pBandeja:4.41,pKilo:11.62},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c18",nombre:"Carrillera de cerdo",bandeja:0.38,pBandeja:11.46,pKilo:30.17},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"c19",nombre:"Manitas de cerdo",bandeja:0.5,pBandeja:6.20,pKilo:12.40},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>]},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ id:"ternera", nombre:"Ternera", emoji:"🐄", activa:true, productos:[</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t1",nombre:"Solomillo cortado 400g",bandeja:0.38,pBandeja:35.50,pKilo:93.48},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t2",nombre:"Vacío de ternera",bandeja:0.75,pBandeja:27.83,pKilo:37.11},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t3",nombre:"Lomo fileteado",bandeja:0.38,pBandeja:24.62,pKilo:64.79},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t4",nombre:"Lomo entrecot",bandeja:0.38,pBandeja:25.65,pKilo:67.51},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t5",nombre:"Chuletón",bandeja:0.7,pBandeja:27.75,pKilo:39.67},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t6",nombre:"Extra pieza",bandeja:0.38,pBandeja:11.95,pKilo:31.45},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t7",nombre:"Extra fileteada",bandeja:0.38,pBandeja:12.95,pKilo:34.09},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t8",nombre:"Primera pieza",bandeja:0.38,pBandeja:11.20,pKilo:29.44},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t9",nombre:"Carpaccio de ternera",bandeja:0.2,pBandeja:6.90,pKilo:34.55},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t10",nombre:"Primera fileteada",bandeja:0.38,pBandeja:12.24,pKilo:32.23},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t11",nombre:"Magro troceado de ternera",bandeja:0.38,pBandeja:10.77,pKilo:28.35},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t12",nombre:"Magro pieza de ternera",bandeja:0.38,pBandeja:10.48,pKilo:27.58},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t13",nombre:"Aguja pieza",bandeja:0.38,pBandeja:10.60,pKilo:27.89},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t14",nombre:"Aguja fileteada",bandeja:0.38,pBandeja:11.50,pKilo:30.29},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t15",nombre:"Picada de ternera (&lt;10% grasa)",bandeja:0.38,pBandeja:10.89,pKilo:28.66},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t16",nombre:"Falda pieza de ternera",bandeja:0.38,pBandeja:9.15,pKilo:24.09},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t17",nombre:"Osobuco de ternera",bandeja:0.4,pBandeja:10.40,pKilo:26.03},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t18",nombre:"Jarrete pieza",bandeja:0.38,pBandeja:10.24,pKilo:26.96},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t19",nombre:"Churrasco de ternera",bandeja:0.4,pBandeja:8.86,pKilo:22.15},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t20",nombre:"Costilla centro de ternera",bandeja:0.4,pBandeja:8.54,pKilo:21.37},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t21",nombre:"Menudo de ternera",bandeja:0.38,pBandeja:4.70,pKilo:12.38},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t22",nombre:"Rabo de ternera",bandeja:0.4,pBandeja:12.30,pKilo:30.75},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t23",nombre:"Lengua de ternera",bandeja:0.38,pBandeja:10.71,pKilo:28.20},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t24",nombre:"Riñones de ternera",bandeja:0.38,pBandeja:5.89,pKilo:15.48},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t25",nombre:"Hígado fileteado de ternera",bandeja:0.38,pBandeja:8.23,pKilo:21.68},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t26",nombre:"Hueso de ternera (canilla)",bandeja:0.4,pBandeja:4.75,pKilo:11.83},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t27",nombre:"Carrillera de ternera",bandeja:0.4,pBandeja:20.67,pKilo:51.69},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t28",nombre:"Picaña de ternera",bandeja:0.4,pBandeja:23.40,pKilo:58.82},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t29",nombre:"Entraña de ternera",bandeja:0.38,pBandeja:13.89,pKilo:36.57},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t30",nombre:"Tomahawk madurado retinta",bandeja:1,pBandeja:39.59,pKilo:39.59},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"t31",nombre:"Lingote de presa retinta",bandeja:0.38,pBandeja:15.20,pKilo:39.98},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>]},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ id:"cordero", nombre:"Cordero", emoji:"🐑", activa:true, productos:[</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"co1",nombre:"Chuletas de cordero",bandeja:0.38,pBandeja:18.25,pKilo:48.05},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"co2",nombre:"Pierna de cordero",bandeja:1.4,pBandeja:52.38,pKilo:37.42},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"co3",nombre:"Chuletas pierna de cordero",bandeja:0.38,pBandeja:16.66,pKilo:43.86},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"co4",nombre:"Brazuelo de cordero",bandeja:1,pBandeja:43.78,pKilo:43.78},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"co5",nombre:"Falda de cordero",bandeja:0.38,pBandeja:8.12,pKilo:21.37},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"co6",nombre:"Chuletitas de cuello",bandeja:0.38,pBandeja:8.35,pKilo:21.99},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"co7",nombre:"Hígado de cordero",bandeja:0.38,pBandeja:5.70,pKilo:15.02},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>]},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ id:"chotoiba", nombre:"Chotoiba", emoji:"🐂", activa:true, productos:[</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch1",nombre:"Lote A — 3 kg",bandeja:3,pBandeja:61.50,pKilo:20.50,nota:"guisar + asar fijos · 20,50€/kg",opciones:[{label:"Elige 1 kg:",choices:["Chuletas","Filetes"]}]},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch2",nombre:"Lote B — 3 kg",bandeja:3,pBandeja:65.85,pKilo:21.95,nota:"chuletas + filetes fijos · 21,95€/kg",opciones:[{label:"Elige 1 kg:",choices:["Carne para asar","Carne para guisar"]}]},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch3",nombre:"Lote C — 3 kg",bandeja:3,pBandeja:61.50,pKilo:20.50,nota:"picada fija · 20,50€/kg",opciones:[{label:"Elige 1 kg:",choices:["Chuletas","Filetes"]},{label:"Elige 1 kg:",choices:["Carne para asar","Carne para guisar"]}]},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch4",nombre:"Lote D — 5 kg",bandeja:5,pBandeja:97.50,pKilo:19.50,nota:"todo fijo · 19,50€/kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch5",nombre:"Chuleta / Chuletón",bandeja:1,pBandeja:25.50,pKilo:25.50,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch6",nombre:"Filete",bandeja:1,pBandeja:22.50,pKilo:22.50,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch7",nombre:"Carne de asar sin hueso",bandeja:1,pBandeja:20.95,pKilo:20.95,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch8",nombre:"Carne guisar con hueso",bandeja:1,pBandeja:17.95,pKilo:17.95,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch9",nombre:"Carne picada",bandeja:1,pBandeja:20.95,pKilo:20.95,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch10",nombre:"Falda",bandeja:1,pBandeja:17.95,pKilo:17.95,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch11",nombre:"Croca / Picaña",bandeja:1,pBandeja:28.00,pKilo:28.00,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch12",nombre:"Solomillo",bandeja:1,pBandeja:48.00,pKilo:48.00,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch13",nombre:"Entrecot",bandeja:1,pBandeja:33.50,pKilo:33.50,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch14",nombre:"Redondo / Blanquita",bandeja:1,pBandeja:22.50,pKilo:22.50,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch15",nombre:"Rabo",bandeja:1,pBandeja:20.95,pKilo:20.95,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch16",nombre:"Fígado",bandeja:1,pBandeja:15.40,pKilo:15.40,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch17",nombre:"Lingua",bandeja:1,pBandeja:14.00,pKilo:14.00,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch18",nombre:"Xarrete",bandeja:1,pBandeja:23.80,pKilo:23.80,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch19",nombre:"Corazón",bandeja:1,pBandeja:11.50,pKilo:11.50,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch20",nombre:"Osos sin envasar",bandeja:1,pBandeja:5.60,pKilo:5.60,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"ch21",nombre:"Osos envasados",bandeja:1,pBandeja:8.50,pKilo:8.50,nota:"mínimo 1 kg"},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>]},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ id:"elaborados", nombre:"Elaborados", emoji:"🥩", activa:true, productos:[</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e1",nombre:"Hamburguesa de ternera",bandeja:0.4,pBandeja:5.00,pKilo:25.64,nota:"4 ud/bandeja"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e2",nombre:"Hamburguesa de pollo",bandeja:0.4,pBandeja:4.57,pKilo:22.85,nota:"4 ud/bandeja"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e3",nombre:"Hamburguesa de pavo",bandeja:0.4,pBandeja:4.57,pKilo:22.85,nota:"4 ud/bandeja"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e4",nombre:"Albóndigas de ternera y cerdo",bandeja:0.38,pBandeja:9.45,pKilo:24.79},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e5",nombre:"Pinchos de pollo",bandeja:0.38,pBandeja:15.25,pKilo:40.14},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e6",nombre:"Pinchos de cordero",bandeja:0.38,pBandeja:21.76,pKilo:57.27},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e7",nombre:"Salchichas de pollo",bandeja:0.3,pBandeja:8.73,pKilo:29.13},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e8",nombre:"Chorizo criollo",bandeja:0.38,pBandeja:9.97,pKilo:26.26},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e9",nombre:"Lomo de cerdo adobado fileteado",bandeja:0.38,pBandeja:13.55,pKilo:35.64},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e10",nombre:"Salchichas de cerdo",bandeja:0.3,pBandeja:7.32,pKilo:24.40},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e11",nombre:"Longaniza de pavo",bandeja:0.38,pBandeja:9.80,pKilo:25.79},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e12",nombre:"Chistorra de cerdo",bandeja:0.2,pBandeja:4.81,pKilo:24.09},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e13",nombre:"Butifarra de cerdo",bandeja:0.38,pBandeja:9.27,pKilo:24.40},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e14",nombre:"Manteca de cerdo",bandeja:0.5,pBandeja:7.70,pKilo:15.40},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e15",nombre:"Preparado para legumbres",bandeja:null,pBandeja:8.20,pKilo:8.20,nota:"1 unidad"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e16",nombre:"Preparado para puchero",bandeja:null,pBandeja:12.09,pKilo:12.09,nota:"1 unidad"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{id:"e17",nombre:"Preparado para caldos",bandeja:null,pBandeja:11.56,pKilo:11.56,nota:"1 unidad"},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>]},</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const COLOR="#2D6A4F", COLOR_LIGHT="#E1F5EE", PASS="carnes2024";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const todayISO=new Date().toISOString().slice(0,10);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const eur=n=&gt;n.toFixed(2).replace(".",",")+" €";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const EMAILJS_SERVICE="service_lobqqc4", EMAILJS_TIENDA="mundo_verde_tenda", EMAILJS_CLIENTE="mundo_verde_cliente";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const sendEmail=(pedido)=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const productos=pedido.productos.map(p=&gt;`• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""} — ${eur(p.subtotal)}`).join("\n");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const entregaInfo=pedido.entregaElegida?`\n\n📅 Entrega solicitada: ${pedido.entregaElegida}`:"";</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const params={cliente_nombre:pedido.nombre,cliente_telefono:pedido.telefono,cliente_email:pedido.email,productos,total:eur(pedido.total),nota:(pedido.nota||"")+entregaInfo};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>emailjs.send(EMAILJS_SERVICE,EMAILJS_TIENDA,params).catch(e=&gt;console.error("EmailJS tienda:",e));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{...params,asunto:"Reserva recibida · Mundo Verde Pontevedra",mensaje:`Xa recibimos a túa reserva correctamente.${pedido.entregaElegida?` A túa entrega está prevista para o ${pedido.entregaElegida}.`:""} En breve poñerémonos en contacto contigo para coordinar a recollida.`}).catch(e=&gt;console.error("EmailJS cliente:",e));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const sendEmailListo=(pedido)=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(!pedido?.email) return;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const productos=(pedido.productos||[]).map(p=&gt;`• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""}`).join("\n");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{cliente_nombre:pedido.nombre,cliente_email:pedido.email,productos,total:eur(pedido.total),nota:pedido.nota||"",asunto:"O teu pedido está listo para recoller! 🌿",mensaje:"Boa nova! O teu pedido de Carnes Ecolóxicas Mundo Verde xa está listo. Podes pasar a recollelo pola tenda cando queiras."}).catch(e=&gt;console.error("EmailJS listo:",e));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const Aviso=()=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style={{background:"#FFF8E1",border:"1px solid #FFE082",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"flex-start",gap:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style={{fontSize:16}}&gt;⚠️&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style={{fontSize:12.5,color:"#7a6000",lineHeight:1.5}}&gt;Os pesos indicados por bandeja son &lt;strong&gt;orientativos&lt;/strong&gt;. O peso final pode variar segundo a peza. O prezo definitivo calcularase sobre o peso real.&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const BannerFechas=({entregas})=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(!entregas||entregas.length===0) return null;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const ahora=new Date();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const vigentes=entregas.filter(e=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(!e.fechaLimiteISO) return true;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return new Date(e.fechaLimiteISO+"T23:59:59")&gt;=ahora;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(vigentes.length===0) return null;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return(</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style={{background:"#E8F4FD",border:"1px solid #AED6F1",borderRadius:10,padding:"12px 14px",display:"flex",alignItems:"flex-start",gap:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;span style={{fontSize:16,flexShrink:0}}&gt;📅&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{flex:1}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{fontSize:12,fontWeight:700,color:"#1a5276",marginBottom:6}}&gt;Próximas entregas disponibles&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{vigentes.map((e,i)=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div key={i} style={{marginBottom:i&lt;vigentes.length-1?6:0}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{fontSize:13,color:"#1a5276",fontWeight:600}}&gt;📦 {e.fechaEntrega}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{e.fechaLimite&amp;&amp;&lt;div style={{fontSize:11.5,color:"#2e86c1",marginTop:1}}&gt;⏰ Prazo límite: {e.fechaLimite}&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const SelectorEntrega=({entregas,entregaElegida,setEntregaElegida})=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(!entregas||entregas.length===0) return null;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const ahora=new Date();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const vigentes=entregas.filter(e=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(!e.fechaLimiteISO) return true;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return new Date(e.fechaLimiteISO+"T23:59:59")&gt;=ahora;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(vigentes.length===0) return null;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return(</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style={{marginBottom:16}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{fontSize:14,fontWeight:600,color:"#333",marginBottom:8}}&gt;📦 Escoge tu fecha de entrega&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>{vigentes.map((e,i)=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const sel=entregaElegida===e.fechaEntrega;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return(</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div key={i} onClick={()=&gt;setEntregaElegida(e.fechaEntrega)} style={{border:`1.5px solid ${sel?COLOR:"#ddd"}`,borderRadius:10,padding:"10px 14px",marginBottom:8,cursor:"pointer",background:sel?COLOR_LIGHT:"#fff",transition:"all 0.15s"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{display:"flex",alignItems:"center",gap:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div style={{width:16,height:16,borderRadius:"50%",border:`2px solid ${sel?COLOR:"#bbb"}`,background:sel?COLOR:"#fff",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{sel&amp;&amp;&lt;div style={{width:6,height:6,borderRadius:"50%",background:"#fff"}}/&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:13.5,fontWeight:600,color:sel?COLOR:"#333"}}&gt;{e.fechaEntrega}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{e.fechaLimite&amp;&amp;&lt;div style={{fontSize:11.5,color:"#888",marginTop:1}}&gt;Prazo límite: {e.fechaLimite}&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>})}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const Stat=({n,label,color})=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style={{textAlign:"center"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style={{fontSize:28,fontWeight:700,color:color||"#222"}}&gt;{n}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style={{fontSize:12,color:"#888",marginTop:2}}&gt;{label}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function ProductCard({prod,qty,setCant,opcionesLote,setOpcionesLote}){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const C=COLOR,kg=prod.bandeja?+(qty*prod.bandeja).toFixed(2):null,sub=+(qty*prod.pBandeja).toFixed(2),esLote=!!prod.opciones;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return(</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style={{background:"#fff",border:qty&gt;0?`1.5px solid ${C}`:"1px solid #eee",borderRadius:12,padding:"11px 14px",marginBottom:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{display:"flex",alignItems:"flex-start",gap:10}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{flex:1}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{fontSize:13.5,color:"#222",fontWeight:500}}&gt;{prod.nombre}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{fontSize:11,color:"#888",marginTop:2}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{prod.bandeja?&lt;span&gt;≈ {prod.bandeja} kg · &lt;/span&gt;:null}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;span&gt;{eur(prod.pBandeja)}/{esLote?"lote":"bandeja"}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;span style={{margin:"0 6px",color:"#ddd"}}&gt;|&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;span&gt;{eur(prod.pKilo)}/kg&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{prod.nota?&lt;span&gt; · {prod.nota}&lt;/span&gt;:null}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>{qty&gt;0&amp;&amp;&lt;div style={{fontSize:11,marginTop:3}}&gt;{!esLote&amp;&amp;kg?&lt;span style={{color:"#888"}}&gt;≈ {kg} kg · &lt;/span&gt;:null}&lt;span style={{color:C,fontWeight:700}}&gt;{eur(sub)}&lt;/span&gt;&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;button onClick={()=&gt;setCant(prod.id,qty-1)} style={{width:28,height:28,borderRadius:8,border:`1.5px solid ${C}`,background:"#fff",color:C,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}&gt;−&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{textAlign:"center"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{fontSize:14,fontWeight:600,minWidth:22,textAlign:"center",color:"#222"}}&gt;{qty}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{fontSize:10,color:"#aaa",lineHeight:1}}&gt;{esLote?"lote(s)":`bandeja${qty!==1?"s":""}`}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;button onClick={()=&gt;setCant(prod.id,qty+1)} style={{width:28,height:28,borderRadius:8,border:`1.5px solid ${C}`,background:"#fff",color:C,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}&gt;+&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>{esLote&amp;&amp;qty&gt;0&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{marginTop:10,paddingTop:8,borderTop:"1px solid #f2f2f2"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>{prod.opciones.map((op,oi)=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div key={oi} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;span style={{fontSize:12,color:"#555",flexShrink:0}}&gt;{op.label}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;select value={(opcionesLote[prod.id]||{})[oi]||""} onChange={e=&gt;setOpcionesLote(prev=&gt;({...prev,[prod.id]:{...(prev[prod.id]||{}),[oi]:e.target.value}}))} style={{fontSize:12,padding:"4px 10px",borderRadius:8,border:`1.5px solid ${C}`,color:"#333",background:"#fff",flex:1}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;option value=""&gt;-- elige --&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{op.choices.map(ch=&gt;&lt;option key={ch} value={ch}&gt;{ch}&lt;/option&gt;)}</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/select&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function PanelFechas({entregas,setEntregas}){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [lista,setLista]=useState(entregas||[]);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [guardando,setGuardando]=useState(false);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const addEntrega=()=&gt;setLista(prev=&gt;[...prev,{fechaEntrega:"",fechaLimite:"",fechaLimiteISO:""}]);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const removeEntrega=(i)=&gt;setLista(prev=&gt;prev.filter((_,idx)=&gt;idx!==i));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const updateEntrega=(i,campo,val)=&gt;setLista(prev=&gt;prev.map((e,idx)=&gt;idx===i?{...e,[campo]:val}:e));</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const guardar=async()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const validas=lista.filter(e=&gt;e.fechaEntrega.trim());</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setGuardando(true);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>await window.db.from("config").upsert([{clave:"entregas_multiples",valor:JSON.stringify(validas)}],{onConflict:"clave"});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setEntregas(validas);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setGuardando(false);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>alert("Entregas gardadas correctamente ✅");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const ahora=new Date();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return(</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style={{background:"#fff",border:"1px solid #eee",borderRadius:14,padding:"20px"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{fontSize:15,fontWeight:700,color:COLOR,marginBottom:4}}&gt;📅 Xestión de entregas&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{fontSize:12.5,color:"#888",marginBottom:18,lineHeight:1.5}}&gt;Engade todas as datas de entrega dispoñibles. Os clientes poderán escoller a que máis lles conveña. As entregas con prazo vencido ocúltanse automaticamente.&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>{lista.map((e,i)=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const vencida=e.fechaLimiteISO&amp;&amp;new Date(e.fechaLimiteISO+"T23:59:59")&lt;ahora;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return(</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div key={i} style={{background:vencida?"#fafafa":"#f8fffe",border:`1.5px solid ${vencida?"#eee":COLOR}`,borderRadius:12,padding:"14px",marginBottom:12,opacity:vencida?0.6:1}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div style={{fontSize:13,fontWeight:700,color:vencida?"#aaa":COLOR}}&gt;Entrega #{i+1} {vencida&amp;&amp;&lt;span style={{fontSize:11,fontWeight:400,color:"#c0392b"}}&gt;(prazo vencido)&lt;/span&gt;}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;button onClick={()=&gt;removeEntrega(i)} style={{background:"none",border:"none",color:"#ccc",fontSize:18,cursor:"pointer",lineHeight:1}}&gt;×&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{marginBottom:10}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div style={{fontSize:12,color:"#555",marginBottom:4,fontWeight:600}}&gt;Data de entrega &lt;span style={{color:"#c0392b"}}&gt;*&lt;/span&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;input type="text" value={e.fechaEntrega} onChange={ev=&gt;updateEntrega(i,"fechaEntrega",ev.target.value)} placeholder="Ex: venres 27 de xuño" style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box"}}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:12,color:"#555",marginBottom:4,fontWeight:600}}&gt;Prazo límite (texto)&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text" value={e.fechaLimite} onChange={ev=&gt;updateEntrega(i,"fechaLimite",ev.target.value)} placeholder="Ex: mércores 25 ás 20:00h" style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box"}}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:12,color:"#555",marginBottom:4,fontWeight:600}}&gt;Prazo límite (data ISO)&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="date" value={e.fechaLimiteISO} onChange={ev=&gt;updateEntrega(i,"fechaLimiteISO",ev.target.value)} style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box",color:"#333"}}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:10.5,color:"#aaa",marginTop:3}}&gt;Para ocultar automáticamente&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>})}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onClick={addEntrega} style={{width:"100%",background:"#f0faf5",color:COLOR,border:`1.5px dashed ${COLOR}`,borderRadius:10,padding:"11px",fontSize:14,fontWeight:600,cursor:"pointer",marginBottom:16}}&gt;+ Engadir entrega&lt;/button&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>{lista.length&gt;0&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{background:"#E8F4FD",border:"1px solid #AED6F1",borderRadius:10,padding:"12px 14px",marginBottom:16}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{fontSize:12,fontWeight:700,color:"#1a5276",marginBottom:8}}&gt;Vista previa do banner:&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;BannerFechas entregas={lista}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>)}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onClick={guardar} disabled={guardando} style={{width:"100%",background:COLOR,color:"#fff",border:"none",borderRadius:12,padding:"13px",fontSize:15,fontWeight:700,cursor:"pointer",opacity:guardando?0.7:1}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{guardando?"Gardando...":"Gardar todas as entregas"}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function Panel({cats,setCats,entregas,setEntregas,onBack}){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [tabP,setTabP]=useState("totales");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [filtroEstado,setFiltroEstado]=useState("todos");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [filtroDia,setFiltroDia]=useState(todayISO);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [filtroEntrega,setFiltroEntrega]=useState("");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [pedidos,setPedidos]=useState([]);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [cargando,setCargando]=useState(true);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [editando,setEditando]=useState(null);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [formProd,setFormProd]=useState({nombre:"",bandeja:"",pBandeja:"",pKilo:"",nota:""});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>useEffect(()=&gt;{cargarPedidos();},[]);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const cargarPedidos=async()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setCargando(true);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const{data,error}=await window.db.from("pedidos").select("*").order("id",{ascending:false});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(!error) setPedidos(data||[]);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setCargando(false);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const CAMPOS=[</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{key:"nombre",label:"Nombre *",type:"text"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{key:"bandeja",label:"Peso bandeja (kg)",type:"number"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{key:"pBandeja",label:"Precio bandeja (€) *",type:"number"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{key:"pKilo",label:"Precio kilo (€) *",type:"number"},</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{key:"nota",label:"Nota (opcional)",type:"text"},</p>
-<p class="p1"><span class="Apple-converted-space">      </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const abrirEditar=(catId,prod)=&gt;{setFormProd({nombre:prod.nombre,bandeja:prod.bandeja||"",pBandeja:prod.pBandeja,pKilo:prod.pKilo,nota:prod.nota||""});setEditando({catId,prodId:prod.id,nuevo:false});};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const abrirNuevo=(catId)=&gt;{setFormProd({nombre:"",bandeja:"",pBandeja:"",pKilo:"",nota:""});setEditando({catId,nuevo:true});};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const guardar=()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const nombre=(formProd.nombre||"").trim();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const pBandeja=parseFloat(String(formProd.pBandeja).replace(",","."));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const pKilo=parseFloat(String(formProd.pKilo).replace(",","."));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const bandeja=formProd.bandeja?parseFloat(String(formProd.bandeja).replace(",",".")):null;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(!nombre||isNaN(pBandeja)||isNaN(pKilo)){alert("Rellena: Nombre, Precio bandeja y Precio kilo.");return;}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const nc=cats.map(cat=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">          </span>if(cat.id!==editando.catId) return cat;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>if(editando.nuevo) return{...cat,productos:[...cat.productos,{id:"custom_"+Date.now(),nombre,bandeja,pBandeja,pKilo,nota:formProd.nota||undefined}]};</p>
-<p class="p1"><span class="Apple-converted-space">          </span>return{...cat,productos:cat.productos.map(p=&gt;p.id===editando.prodId?{...p,nombre,bandeja,pBandeja,pKilo,nota:formProd.nota||undefined}:p)};</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setCats(nc);setEditando(null);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const toggleCategoria=(catId)=&gt;{setCats(cats.map(c=&gt;c.id===catId?{...c,activa:!c.activa}:c));};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const eliminarProd=(catId,prodId)=&gt;{if(!window.confirm("¿Eliminar este producto?"))return;setCats(cats.map(c=&gt;c.id!==catId?c:{...c,productos:c.productos.filter(p=&gt;p.id!==prodId)}));};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const cambiarEstado=async(id,estado)=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>await window.db.from("pedidos").update({estado}).eq("id",id);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setPedidos(prev=&gt;prev.map(p=&gt;p.id===id?{...p,estado}:p));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(estado==="listo"){const pedido=pedidos.find(p=&gt;p.id===id);sendEmailListo(pedido);}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const eliminarPedido=async(id)=&gt;{if(!window.confirm("¿Eliminar este pedido?"))return;await window.db.from("pedidos").delete().eq("id",id);setPedidos(prev=&gt;prev.filter(p=&gt;p.id!==id));};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const eliminarGestionados=async()=&gt;{if(!window.confirm("¿Eliminar todos los gestionados?"))return;await window.db.from("pedidos").delete().eq("estado","listo");setPedidos(prev=&gt;prev.filter(p=&gt;p.estado!=="listo"));};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const entregasEnPedidos=useMemo(()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const set=new Set(pedidos.filter(p=&gt;p.entrega_elegida).map(p=&gt;p.entrega_elegida));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return Array.from(set).sort();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>},[pedidos]);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const filtrados=useMemo(()=&gt;pedidos.filter(p=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const eOk=filtroEstado==="todos"||p.estado===filtroEstado;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const dOk=!filtroDia||p.iso_date===filtroDia;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const enOk=!filtroEntrega||p.entrega_elegida===filtroEntrega;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return eOk&amp;&amp;dOk&amp;&amp;enOk;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}),[pedidos,filtroEstado,filtroDia,filtroEntrega]);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const totalesProd=useMemo(()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const map={};</p>
-<p class="p1"><span class="Apple-converted-space">        </span>filtrados.forEach(p=&gt;(p.productos||[]).forEach(pr=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">          </span>if(!map[pr.nombre]) map[pr.nombre]={nombre:pr.nombre,bandejas:0,kg:0,importe:0};</p>
-<p class="p1"><span class="Apple-converted-space">          </span>map[pr.nombre].bandejas+=pr.bandejas;map[pr.nombre].kg+=pr.kgTotal||0;map[pr.nombre].importe+=pr.subtotal||0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return Object.values(map).sort((a,b)=&gt;b.bandejas-a.bandejas);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>},[filtrados]);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const exportCSV=()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const rows=[["Cliente","Teléfono","Email","Fecha","Entrega","Estado","Producto","Opciones","Uds","Kg","Subtotal","Nota"]];</p>
-<p class="p1"><span class="Apple-converted-space">        </span>filtrados.forEach(p=&gt;(p.productos||[]).forEach(pr=&gt;rows.push([p.nombre,p.telefono,p.email||"",p.fecha,p.entrega_elegida||"",p.estado,pr.nombre,pr.opcion||"",pr.bandejas,(pr.kgTotal||"").toString(),pr.subtotal?eur(pr.subtotal):"",p.nota||""])));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const csv=rows.map(r=&gt;r.map(c=&gt;`"${c}"`).join(",")).join("\n");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="pedidos_carnes.csv";a.click();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const total=pedidos.length,pendientes=pedidos.filter(p=&gt;p.estado==="pendiente").length,confirmados=pedidos.filter(p=&gt;p.estado==="preparando").length,gestionados=pedidos.filter(p=&gt;p.estado==="listo").length;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const tabBtn=(id,lbl)=&gt;(&lt;button onClick={()=&gt;setTabP(id)} style={{padding:"7px 16px",borderRadius:20,border:`1.5px solid ${tabP===id?COLOR:"#ddd"}`,background:tabP===id?COLOR:"#fff",color:tabP===id?"#fff":"#555",fontSize:13,cursor:"pointer",fontWeight:tabP===id?600:400,flexShrink:0}}&gt;{lbl}&lt;/button&gt;);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>return(</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style={{fontFamily:"system-ui,sans-serif",maxWidth:780,margin:"0 auto",paddingBottom:40}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{background:COLOR,padding:"20px",borderRadius:"0 0 16px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{color:"#fff",fontSize:20,fontWeight:700}}&gt;📋 Panel de la tienda&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{color:"rgba(255,255,255,0.82)",fontSize:13,marginTop:3}}&gt;Carnes Ecológicas Mundo Verde&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{display:"flex",gap:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;button onClick={cargarPedidos} style={{background:"rgba(255,255,255,0.18)",border:"none",color:"#fff",borderRadius:20,padding:"7px 14px",cursor:"pointer",fontSize:13}}&gt;🔄&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;button onClick={exportCSV} style={{background:"rgba(255,255,255,0.18)",border:"none",color:"#fff",borderRadius:20,padding:"7px 14px",cursor:"pointer",fontSize:13}}&gt;⬇ CSV&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;button onClick={onBack} style={{background:"rgba(255,255,255,0.18)",border:"none",color:"#fff",borderRadius:20,padding:"7px 14px",cursor:"pointer",fontSize:13}}&gt;← Tienda&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,padding:"24px 20px 8px"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;Stat n={total} label="Total"/&gt;&lt;Stat n={pendientes} label="Pendientes" color="#E74C3C"/&gt;&lt;Stat n={confirmados} label="Confirmados" color={COLOR}/&gt;&lt;Stat n={gestionados} label="Gestionados" color="#3498DB"/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{display:"flex",gap:8,padding:"16px 20px 8px",overflowX:"auto"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{tabBtn("totales","📊 Totales")}{tabBtn("pedidos","📦 Pedidos")}{tabBtn("productos","🛍 Produtos")}{tabBtn("gestionar","⚙️ Xestionar")}{tabBtn("fechas","📅 Entregas")}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>{tabP!=="gestionar"&amp;&amp;tabP!=="fechas"&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 20px",flexWrap:"wrap"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;select value={filtroEstado} onChange={e=&gt;setFiltroEstado(e.target.value)} style={{padding:"7px 12px",borderRadius:10,border:"1.5px solid #ddd",fontSize:13,background:"#fff",color:"#333"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{["todos","pendiente","preparando","listo"].map(e=&gt;&lt;option key={e} value={e}&gt;{{todos:"Todos los estados",pendiente:"Pendiente",preparando:"Preparando",listo:"Listo"}[e]}&lt;/option&gt;)}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/select&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;input type="date" value={filtroDia} onChange={e=&gt;setFiltroDia(e.target.value)} style={{padding:"7px 12px",borderRadius:10,border:"1.5px solid #ddd",fontSize:13,background:"#fff",color:"#333"}}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>{filtroDia&amp;&amp;&lt;button onClick={()=&gt;setFiltroDia("")} style={{fontSize:12,color:"#aaa",background:"none",border:"none",cursor:"pointer"}}&gt;✕ Fecha&lt;/button&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>{entregasEnPedidos.length&gt;0&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;select value={filtroEntrega} onChange={e=&gt;setFiltroEntrega(e.target.value)} style={{padding:"7px 12px",borderRadius:10,border:"1.5px solid #ddd",fontSize:13,background:"#fff",color:"#333",maxWidth:180}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;option value=""&gt;Todas las entregas&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>{entregasEnPedidos.map(e=&gt;&lt;option key={e} value={e}&gt;{e}&lt;/option&gt;)}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/select&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>{filtroEntrega&amp;&amp;&lt;button onClick={()=&gt;setFiltroEntrega("")} style={{fontSize:12,color:"#aaa",background:"none",border:"none",cursor:"pointer"}}&gt;✕ Entrega&lt;/button&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;span style={{marginLeft:"auto",fontSize:13,color:"#aaa"}}&gt;{filtrados.length} pedido{filtrados.length!==1?"s":""}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>{pedidos.filter(p=&gt;p.estado==="listo").length&gt;0&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button onClick={eliminarGestionados} style={{fontSize:12,color:"#c0392b",background:"none",border:"1px solid #e8b5b2",borderRadius:8,padding:"4px 10px",cursor:"pointer"}}&gt;🗑 Borrar gestionados&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>)}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{padding:"8px 20px"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{cargando&amp;&amp;&lt;div style={{textAlign:"center",padding:40,color:"#aaa",fontSize:14}}&gt;Cargando...&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{!cargando&amp;&amp;tabP!=="gestionar"&amp;&amp;tabP!=="fechas"&amp;&amp;filtrados.length===0&amp;&amp;&lt;div style={{textAlign:"center",padding:40,color:"#bbb",fontSize:14}}&gt;No hay datos&lt;/div&gt;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>{!cargando&amp;&amp;(tabP==="totales"||tabP==="productos")&amp;&amp;filtrados.length&gt;0&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{background:"#fff",border:"1px solid #eee",borderRadius:14,overflow:"hidden"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{filtroEntrega&amp;&amp;&lt;div style={{padding:"8px 16px",background:COLOR_LIGHT,fontSize:12,color:COLOR,fontWeight:600}}&gt;📦 Filtrando por entrega: {filtroEntrega}&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{display:"grid",gridTemplateColumns:"1fr auto auto auto",gap:8,padding:"10px 16px",background:"#f9f9f9",fontSize:12,fontWeight:600,color:"#888"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;span&gt;Producto&lt;/span&gt;&lt;span style={{textAlign:"right"}}&gt;Uds&lt;/span&gt;&lt;span style={{textAlign:"right"}}&gt;Kg&lt;/span&gt;&lt;span style={{textAlign:"right"}}&gt;Importe&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{totalesProd.map((pr,i)=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto auto auto",gap:8,padding:"10px 16px",borderTop:"1px solid #f2f2f2"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span style={{fontSize:13.5,color:"#222"}}&gt;{pr.nombre}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span style={{fontSize:13,fontWeight:600,color:COLOR,textAlign:"right"}}&gt;{pr.bandejas}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span style={{fontSize:13,color:"#888",textAlign:"right",minWidth:55}}&gt;{pr.kg&gt;0?`≈${pr.kg.toFixed(2)}`:"—"}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span style={{fontSize:13,fontWeight:600,color:"#333",textAlign:"right",minWidth:70}}&gt;{pr.importe&gt;0?eur(pr.importe):"—"}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{display:"grid",gridTemplateColumns:"1fr auto auto auto",gap:8,padding:"12px 16px",borderTop:"2px solid #eee",background:"#f9f9f9"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;span style={{fontSize:13,fontWeight:700,color:"#333"}}&gt;TOTAL&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;span style={{fontSize:13,fontWeight:700,color:COLOR,textAlign:"right"}}&gt;{totalesProd.reduce((a,p)=&gt;a+p.bandejas,0)}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;span style={{fontSize:13,fontWeight:700,color:"#555",textAlign:"right"}}&gt;≈{totalesProd.reduce((a,p)=&gt;a+p.kg,0).toFixed(2)}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;span style={{fontSize:13,fontWeight:700,color:COLOR,textAlign:"right"}}&gt;{eur(totalesProd.reduce((a,p)=&gt;a+p.importe,0))}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>)}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>{!cargando&amp;&amp;tabP==="pedidos"&amp;&amp;filtrados.map(p=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div key={p.id} style={{background:"#fff",border:"1px solid #eee",borderRadius:14,padding:"14px 16px",marginBottom:10}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontWeight:600,fontSize:14,color:"#222"}}&gt;{p.nombre}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:12,color:"#888",marginTop:2}}&gt;{p.telefono}{p.email?` · ${p.email}`:""} · {p.fecha}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{p.entrega_elegida&amp;&amp;&lt;div style={{fontSize:12,color:COLOR,fontWeight:600,marginTop:3}}&gt;📦 Entrega: {p.entrega_elegida}&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;span style={{display:"inline-block",padding:"3px 12px",borderRadius:20,fontSize:11,fontWeight:600,background:p.estado==="listo"?"#eafaf1":p.estado==="preparando"?"#fff8e1":COLOR_LIGHT,color:p.estado==="listo"?"#1a7a3c":p.estado==="preparando"?"#b8860b":COLOR}}&gt;{p.estado}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{fontSize:13,color:"#555",marginTop:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>{(p.productos||[]).map((pr,i)=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div key={i} style={{display:"flex",justifyContent:"space-between",marginBottom:2}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;span&gt;• {pr.nombre}{pr.opcion?` · ${pr.opcion}`:""} — {pr.bandejas} {pr.esLote?"lote(s)":"bandeja(s)"}{pr.kgTotal?` (≈${pr.kgTotal} kg)`:""}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>{pr.subtotal?&lt;span style={{color:COLOR,fontWeight:600}}&gt;{eur(pr.subtotal)}&lt;/span&gt;:null}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{p.nota&amp;&amp;&lt;div style={{fontSize:12,color:"#999",marginTop:4}}&gt;Nota: {p.nota}&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:10}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div style={{display:"flex",gap:6}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{["pendiente","preparando","listo"].map(e=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;button key={e} onClick={()=&gt;cambiarEstado(p.id,e)} style={{padding:"4px 12px",borderRadius:20,border:`1.5px solid ${p.estado===e?COLOR:"#ddd"}`,background:p.estado===e?COLOR_LIGHT:"#fff",color:p.estado===e?COLOR:"#888",fontSize:12,cursor:"pointer",fontWeight:p.estado===e?600:400}}&gt;{e}&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div style={{display:"flex",alignItems:"center",gap:10}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span style={{fontSize:14,fontWeight:700,color:COLOR}}&gt;{eur(p.total)}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onClick={()=&gt;eliminarPedido(p.id)} style={{background:"none",border:"none",color:"#ccc",fontSize:16,cursor:"pointer"}}&gt;🗑&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>))}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>{tabP==="fechas"&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;PanelFechas entregas={entregas} setEntregas={setEntregas}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>)}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>{tabP==="gestionar"&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{editando&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div style={{background:"#fff",border:`1.5px solid ${COLOR}`,borderRadius:14,padding:"16px",marginBottom:16}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:14,fontWeight:700,color:"#222",marginBottom:4}}&gt;{editando.nuevo?"➕ Novo produto":"✏️ Editar produto"}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:12,color:"#888",marginBottom:12}}&gt;Categoría: &lt;strong&gt;{cats.find(c=&gt;c.id===editando.catId)?.nombre}&lt;/strong&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{CAMPOS.map(c=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;div key={c.key} style={{marginBottom:10}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div style={{fontSize:12,color:"#555",marginBottom:3}}&gt;{c.label}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type={c.type} step="0.01" value={formProd[c.key]||""} onChange={e=&gt;setFormProd(prev=&gt;({...prev,[c.key]:e.target.value}))} style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box"}}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{display:"flex",gap:8,marginTop:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;button onClick={guardar} style={{flex:1,background:COLOR,color:"#fff",border:"none",borderRadius:10,padding:"11px",fontSize:14,fontWeight:600,cursor:"pointer"}}&gt;Gardar&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;button onClick={()=&gt;setEditando(null)} style={{flex:1,background:"#f5f5f5",color:"#555",border:"none",borderRadius:10,padding:"11px",fontSize:14,cursor:"pointer"}}&gt;Cancelar&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{cats.map(cat=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div key={cat.id} style={{marginBottom:20}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;div style={{fontSize:14,fontWeight:700,color:cat.activa!==false?COLOR:"#aaa"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>{cat.emoji} {cat.nombre} {cat.activa===false&amp;&amp;&lt;span style={{fontSize:11,fontWeight:400}}&gt;(oculta)&lt;/span&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;div style={{display:"flex",gap:6}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onClick={()=&gt;toggleCategoria(cat.id)} style={{fontSize:12,background:cat.activa!==false?"#fff8e1":COLOR_LIGHT,color:cat.activa!==false?"#b8860b":COLOR,border:`1px solid ${cat.activa!==false?"#FFE082":COLOR}`,borderRadius:8,padding:"4px 12px",cursor:"pointer"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                          </span>{cat.activa!==false?"🙈 Ocultar":"👁 Mostrar"}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onClick={()=&gt;abrirNuevo(cat.id)} style={{fontSize:12,background:COLOR,color:"#fff",border:"none",borderRadius:8,padding:"5px 14px",cursor:"pointer"}}&gt;+ Engadir&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{cat.productos.map(prod=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;div key={prod.id} style={{background:"#fff",border:"1px solid #eee",borderRadius:10,padding:"10px 14px",marginBottom:6,display:"flex",alignItems:"center",gap:8,opacity:cat.activa===false?0.5:1}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div style={{flex:1}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                          </span>&lt;div style={{fontSize:13,fontWeight:500,color:"#222"}}&gt;{prod.nombre}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                          </span>&lt;div style={{fontSize:11,color:"#888"}}&gt;{prod.bandeja?`${prod.bandeja} kg · `:""}{eur(prod.pBandeja)}/bandeja · {eur(prod.pKilo)}/kg{prod.nota?` · ${prod.nota}`:""}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onClick={()=&gt;abrirEditar(cat.id,prod)} style={{background:"none",border:`1px solid ${COLOR}`,color:COLOR,borderRadius:8,padding:"4px 10px",fontSize:12,cursor:"pointer"}}&gt;✏️&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onClick={()=&gt;eliminarProd(cat.id,prod.id)} style={{background:"none",border:"1px solid #e8b5b2",color:"#c0392b",borderRadius:8,padding:"4px 10px",fontSize:12,cursor:"pointer"}}&gt;🗑&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function App(){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [cats,setCatsState]=useState(CATEGORIAS_INIT);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [catsId,setCatsId]=useState(null);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [bandejas,setBandejas]=useState({});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [opcionesLote,setOpcionesLote]=useState({});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [catActiva,setCatActiva]=useState("todas");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [modal,setModal]=useState(false);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [enviado,setEnviado]=useState(false);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [form,setForm]=useState({nombre:"",telefono:"",email:"",nota:""});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [entregaElegida,setEntregaElegida]=useState("");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [panel,setPanel]=useState(false);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [panelPass,setPanelPass]=useState(false);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [passInput,setPassInput]=useState("");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [passError,setPassError]=useState(false);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const [entregas,setEntregas]=useState([]);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>useEffect(()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>window.db.from("categorias").select("*").limit(1).then(({data})=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">          </span>if(data&amp;&amp;data.length&gt;0){setCatsState(data[0].data);setCatsId(data[0].id);}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>window.db.from("config").select("*").then(({data})=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">          </span>if(data) data.forEach(r=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(r.clave==="entregas_multiples"){</p>
-<p class="p1"><span class="Apple-converted-space">              </span>try{setEntregas(JSON.parse(r.valor)||[]);}catch(e){}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if(r.clave==="fecha_entrega"&amp;&amp;r.valor){</p>
-<p class="p1"><span class="Apple-converted-space">              </span>setEntregas(prev=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if(prev.length&gt;0) return prev;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return [{fechaEntrega:r.valor,fechaLimite:"",fechaLimiteISO:""}];</p>
-<p class="p1"><span class="Apple-converted-space">              </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>},[]);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const setCats=async(nc)=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setCatsState(nc);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(catsId){await window.db.from("categorias").update({data:nc}).eq("id",catsId);}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else{const{data}=await window.db.from("categorias").insert([{data:nc}]).select();if(data?.[0])setCatsId(data[0].id);}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const abrirModal=()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const ahora=new Date();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const vigentes=entregas.filter(e=&gt;!e.fechaLimiteISO||new Date(e.fechaLimiteISO+"T23:59:59")&gt;=ahora);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(vigentes.length===1) setEntregaElegida(vigentes[0].fechaEntrega);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else setEntregaElegida("");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setModal(true);setEnviado(false);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const catsActivas=cats.filter(c=&gt;c.activa!==false);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const allProds=cats.flatMap(c=&gt;c.productos);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const seleccionados=allProds.filter(p=&gt;(bandejas[p.id]||0)&gt;0);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const totalPedido=useMemo(()=&gt;seleccionados.reduce((acc,p)=&gt;acc+(bandejas[p.id]||0)*p.pBandeja,0),[seleccionados,bandejas]);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const catsOrdenadas=catsActivas.map(c=&gt;({...c,productos:[...c.productos].sort((a,b)=&gt;a.nombre.localeCompare(b.nombre,"es"))}));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const catsFiltradas=catActiva==="todas"?catsOrdenadas:catsOrdenadas.filter(c=&gt;c.id===catActiva);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const setCant=(id,val)=&gt;setBandejas(prev=&gt;({...prev,[id]:Math.max(0,Math.round(parseFloat(val)||0))}));</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const ahora=new Date();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const entregasVigentes=entregas.filter(e=&gt;!e.fechaLimiteISO||new Date(e.fechaLimiteISO+"T23:59:59")&gt;=ahora);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const requiereEntrega=entregasVigentes.length&gt;1;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const puedeEnviar=form.nombre&amp;&amp;form.telefono&amp;&amp;form.email&amp;&amp;(!requiereEntrega||entregaElegida);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const enviar=async()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(!puedeEnviar) return;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const nuevo={</p>
-<p class="p1"><span class="Apple-converted-space">          </span>nombre:form.nombre,telefono:form.telefono,email:form.email,nota:form.nota,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>fecha:new Date().toLocaleString("es-ES"),iso_date:new Date().toISOString().slice(0,10),</p>
-<p class="p1"><span class="Apple-converted-space">          </span>estado:"pendiente",total:totalPedido,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>entrega_elegida:entregaElegida||null,</p>
-<p class="p1"><span class="Apple-converted-space">          </span>productos:seleccionados.map(p=&gt;({</p>
-<p class="p1"><span class="Apple-converted-space">            </span>nombre:p.nombre,bandejas:bandejas[p.id],esLote:!!p.opciones,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>kgTotal:p.bandeja?+(bandejas[p.id]*p.bandeja).toFixed(2):null,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>subtotal:+(bandejas[p.id]*p.pBandeja).toFixed(2),</p>
-<p class="p1"><span class="Apple-converted-space">            </span>opcion:opcionesLote[p.id]?Object.values(opcionesLote[p.id]).join(" + "):null</p>
-<p class="p1"><span class="Apple-converted-space">          </span>}))</p>
-<p class="p1"><span class="Apple-converted-space">        </span>};</p>
-<p class="p1"><span class="Apple-converted-space">        </span>await window.db.from("pedidos").insert([nuevo]);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>sendEmail({...nuevo,entregaElegida:nuevo.entrega_elegida});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setEnviado(true);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const entrarPanel=()=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(passInput===PASS){setPanel(true);setPassError(false);setPanelPass(false);setPassInput("");}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>else setPassError(true);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>if(panel) return &lt;Panel cats={cats} setCats={setCats} entregas={entregas} setEntregas={setEntregas} onBack={()=&gt;setPanel(false)}/&gt;;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const C=COLOR;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return(</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style={{fontFamily:"system-ui,sans-serif",maxWidth:780,margin:"0 auto",paddingBottom:80}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{background:C,padding:"22px 20px 18px",borderRadius:"0 0 16px 16px"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{color:"#fff",fontSize:22,fontWeight:600}}&gt;🌿 Carnes Ecológicas Mundo Verde&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{color:"rgba(255,255,255,0.82)",fontSize:13,marginTop:4}}&gt;Reserva de carnes frescas de producción ecológica · Pontevedra&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span style={{display:"inline-block",background:"rgba(255,255,255,0.18)",color:"#fff",fontSize:11,padding:"2px 10px",borderRadius:20,marginTop:10}}&gt;Producción 100% ecológica&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{display:"flex",justifyContent:"flex-end",padding:"10px 16px 0"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span onClick={()=&gt;setPanelPass(v=&gt;!v)} style={{fontSize:12,color:"#aaa",cursor:"pointer",textDecoration:"underline"}}&gt;Acceso panel&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>{panelPass&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{margin:"8px 16px",background:"#fff",border:"1px solid #eee",borderRadius:12,padding:"14px 16px"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{fontSize:13,fontWeight:600,marginBottom:8,color:"#333"}}&gt;Contraseña del panel&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{display:"flex",gap:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;input type="password" value={passInput} onChange={e=&gt;setPassInput(e.target.value)} onKeyDown={e=&gt;e.key==="Enter"&amp;&amp;entrarPanel()} placeholder="Contraseña" style={{flex:1,padding:"10px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,outline:"none"}}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button onClick={entrarPanel} style={{background:C,color:"#fff",border:"none",borderRadius:10,padding:"0 16px",cursor:"pointer",fontSize:14}}&gt;Entrar&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>{passError&amp;&amp;&lt;div style={{fontSize:12,color:"#c0392b",marginTop:6}}&gt;Contraseña incorrecta&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>)}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{margin:"12px 16px 0"}}&gt;&lt;Aviso/&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>{entregasVigentes.length&gt;0&amp;&amp;&lt;div style={{margin:"10px 16px 0"}}&gt;&lt;BannerFechas entregas={entregas}/&gt;&lt;/div&gt;}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style={{display:"flex",gap:8,overflowX:"auto",padding:"14px 16px 4px",scrollbarWidth:"none"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>{[{id:"todas",nombre:"Todas",emoji:""},...catsActivas].map(c=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;button key={c.id} onClick={()=&gt;setCatActiva(c.id)} style={{flexShrink:0,padding:"6px 14px",borderRadius:20,border:`1.5px solid ${catActiva===c.id?C:"#ddd"}`,background:catActiva===c.id?C:"#fff",color:catActiva===c.id?"#fff":"#555",fontSize:13,cursor:"pointer",fontWeight:catActiva===c.id?600:400}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{c.emoji?`${c.emoji} `:""}{c.nombre}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>{catsFiltradas.map(cat=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div key={cat.id} style={{margin:"18px 16px 0"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{fontSize:15,fontWeight:600,color:C,marginBottom:10}}&gt;{cat.emoji} {cat.nombre} · producción ecológica&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>{cat.productos.map(prod=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;ProductCard key={prod.id} prod={prod} qty={bandejas[prod.id]||0} setCant={setCant} opcionesLote={opcionesLote} setOpcionesLote={setOpcionesLote}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>))}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>{seleccionados.length&gt;0&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;button onClick={abrirModal} style={{position:"fixed",bottom:16,left:"50%",transform:"translateX(-50%)",background:C,color:"#fff",border:"none",borderRadius:24,padding:"13px 28px",fontSize:15,fontWeight:600,cursor:"pointer",boxShadow:"0 4px 16px rgba(45,106,79,0.35)",zIndex:100,whiteSpace:"nowrap"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>Ver reserva ({seleccionados.length} prod.) · {eur(totalPedido)} →</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>)}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>{modal&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.45)",display:"flex",alignItems:"flex-end",justifyContent:"center",zIndex:200}} onClick={e=&gt;e.target===e.currentTarget&amp;&amp;setModal(false)}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div style={{background:"#fff",borderRadius:"20px 20px 0 0",padding:"24px 20px 32px",width:"100%",maxWidth:780,maxHeight:"85vh",overflowY:"auto"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>{!enviado?(</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:17,fontWeight:700,color:"#222",marginBottom:16}}&gt;A túa reserva&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{seleccionados.map(p=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>const qty=bandejas[p.id],kg=p.bandeja?+(qty*p.bandeja).toFixed(2):null,sub=+(qty*p.pBandeja).toFixed(2),opcion=opcionesLote[p.id]?Object.values(opcionesLote[p.id]).join(" + "):null;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>return(</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div key={p.id} style={{padding:"8px 0",borderBottom:"1px solid #f2f2f2"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                          </span>&lt;div style={{display:"flex",justifyContent:"space-between",gap:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div style={{flex:1}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                              </span>&lt;div style={{color:"#333",fontSize:13.5}}&gt;{p.nombre}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                              </span>&lt;div style={{fontSize:11,color:"#888"}}&gt;{qty} {p.opciones?"lote(s)":`bandeja${qty&gt;1?"s":""}`}{kg?` · ≈${kg} kg`:""}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                              </span>{opcion&amp;&amp;&lt;div style={{fontSize:11,color:C,fontWeight:600,marginTop:2}}&gt;→ {opcion}&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span style={{color:C,fontWeight:600,flexShrink:0}}&gt;{eur(sub)}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                          </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>})}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{display:"flex",justifyContent:"space-between",padding:"12px 0 4px",fontSize:15,fontWeight:700,borderTop:"2px solid #eee",marginTop:4}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;span style={{color:"#333"}}&gt;Total orientativo&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;span style={{color:C}}&gt;{eur(totalPedido)}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{margin:"12px 0 8px"}}&gt;&lt;Aviso/&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{entregasVigentes.length&gt;0&amp;&amp;(</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;div style={{marginBottom:4,marginTop:8}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;SelectorEntrega entregas={entregas} entregaElegida={entregaElegida} setEntregaElegida={setEntregaElegida}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>{requiereEntrega&amp;&amp;!entregaElegida&amp;&amp;&lt;div style={{fontSize:12,color:"#c0392b",marginTop:-8,marginBottom:8}}&gt;* Debes escoller unha data de entrega&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>)}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{marginBottom:6,fontSize:14,fontWeight:600,color:"#333"}}&gt;Os teus datos&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{["nombre","telefono","email","nota"].map(f=&gt;(</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;input key={f} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,marginBottom:12,boxSizing:"border-box",outline:"none"}}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>placeholder={f==="nombre"?"Nome *":f==="telefono"?"Teléfono *":f==="email"?"Email *":"Nota ou indicación (opcional)"}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>value={form[f]} onChange={e=&gt;setForm(prev=&gt;({...prev,[f]:e.target.value}))}/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>))}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onClick={enviar} disabled={!puedeEnviar} style={{width:"100%",background:puedeEnviar?C:"#ccc",color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:puedeEnviar?"pointer":"not-allowed"}}&gt;Confirmar reserva&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onClick={()=&gt;setModal(false)} style={{width:"100%",background:"#f5f5f5",color:"#555",border:"none",borderRadius:12,padding:"12px",fontSize:14,cursor:"pointer",marginTop:8}}&gt;Seguir escollendo&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>):(</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div style={{textAlign:"center",padding:"20px 10px"}}&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:48,marginBottom:12}}&gt;✅&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:20,fontWeight:700,color:C,marginBottom:8}}&gt;Reserva confirmada!&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>{entregaElegida&amp;&amp;&lt;div style={{fontSize:14,color:C,fontWeight:600,marginBottom:8}}&gt;📦 Entrega: {entregaElegida}&lt;/div&gt;}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style={{fontSize:14,color:"#666"}}&gt;Xa recibimos o teu pedido, {form.nombre}. Enviámosche un email de confirmación. En breve poñerémonos en contacto contigo para coordinar a recollida.&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onClick={()=&gt;{setModal(false);setBandejas({});setOpcionesLote({});setForm({nombre:"",telefono:"",email:"",nota:""});setEntregaElegida("");}} style={{width:"100%",background:C,color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:"pointer",marginTop:20}}&gt;Nova reserva&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>)}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>ReactDOM.createRoot(document.getElementById("root")).render(&lt;App/&gt;);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+  <div id="root"></div>
+  <script>
+    emailjs.init({ publicKey: "z790C6rjbbv3l6XoD" });
+    const db = supabase.createClient(
+      "https://khismajlbrwyzxclzrlj.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtoaXNtYWpsYnJ3eXp4Y2x6cmxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MDMyNTgsImV4cCI6MjA5NjA3OTI1OH0.nS1wBFsDLKfFx1h-A7QVFaLOtbS6CcSZvqD_fDC82bw"
+    );
+    window.db = db;
+  </script>
+  <script type="text/babel">
+    const { useState, useMemo, useEffect } = React;
+
+    const CATEGORIAS_INIT = [
+      { id:"pollo", nombre:"Pollo", emoji:"🐔", activa:true, productos:[
+        {id:"p1",nombre:"Pollo entero",bandeja:2,pBandeja:33.38,pKilo:16.64},
+        {id:"p2",nombre:"Medio pollo",bandeja:1,pBandeja:17.89,pKilo:17.89},
+        {id:"p3",nombre:"Pollo troceado",bandeja:1,pBandeja:19.67,pKilo:19.67},
+        {id:"p4",nombre:"Pechuga entera",bandeja:0.38,pBandeja:14.31,pKilo:37.66},
+        {id:"p5",nombre:"Pechuga fileteada",bandeja:0.38,pBandeja:14.90,pKilo:39.21},
+        {id:"p6",nombre:"Picada de pollo",bandeja:0.38,pBandeja:10.60,pKilo:27.89},
+        {id:"p7",nombre:"Contramuslo s/hueso s/piel",bandeja:0.38,pBandeja:10.00,pKilo:26.34},
+        {id:"p8",nombre:"Contramuslo c/hueso c/piel",bandeja:0.4,pBandeja:9.07,pKilo:22.69},
+        {id:"p9",nombre:"Jamoncitos (Cat A)",bandeja:0.4,pBandeja:8.52,pKilo:21.30},
+        {id:"p10",nombre:"Muslo de pollo",bandeja:0.36,pBandeja:7.66,pKilo:21.30},
+        {id:"p11",nombre:"Churrasco de pollo",bandeja:0.38,pBandeja:10.15,pKilo:26.72},
+        {id:"p12",nombre:"Alas de pollo",bandeja:0.4,pBandeja:7.00,pKilo:17.50},
+        {id:"p13",nombre:"Carcasa de pollo",bandeja:0.25,pBandeja:2.05,pKilo:8.19},
+      ]},
+      { id:"pavo", nombre:"Pavo", emoji:"🦃", activa:true, productos:[
+        {id:"pv1",nombre:"Pechuga entera de pavo",bandeja:0.4,pBandeja:14.72,pKilo:36.80},
+        {id:"pv2",nombre:"Pechuga fileteada de pavo",bandeja:0.38,pBandeja:14.72,pKilo:38.74},
+        {id:"pv3",nombre:"Contramuslo deshuesado de pavo",bandeja:0.38,pBandeja:9.10,pKilo:23.93},
+        {id:"pv4",nombre:"Picada de pavo",bandeja:0.38,pBandeja:9.42,pKilo:24.79},
+        {id:"pv5",nombre:"Estofado de pavo",bandeja:0.38,pBandeja:9.30,pKilo:24.48},
+      ]},
+      { id:"cerdo", nombre:"Cerdo", emoji:"🐷", activa:true, productos:[
+        {id:"c1",nombre:"Solomillo de cerdo",bandeja:0.5,pBandeja:15.45,pKilo:30.91},
+        {id:"c2",nombre:"Presa de cerdo",bandeja:0.38,pBandeja:10.56,pKilo:27.81},
+        {id:"c3",nombre:"Secreto de cerdo",bandeja:0.38,pBandeja:12.45,pKilo:32.77},
+        {id:"c4",nombre:"Pluma de cerdo",bandeja:0.38,pBandeja:11.51,pKilo:30.29},
+        {id:"c5",nombre:"Lomo de cerdo",bandeja:0.38,pBandeja:11.18,pKilo:29.44},
+        {id:"c6",nombre:"Lomo fileteado de cerdo",bandeja:0.38,pBandeja:11.77,pKilo:30.99},
+        {id:"c7",nombre:"Jamón de cerdo",bandeja:0.38,pBandeja:10.33,pKilo:27.19},
+        {id:"c8",nombre:"Jamón fileteado de cerdo",bandeja:0.38,pBandeja:11.18,pKilo:29.44},
+        {id:"c9",nombre:"Chuletas de cerdo",bandeja:0.38,pBandeja:10.00,pKilo:26.34},
+        {id:"c10",nombre:"Cabeza de lomo",bandeja:0.38,pBandeja:9.15,pKilo:24.09},
+        {id:"c11",nombre:"Cabeza de lomo fileteada",bandeja:0.38,pBandeja:9.74,pKilo:25.64},
+        {id:"c12",nombre:"Magro pieza de cerdo",bandeja:0.38,pBandeja:8.21,pKilo:21.61},
+        {id:"c13",nombre:"Magro troceado de cerdo",bandeja:0.38,pBandeja:8.41,pKilo:22.15},
+        {id:"c14",nombre:"Picada de cerdo",bandeja:0.38,pBandeja:8.56,pKilo:22.54},
+        {id:"c15",nombre:"Costillas de cerdo",bandeja:0.38,pBandeja:7.59,pKilo:19.98},
+        {id:"c16",nombre:"Panceta de cerdo",bandeja:0.38,pBandeja:7.20,pKilo:18.97},
+        {id:"c17",nombre:"Tocino de papada",bandeja:0.38,pBandeja:4.41,pKilo:11.62},
+        {id:"c18",nombre:"Carrillera de cerdo",bandeja:0.38,pBandeja:11.46,pKilo:30.17},
+        {id:"c19",nombre:"Manitas de cerdo",bandeja:0.5,pBandeja:6.20,pKilo:12.40},
+      ]},
+      { id:"ternera", nombre:"Ternera", emoji:"🐄", activa:true, productos:[
+        {id:"t1",nombre:"Solomillo cortado 400g",bandeja:0.38,pBandeja:35.50,pKilo:93.48},
+        {id:"t2",nombre:"Vacío de ternera",bandeja:0.75,pBandeja:27.83,pKilo:37.11},
+        {id:"t3",nombre:"Lomo fileteado",bandeja:0.38,pBandeja:24.62,pKilo:64.79},
+        {id:"t4",nombre:"Lomo entrecot",bandeja:0.38,pBandeja:25.65,pKilo:67.51},
+        {id:"t5",nombre:"Chuletón",bandeja:0.7,pBandeja:27.75,pKilo:39.67},
+        {id:"t6",nombre:"Extra pieza",bandeja:0.38,pBandeja:11.95,pKilo:31.45},
+        {id:"t7",nombre:"Extra fileteada",bandeja:0.38,pBandeja:12.95,pKilo:34.09},
+        {id:"t8",nombre:"Primera pieza",bandeja:0.38,pBandeja:11.20,pKilo:29.44},
+        {id:"t9",nombre:"Carpaccio de ternera",bandeja:0.2,pBandeja:6.90,pKilo:34.55},
+        {id:"t10",nombre:"Primera fileteada",bandeja:0.38,pBandeja:12.24,pKilo:32.23},
+        {id:"t11",nombre:"Magro troceado de ternera",bandeja:0.38,pBandeja:10.77,pKilo:28.35},
+        {id:"t12",nombre:"Magro pieza de ternera",bandeja:0.38,pBandeja:10.48,pKilo:27.58},
+        {id:"t13",nombre:"Aguja pieza",bandeja:0.38,pBandeja:10.60,pKilo:27.89},
+        {id:"t14",nombre:"Aguja fileteada",bandeja:0.38,pBandeja:11.50,pKilo:30.29},
+        {id:"t15",nombre:"Picada de ternera (<10% grasa)",bandeja:0.38,pBandeja:10.89,pKilo:28.66},
+        {id:"t16",nombre:"Falda pieza de ternera",bandeja:0.38,pBandeja:9.15,pKilo:24.09},
+        {id:"t17",nombre:"Osobuco de ternera",bandeja:0.4,pBandeja:10.40,pKilo:26.03},
+        {id:"t18",nombre:"Jarrete pieza",bandeja:0.38,pBandeja:10.24,pKilo:26.96},
+        {id:"t19",nombre:"Churrasco de ternera",bandeja:0.4,pBandeja:8.86,pKilo:22.15},
+        {id:"t20",nombre:"Costilla centro de ternera",bandeja:0.4,pBandeja:8.54,pKilo:21.37},
+        {id:"t21",nombre:"Menudo de ternera",bandeja:0.38,pBandeja:4.70,pKilo:12.38},
+        {id:"t22",nombre:"Rabo de ternera",bandeja:0.4,pBandeja:12.30,pKilo:30.75},
+        {id:"t23",nombre:"Lengua de ternera",bandeja:0.38,pBandeja:10.71,pKilo:28.20},
+        {id:"t24",nombre:"Riñones de ternera",bandeja:0.38,pBandeja:5.89,pKilo:15.48},
+        {id:"t25",nombre:"Hígado fileteado de ternera",bandeja:0.38,pBandeja:8.23,pKilo:21.68},
+        {id:"t26",nombre:"Hueso de ternera (canilla)",bandeja:0.4,pBandeja:4.75,pKilo:11.83},
+        {id:"t27",nombre:"Carrillera de ternera",bandeja:0.4,pBandeja:20.67,pKilo:51.69},
+        {id:"t28",nombre:"Picaña de ternera",bandeja:0.4,pBandeja:23.40,pKilo:58.82},
+        {id:"t29",nombre:"Entraña de ternera",bandeja:0.38,pBandeja:13.89,pKilo:36.57},
+        {id:"t30",nombre:"Tomahawk madurado retinta",bandeja:1,pBandeja:39.59,pKilo:39.59},
+        {id:"t31",nombre:"Lingote de presa retinta",bandeja:0.38,pBandeja:15.20,pKilo:39.98},
+      ]},
+      { id:"cordero", nombre:"Cordero", emoji:"🐑", activa:true, productos:[
+        {id:"co1",nombre:"Chuletas de cordero",bandeja:0.38,pBandeja:18.25,pKilo:48.05},
+        {id:"co2",nombre:"Pierna de cordero",bandeja:1.4,pBandeja:52.38,pKilo:37.42},
+        {id:"co3",nombre:"Chuletas pierna de cordero",bandeja:0.38,pBandeja:16.66,pKilo:43.86},
+        {id:"co4",nombre:"Brazuelo de cordero",bandeja:1,pBandeja:43.78,pKilo:43.78},
+        {id:"co5",nombre:"Falda de cordero",bandeja:0.38,pBandeja:8.12,pKilo:21.37},
+        {id:"co6",nombre:"Chuletitas de cuello",bandeja:0.38,pBandeja:8.35,pKilo:21.99},
+        {id:"co7",nombre:"Hígado de cordero",bandeja:0.38,pBandeja:5.70,pKilo:15.02},
+      ]},
+      { id:"chotoiba", nombre:"Chotoiba", emoji:"🐂", activa:true, productos:[
+        {id:"ch1",nombre:"Lote A — 3 kg",bandeja:3,pBandeja:61.50,pKilo:20.50,nota:"guisar + asar fijos · 20,50€/kg",opciones:[{label:"Elige 1 kg:",choices:["Chuletas","Filetes"]}]},
+        {id:"ch2",nombre:"Lote B — 3 kg",bandeja:3,pBandeja:65.85,pKilo:21.95,nota:"chuletas + filetes fijos · 21,95€/kg",opciones:[{label:"Elige 1 kg:",choices:["Carne para asar","Carne para guisar"]}]},
+        {id:"ch3",nombre:"Lote C — 3 kg",bandeja:3,pBandeja:61.50,pKilo:20.50,nota:"picada fija · 20,50€/kg",opciones:[{label:"Elige 1 kg:",choices:["Chuletas","Filetes"]},{label:"Elige 1 kg:",choices:["Carne para asar","Carne para guisar"]}]},
+        {id:"ch4",nombre:"Lote D — 5 kg",bandeja:5,pBandeja:97.50,pKilo:19.50,nota:"todo fijo · 19,50€/kg"},
+        {id:"ch5",nombre:"Chuleta / Chuletón",bandeja:1,pBandeja:25.50,pKilo:25.50,nota:"mínimo 1 kg"},
+        {id:"ch6",nombre:"Filete",bandeja:1,pBandeja:22.50,pKilo:22.50,nota:"mínimo 1 kg"},
+        {id:"ch7",nombre:"Carne de asar sin hueso",bandeja:1,pBandeja:20.95,pKilo:20.95,nota:"mínimo 1 kg"},
+        {id:"ch8",nombre:"Carne guisar con hueso",bandeja:1,pBandeja:17.95,pKilo:17.95,nota:"mínimo 1 kg"},
+        {id:"ch9",nombre:"Carne picada",bandeja:1,pBandeja:20.95,pKilo:20.95,nota:"mínimo 1 kg"},
+        {id:"ch10",nombre:"Falda",bandeja:1,pBandeja:17.95,pKilo:17.95,nota:"mínimo 1 kg"},
+        {id:"ch11",nombre:"Croca / Picaña",bandeja:1,pBandeja:28.00,pKilo:28.00,nota:"mínimo 1 kg"},
+        {id:"ch12",nombre:"Solomillo",bandeja:1,pBandeja:48.00,pKilo:48.00,nota:"mínimo 1 kg"},
+        {id:"ch13",nombre:"Entrecot",bandeja:1,pBandeja:33.50,pKilo:33.50,nota:"mínimo 1 kg"},
+        {id:"ch14",nombre:"Redondo / Blanquita",bandeja:1,pBandeja:22.50,pKilo:22.50,nota:"mínimo 1 kg"},
+        {id:"ch15",nombre:"Rabo",bandeja:1,pBandeja:20.95,pKilo:20.95,nota:"mínimo 1 kg"},
+        {id:"ch16",nombre:"Fígado",bandeja:1,pBandeja:15.40,pKilo:15.40,nota:"mínimo 1 kg"},
+        {id:"ch17",nombre:"Lingua",bandeja:1,pBandeja:14.00,pKilo:14.00,nota:"mínimo 1 kg"},
+        {id:"ch18",nombre:"Xarrete",bandeja:1,pBandeja:23.80,pKilo:23.80,nota:"mínimo 1 kg"},
+        {id:"ch19",nombre:"Corazón",bandeja:1,pBandeja:11.50,pKilo:11.50,nota:"mínimo 1 kg"},
+        {id:"ch20",nombre:"Osos sin envasar",bandeja:1,pBandeja:5.60,pKilo:5.60,nota:"mínimo 1 kg"},
+        {id:"ch21",nombre:"Osos envasados",bandeja:1,pBandeja:8.50,pKilo:8.50,nota:"mínimo 1 kg"},
+      ]},
+      { id:"elaborados", nombre:"Elaborados", emoji:"🥩", activa:true, productos:[
+        {id:"e1",nombre:"Hamburguesa de ternera",bandeja:0.4,pBandeja:5.00,pKilo:25.64,nota:"4 ud/bandeja"},
+        {id:"e2",nombre:"Hamburguesa de pollo",bandeja:0.4,pBandeja:4.57,pKilo:22.85,nota:"4 ud/bandeja"},
+        {id:"e3",nombre:"Hamburguesa de pavo",bandeja:0.4,pBandeja:4.57,pKilo:22.85,nota:"4 ud/bandeja"},
+        {id:"e4",nombre:"Albóndigas de ternera y cerdo",bandeja:0.38,pBandeja:9.45,pKilo:24.79},
+        {id:"e5",nombre:"Pinchos de pollo",bandeja:0.38,pBandeja:15.25,pKilo:40.14},
+        {id:"e6",nombre:"Pinchos de cordero",bandeja:0.38,pBandeja:21.76,pKilo:57.27},
+        {id:"e7",nombre:"Salchichas de pollo",bandeja:0.3,pBandeja:8.73,pKilo:29.13},
+        {id:"e8",nombre:"Chorizo criollo",bandeja:0.38,pBandeja:9.97,pKilo:26.26},
+        {id:"e9",nombre:"Lomo de cerdo adobado fileteado",bandeja:0.38,pBandeja:13.55,pKilo:35.64},
+        {id:"e10",nombre:"Salchichas de cerdo",bandeja:0.3,pBandeja:7.32,pKilo:24.40},
+        {id:"e11",nombre:"Longaniza de pavo",bandeja:0.38,pBandeja:9.80,pKilo:25.79},
+        {id:"e12",nombre:"Chistorra de cerdo",bandeja:0.2,pBandeja:4.81,pKilo:24.09},
+        {id:"e13",nombre:"Butifarra de cerdo",bandeja:0.38,pBandeja:9.27,pKilo:24.40},
+        {id:"e14",nombre:"Manteca de cerdo",bandeja:0.5,pBandeja:7.70,pKilo:15.40},
+        {id:"e15",nombre:"Preparado para legumbres",bandeja:null,pBandeja:8.20,pKilo:8.20,nota:"1 unidad"},
+        {id:"e16",nombre:"Preparado para puchero",bandeja:null,pBandeja:12.09,pKilo:12.09,nota:"1 unidad"},
+        {id:"e17",nombre:"Preparado para caldos",bandeja:null,pBandeja:11.56,pKilo:11.56,nota:"1 unidad"},
+      ]},
+    ];
+
+    const COLOR="#2D6A4F", COLOR_LIGHT="#E1F5EE", PASS="carnes2024";
+    const todayISO=new Date().toISOString().slice(0,10);
+    const eur=n=>n.toFixed(2).replace(".",",")+" €";
+    const EMAILJS_SERVICE="service_lobqqc4", EMAILJS_TIENDA="mundo_verde_tenda", EMAILJS_CLIENTE="mundo_verde_cliente";
+
+    const sendEmail=(pedido)=>{
+      const productos=pedido.productos.map(p=>`• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""} — ${eur(p.subtotal)}`).join("\n");
+      const entregaInfo=pedido.entregaElegida?`\n\n📅 Entrega solicitada: ${pedido.entregaElegida}`:"";
+      const params={cliente_nombre:pedido.nombre,cliente_telefono:pedido.telefono,cliente_email:pedido.email,productos,total:eur(pedido.total),nota:(pedido.nota||"")+entregaInfo};
+      emailjs.send(EMAILJS_SERVICE,EMAILJS_TIENDA,params).catch(e=>console.error("EmailJS tienda:",e));
+      emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{...params,asunto:"Reserva recibida · Mundo Verde Pontevedra",mensaje:`Xa recibimos a túa reserva correctamente.${pedido.entregaElegida?` A túa entrega está prevista para o ${pedido.entregaElegida}.`:""} En breve poñerémonos en contacto contigo para coordinar a recollida.`}).catch(e=>console.error("EmailJS cliente:",e));
+    };
+
+    const sendEmailListo=(pedido)=>{
+      if(!pedido?.email) return;
+      const productos=(pedido.productos||[]).map(p=>`• ${p.nombre}${p.opcion?` (${p.opcion})`:""} — ${p.bandejas} ${p.esLote?"lote(s)":"bandeja(s)"}${p.kgTotal?` (≈${p.kgTotal} kg)`:""}`).join("\n");
+      emailjs.send(EMAILJS_SERVICE,EMAILJS_CLIENTE,{cliente_nombre:pedido.nombre,cliente_email:pedido.email,productos,total:eur(pedido.total),nota:pedido.nota||"",asunto:"O teu pedido está listo para recoller! 🌿",mensaje:"Boa nova! O teu pedido de Carnes Ecolóxicas Mundo Verde xa está listo. Podes pasar a recollelo pola tenda cando queiras."}).catch(e=>console.error("EmailJS listo:",e));
+    };
+
+    const Aviso=()=>(
+      <div style={{background:"#FFF8E1",border:"1px solid #FFE082",borderRadius:10,padding:"10px 14px",display:"flex",alignItems:"flex-start",gap:8}}>
+        <span style={{fontSize:16}}>⚠️</span>
+        <span style={{fontSize:12.5,color:"#7a6000",lineHeight:1.5}}>Os pesos indicados por bandeja son <strong>orientativos</strong>. O peso final pode variar segundo a peza. O prezo definitivo calcularase sobre o peso real.</span>
+      </div>
+    );
+
+    const BannerFechas=({entregas})=>{
+      if(!entregas||entregas.length===0) return null;
+      const ahora=new Date();
+      const vigentes=entregas.filter(e=>{
+        if(!e.fechaLimiteISO) return true;
+        return new Date(e.fechaLimiteISO+"T23:59:59")>=ahora;
+      });
+      if(vigentes.length===0) return null;
+      return(
+        <div style={{background:"#E8F4FD",border:"1px solid #AED6F1",borderRadius:10,padding:"12px 14px",display:"flex",alignItems:"flex-start",gap:8}}>
+          <span style={{fontSize:16,flexShrink:0}}>📅</span>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:700,color:"#1a5276",marginBottom:6}}>Próximas entregas disponibles</div>
+            {vigentes.map((e,i)=>(
+              <div key={i} style={{marginBottom:i<vigentes.length-1?6:0}}>
+                <div style={{fontSize:13,color:"#1a5276",fontWeight:600}}>📦 {e.fechaEntrega}</div>
+                {e.fechaLimite&&<div style={{fontSize:11.5,color:"#2e86c1",marginTop:1}}>⏰ Prazo límite: {e.fechaLimite}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    const SelectorEntrega=({entregas,entregaElegida,setEntregaElegida})=>{
+      if(!entregas||entregas.length===0) return null;
+      const ahora=new Date();
+      const vigentes=entregas.filter(e=>{
+        if(!e.fechaLimiteISO) return true;
+        return new Date(e.fechaLimiteISO+"T23:59:59")>=ahora;
+      });
+      if(vigentes.length===0) return null;
+      return(
+        <div style={{marginBottom:16}}>
+          <div style={{fontSize:14,fontWeight:600,color:"#333",marginBottom:8}}>📦 Escoge tu fecha de entrega</div>
+          {vigentes.map((e,i)=>{
+            const sel=entregaElegida===e.fechaEntrega;
+            return(
+              <div key={i} onClick={()=>setEntregaElegida(e.fechaEntrega)} style={{border:`1.5px solid ${sel?COLOR:"#ddd"}`,borderRadius:10,padding:"10px 14px",marginBottom:8,cursor:"pointer",background:sel?COLOR_LIGHT:"#fff",transition:"all 0.15s"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{width:16,height:16,borderRadius:"50%",border:`2px solid ${sel?COLOR:"#bbb"}`,background:sel?COLOR:"#fff",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    {sel&&<div style={{width:6,height:6,borderRadius:"50%",background:"#fff"}}/>}
+                  </div>
+                  <div>
+                    <div style={{fontSize:13.5,fontWeight:600,color:sel?COLOR:"#333"}}>{e.fechaEntrega}</div>
+                    {e.fechaLimite&&<div style={{fontSize:11.5,color:"#888",marginTop:1}}>Prazo límite: {e.fechaLimite}</div>}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    };
+
+    const Stat=({n,label,color})=>(
+      <div style={{textAlign:"center"}}>
+        <div style={{fontSize:28,fontWeight:700,color:color||"#222"}}>{n}</div>
+        <div style={{fontSize:12,color:"#888",marginTop:2}}>{label}</div>
+      </div>
+    );
+
+    function ProductCard({prod,qty,setCant,opcionesLote,setOpcionesLote}){
+      const C=COLOR,kg=prod.bandeja?+(qty*prod.bandeja).toFixed(2):null,sub=+(qty*prod.pBandeja).toFixed(2),esLote=!!prod.opciones;
+      return(
+        <div style={{background:"#fff",border:qty>0?`1.5px solid ${C}`:"1px solid #eee",borderRadius:12,padding:"11px 14px",marginBottom:8}}>
+          <div style={{display:"flex",alignItems:"flex-start",gap:10}}>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13.5,color:"#222",fontWeight:500}}>{prod.nombre}</div>
+              <div style={{fontSize:11,color:"#888",marginTop:2}}>
+                {prod.bandeja?<span>≈ {prod.bandeja} kg · </span>:null}
+                <span>{eur(prod.pBandeja)}/{esLote?"lote":"bandeja"}</span>
+                <span style={{margin:"0 6px",color:"#ddd"}}>|</span>
+                <span>{eur(prod.pKilo)}/kg</span>
+                {prod.nota?<span> · {prod.nota}</span>:null}
+              </div>
+              {qty>0&&<div style={{fontSize:11,marginTop:3}}>{!esLote&&kg?<span style={{color:"#888"}}>≈ {kg} kg · </span>:null}<span style={{color:C,fontWeight:700}}>{eur(sub)}</span></div>}
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
+              <button onClick={()=>setCant(prod.id,qty-1)} style={{width:28,height:28,borderRadius:8,border:`1.5px solid ${C}`,background:"#fff",color:C,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>−</button>
+              <div style={{textAlign:"center"}}>
+                <div style={{fontSize:14,fontWeight:600,minWidth:22,textAlign:"center",color:"#222"}}>{qty}</div>
+                <div style={{fontSize:10,color:"#aaa",lineHeight:1}}>{esLote?"lote(s)":`bandeja${qty!==1?"s":""}`}</div>
+              </div>
+              <button onClick={()=>setCant(prod.id,qty+1)} style={{width:28,height:28,borderRadius:8,border:`1.5px solid ${C}`,background:"#fff",color:C,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>+</button>
+            </div>
+          </div>
+          {esLote&&qty>0&&(
+            <div style={{marginTop:10,paddingTop:8,borderTop:"1px solid #f2f2f2"}}>
+              {prod.opciones.map((op,oi)=>(
+                <div key={oi} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+                  <span style={{fontSize:12,color:"#555",flexShrink:0}}>{op.label}</span>
+                  <select value={(opcionesLote[prod.id]||{})[oi]||""} onChange={e=>setOpcionesLote(prev=>({...prev,[prod.id]:{...(prev[prod.id]||{}),[oi]:e.target.value}}))} style={{fontSize:12,padding:"4px 10px",borderRadius:8,border:`1.5px solid ${C}`,color:"#333",background:"#fff",flex:1}}>
+                    <option value="">-- elige --</option>
+                    {op.choices.map(ch=><option key={ch} value={ch}>{ch}</option>)}
+                  </select>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function PanelFechas({entregas,setEntregas}){
+      const [lista,setLista]=useState(entregas||[]);
+      const [guardando,setGuardando]=useState(false);
+
+      const addEntrega=()=>setLista(prev=>[...prev,{fechaEntrega:"",fechaLimite:"",fechaLimiteISO:""}]);
+      const removeEntrega=(i)=>setLista(prev=>prev.filter((_,idx)=>idx!==i));
+      const updateEntrega=(i,campo,val)=>setLista(prev=>prev.map((e,idx)=>idx===i?{...e,[campo]:val}:e));
+
+      const guardar=async()=>{
+        const validas=lista.filter(e=>e.fechaEntrega.trim());
+        setGuardando(true);
+        await window.db.from("config").upsert([{clave:"entregas_multiples",valor:JSON.stringify(validas)}],{onConflict:"clave"});
+        setEntregas(validas);
+        setGuardando(false);
+        alert("Entregas gardadas correctamente ✅");
+      };
+
+      const ahora=new Date();
+      return(
+        <div style={{background:"#fff",border:"1px solid #eee",borderRadius:14,padding:"20px"}}>
+          <div style={{fontSize:15,fontWeight:700,color:COLOR,marginBottom:4}}>📅 Xestión de entregas</div>
+          <div style={{fontSize:12.5,color:"#888",marginBottom:18,lineHeight:1.5}}>Engade todas as datas de entrega dispoñibles. Os clientes poderán escoller a que máis lles conveña. As entregas con prazo vencido ocúltanse automaticamente.</div>
+
+          {lista.map((e,i)=>{
+            const vencida=e.fechaLimiteISO&&new Date(e.fechaLimiteISO+"T23:59:59")<ahora;
+            return(
+              <div key={i} style={{background:vencida?"#fafafa":"#f8fffe",border:`1.5px solid ${vencida?"#eee":COLOR}`,borderRadius:12,padding:"14px",marginBottom:12,opacity:vencida?0.6:1}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                  <div style={{fontSize:13,fontWeight:700,color:vencida?"#aaa":COLOR}}>Entrega #{i+1} {vencida&&<span style={{fontSize:11,fontWeight:400,color:"#c0392b"}}>(prazo vencido)</span>}</div>
+                  <button onClick={()=>removeEntrega(i)} style={{background:"none",border:"none",color:"#ccc",fontSize:18,cursor:"pointer",lineHeight:1}}>×</button>
+                </div>
+                <div style={{marginBottom:10}}>
+                  <div style={{fontSize:12,color:"#555",marginBottom:4,fontWeight:600}}>Data de entrega <span style={{color:"#c0392b"}}>*</span></div>
+                  <input type="text" value={e.fechaEntrega} onChange={ev=>updateEntrega(i,"fechaEntrega",ev.target.value)} placeholder="Ex: venres 27 de xuño" style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                  <div>
+                    <div style={{fontSize:12,color:"#555",marginBottom:4,fontWeight:600}}>Prazo límite (texto)</div>
+                    <input type="text" value={e.fechaLimite} onChange={ev=>updateEntrega(i,"fechaLimite",ev.target.value)} placeholder="Ex: mércores 25 ás 20:00h" style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
+                  </div>
+                  <div>
+                    <div style={{fontSize:12,color:"#555",marginBottom:4,fontWeight:600}}>Prazo límite (data ISO)</div>
+                    <input type="date" value={e.fechaLimiteISO} onChange={ev=>updateEntrega(i,"fechaLimiteISO",ev.target.value)} style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box",color:"#333"}}/>
+                    <div style={{fontSize:10.5,color:"#aaa",marginTop:3}}>Para ocultar automáticamente</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          <button onClick={addEntrega} style={{width:"100%",background:"#f0faf5",color:COLOR,border:`1.5px dashed ${COLOR}`,borderRadius:10,padding:"11px",fontSize:14,fontWeight:600,cursor:"pointer",marginBottom:16}}>+ Engadir entrega</button>
+
+          {lista.length>0&&(
+            <div style={{background:"#E8F4FD",border:"1px solid #AED6F1",borderRadius:10,padding:"12px 14px",marginBottom:16}}>
+              <div style={{fontSize:12,fontWeight:700,color:"#1a5276",marginBottom:8}}>Vista previa do banner:</div>
+              <BannerFechas entregas={lista}/>
+            </div>
+          )}
+
+          <button onClick={guardar} disabled={guardando} style={{width:"100%",background:COLOR,color:"#fff",border:"none",borderRadius:12,padding:"13px",fontSize:15,fontWeight:700,cursor:"pointer",opacity:guardando?0.7:1}}>
+            {guardando?"Gardando...":"Gardar todas as entregas"}
+          </button>
+        </div>
+      );
+    }
+
+    function Panel({cats,setCats,entregas,setEntregas,onBack}){
+      const [tabP,setTabP]=useState("totales");
+      const [filtroEstado,setFiltroEstado]=useState("todos");
+      const [filtroDia,setFiltroDia]=useState(todayISO);
+      const [filtroEntrega,setFiltroEntrega]=useState("");
+      const [pedidos,setPedidos]=useState([]);
+      const [cargando,setCargando]=useState(true);
+      const [editando,setEditando]=useState(null);
+      const [formProd,setFormProd]=useState({nombre:"",bandeja:"",pBandeja:"",pKilo:"",nota:""});
+
+      useEffect(()=>{cargarPedidos();},[]);
+
+      const cargarPedidos=async()=>{
+        setCargando(true);
+        const{data,error}=await window.db.from("pedidos").select("*").order("id",{ascending:false});
+        if(!error) setPedidos(data||[]);
+        setCargando(false);
+      };
+
+      const CAMPOS=[
+        {key:"nombre",label:"Nombre *",type:"text"},
+        {key:"bandeja",label:"Peso bandeja (kg)",type:"number"},
+        {key:"pBandeja",label:"Precio bandeja (€) *",type:"number"},
+        {key:"pKilo",label:"Precio kilo (€) *",type:"number"},
+        {key:"nota",label:"Nota (opcional)",type:"text"},
+      ];
+
+      const abrirEditar=(catId,prod)=>{setFormProd({nombre:prod.nombre,bandeja:prod.bandeja||"",pBandeja:prod.pBandeja,pKilo:prod.pKilo,nota:prod.nota||""});setEditando({catId,prodId:prod.id,nuevo:false});};
+      const abrirNuevo=(catId)=>{setFormProd({nombre:"",bandeja:"",pBandeja:"",pKilo:"",nota:""});setEditando({catId,nuevo:true});};
+
+      const guardar=()=>{
+        const nombre=(formProd.nombre||"").trim();
+        const pBandeja=parseFloat(String(formProd.pBandeja).replace(",","."));
+        const pKilo=parseFloat(String(formProd.pKilo).replace(",","."));
+        const bandeja=formProd.bandeja?parseFloat(String(formProd.bandeja).replace(",",".")):null;
+        if(!nombre||isNaN(pBandeja)||isNaN(pKilo)){alert("Rellena: Nombre, Precio bandeja y Precio kilo.");return;}
+        const nc=cats.map(cat=>{
+          if(cat.id!==editando.catId) return cat;
+          if(editando.nuevo) return{...cat,productos:[...cat.productos,{id:"custom_"+Date.now(),nombre,bandeja,pBandeja,pKilo,nota:formProd.nota||undefined}]};
+          return{...cat,productos:cat.productos.map(p=>p.id===editando.prodId?{...p,nombre,bandeja,pBandeja,pKilo,nota:formProd.nota||undefined}:p)};
+        });
+        setCats(nc);setEditando(null);
+      };
+
+      const toggleCategoria=(catId)=>{setCats(cats.map(c=>c.id===catId?{...c,activa:!c.activa}:c));};
+      const eliminarProd=(catId,prodId)=>{if(!window.confirm("¿Eliminar este producto?"))return;setCats(cats.map(c=>c.id!==catId?c:{...c,productos:c.productos.filter(p=>p.id!==prodId)}));};
+
+      const cambiarEstado=async(id,estado)=>{
+        await window.db.from("pedidos").update({estado}).eq("id",id);
+        setPedidos(prev=>prev.map(p=>p.id===id?{...p,estado}:p));
+        if(estado==="listo"){const pedido=pedidos.find(p=>p.id===id);sendEmailListo(pedido);}
+      };
+
+      const eliminarPedido=async(id)=>{if(!window.confirm("¿Eliminar este pedido?"))return;await window.db.from("pedidos").delete().eq("id",id);setPedidos(prev=>prev.filter(p=>p.id!==id));};
+      const eliminarGestionados=async()=>{if(!window.confirm("¿Eliminar todos los gestionados?"))return;await window.db.from("pedidos").delete().eq("estado","listo");setPedidos(prev=>prev.filter(p=>p.estado!=="listo"));};
+
+      const entregasEnPedidos=useMemo(()=>{
+        const set=new Set(pedidos.filter(p=>p.entrega_elegida).map(p=>p.entrega_elegida));
+        return Array.from(set).sort();
+      },[pedidos]);
+
+      const filtrados=useMemo(()=>pedidos.filter(p=>{
+        const eOk=filtroEstado==="todos"||p.estado===filtroEstado;
+        const dOk=!filtroDia||p.iso_date===filtroDia;
+        const enOk=!filtroEntrega||p.entrega_elegida===filtroEntrega;
+        return eOk&&dOk&&enOk;
+      }),[pedidos,filtroEstado,filtroDia,filtroEntrega]);
+
+      const totalesProd=useMemo(()=>{
+        const map={};
+        filtrados.forEach(p=>(p.productos||[]).forEach(pr=>{
+          if(!map[pr.nombre]) map[pr.nombre]={nombre:pr.nombre,bandejas:0,kg:0,importe:0};
+          map[pr.nombre].bandejas+=pr.bandejas;map[pr.nombre].kg+=pr.kgTotal||0;map[pr.nombre].importe+=pr.subtotal||0;
+        }));
+        return Object.values(map).sort((a,b)=>b.bandejas-a.bandejas);
+      },[filtrados]);
+
+      const exportCSV=()=>{
+        const rows=[["Cliente","Teléfono","Email","Fecha","Entrega","Estado","Producto","Opciones","Uds","Kg","Subtotal","Nota"]];
+        filtrados.forEach(p=>(p.productos||[]).forEach(pr=>rows.push([p.nombre,p.telefono,p.email||"",p.fecha,p.entrega_elegida||"",p.estado,pr.nombre,pr.opcion||"",pr.bandejas,(pr.kgTotal||"").toString(),pr.subtotal?eur(pr.subtotal):"",p.nota||""])));
+        const csv=rows.map(r=>r.map(c=>`"${c}"`).join(",")).join("\n");
+        const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="pedidos_carnes.csv";a.click();
+      };
+
+      const total=pedidos.length,pendientes=pedidos.filter(p=>p.estado==="pendiente").length,confirmados=pedidos.filter(p=>p.estado==="preparando").length,gestionados=pedidos.filter(p=>p.estado==="listo").length;
+      const tabBtn=(id,lbl)=>(<button onClick={()=>setTabP(id)} style={{padding:"7px 16px",borderRadius:20,border:`1.5px solid ${tabP===id?COLOR:"#ddd"}`,background:tabP===id?COLOR:"#fff",color:tabP===id?"#fff":"#555",fontSize:13,cursor:"pointer",fontWeight:tabP===id?600:400,flexShrink:0}}>{lbl}</button>);
+
+      return(
+        <div style={{fontFamily:"system-ui,sans-serif",maxWidth:780,margin:"0 auto",paddingBottom:40}}>
+          <div style={{background:COLOR,padding:"20px",borderRadius:"0 0 16px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div>
+              <div style={{color:"#fff",fontSize:20,fontWeight:700}}>📋 Panel de la tienda</div>
+              <div style={{color:"rgba(255,255,255,0.82)",fontSize:13,marginTop:3}}>Carnes Ecológicas Mundo Verde</div>
+            </div>
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={cargarPedidos} style={{background:"rgba(255,255,255,0.18)",border:"none",color:"#fff",borderRadius:20,padding:"7px 14px",cursor:"pointer",fontSize:13}}>🔄</button>
+              <button onClick={exportCSV} style={{background:"rgba(255,255,255,0.18)",border:"none",color:"#fff",borderRadius:20,padding:"7px 14px",cursor:"pointer",fontSize:13}}>⬇ CSV</button>
+              <button onClick={onBack} style={{background:"rgba(255,255,255,0.18)",border:"none",color:"#fff",borderRadius:20,padding:"7px 14px",cursor:"pointer",fontSize:13}}>← Tienda</button>
+            </div>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,padding:"24px 20px 8px"}}>
+            <Stat n={total} label="Total"/><Stat n={pendientes} label="Pendientes" color="#E74C3C"/><Stat n={confirmados} label="Confirmados" color={COLOR}/><Stat n={gestionados} label="Gestionados" color="#3498DB"/>
+          </div>
+
+          <div style={{display:"flex",gap:8,padding:"16px 20px 8px",overflowX:"auto"}}>
+            {tabBtn("totales","📊 Totales")}{tabBtn("pedidos","📦 Pedidos")}{tabBtn("productos","🛍 Produtos")}{tabBtn("gestionar","⚙️ Xestionar")}{tabBtn("fechas","📅 Entregas")}
+          </div>
+
+          {tabP!=="gestionar"&&tabP!=="fechas"&&(
+            <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 20px",flexWrap:"wrap"}}>
+              <select value={filtroEstado} onChange={e=>setFiltroEstado(e.target.value)} style={{padding:"7px 12px",borderRadius:10,border:"1.5px solid #ddd",fontSize:13,background:"#fff",color:"#333"}}>
+                {["todos","pendiente","preparando","listo"].map(e=><option key={e} value={e}>{{todos:"Todos los estados",pendiente:"Pendiente",preparando:"Preparando",listo:"Listo"}[e]}</option>)}
+              </select>
+              <input type="date" value={filtroDia} onChange={e=>setFiltroDia(e.target.value)} style={{padding:"7px 12px",borderRadius:10,border:"1.5px solid #ddd",fontSize:13,background:"#fff",color:"#333"}}/>
+              {filtroDia&&<button onClick={()=>setFiltroDia("")} style={{fontSize:12,color:"#aaa",background:"none",border:"none",cursor:"pointer"}}>✕ Fecha</button>}
+              {entregasEnPedidos.length>0&&(
+                <select value={filtroEntrega} onChange={e=>setFiltroEntrega(e.target.value)} style={{padding:"7px 12px",borderRadius:10,border:"1.5px solid #ddd",fontSize:13,background:"#fff",color:"#333",maxWidth:180}}>
+                  <option value="">Todas las entregas</option>
+                  {entregasEnPedidos.map(e=><option key={e} value={e}>{e}</option>)}
+                </select>
+              )}
+              {filtroEntrega&&<button onClick={()=>setFiltroEntrega("")} style={{fontSize:12,color:"#aaa",background:"none",border:"none",cursor:"pointer"}}>✕ Entrega</button>}
+              <span style={{marginLeft:"auto",fontSize:13,color:"#aaa"}}>{filtrados.length} pedido{filtrados.length!==1?"s":""}</span>
+              {pedidos.filter(p=>p.estado==="listo").length>0&&(
+                <button onClick={eliminarGestionados} style={{fontSize:12,color:"#c0392b",background:"none",border:"1px solid #e8b5b2",borderRadius:8,padding:"4px 10px",cursor:"pointer"}}>🗑 Borrar gestionados</button>
+              )}
+            </div>
+          )}
+
+          <div style={{padding:"8px 20px"}}>
+            {cargando&&<div style={{textAlign:"center",padding:40,color:"#aaa",fontSize:14}}>Cargando...</div>}
+            {!cargando&&tabP!=="gestionar"&&tabP!=="fechas"&&filtrados.length===0&&<div style={{textAlign:"center",padding:40,color:"#bbb",fontSize:14}}>No hay datos</div>}
+
+            {!cargando&&(tabP==="totales"||tabP==="productos")&&filtrados.length>0&&(
+              <div style={{background:"#fff",border:"1px solid #eee",borderRadius:14,overflow:"hidden"}}>
+                {filtroEntrega&&<div style={{padding:"8px 16px",background:COLOR_LIGHT,fontSize:12,color:COLOR,fontWeight:600}}>📦 Filtrando por entrega: {filtroEntrega}</div>}
+                <div style={{display:"grid",gridTemplateColumns:"1fr auto auto auto",gap:8,padding:"10px 16px",background:"#f9f9f9",fontSize:12,fontWeight:600,color:"#888"}}>
+                  <span>Producto</span><span style={{textAlign:"right"}}>Uds</span><span style={{textAlign:"right"}}>Kg</span><span style={{textAlign:"right"}}>Importe</span>
+                </div>
+                {totalesProd.map((pr,i)=>(
+                  <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto auto auto",gap:8,padding:"10px 16px",borderTop:"1px solid #f2f2f2"}}>
+                    <span style={{fontSize:13.5,color:"#222"}}>{pr.nombre}</span>
+                    <span style={{fontSize:13,fontWeight:600,color:COLOR,textAlign:"right"}}>{pr.bandejas}</span>
+                    <span style={{fontSize:13,color:"#888",textAlign:"right",minWidth:55}}>{pr.kg>0?`≈${pr.kg.toFixed(2)}`:"—"}</span>
+                    <span style={{fontSize:13,fontWeight:600,color:"#333",textAlign:"right",minWidth:70}}>{pr.importe>0?eur(pr.importe):"—"}</span>
+                  </div>
+                ))}
+                <div style={{display:"grid",gridTemplateColumns:"1fr auto auto auto",gap:8,padding:"12px 16px",borderTop:"2px solid #eee",background:"#f9f9f9"}}>
+                  <span style={{fontSize:13,fontWeight:700,color:"#333"}}>TOTAL</span>
+                  <span style={{fontSize:13,fontWeight:700,color:COLOR,textAlign:"right"}}>{totalesProd.reduce((a,p)=>a+p.bandejas,0)}</span>
+                  <span style={{fontSize:13,fontWeight:700,color:"#555",textAlign:"right"}}>≈{totalesProd.reduce((a,p)=>a+p.kg,0).toFixed(2)}</span>
+                  <span style={{fontSize:13,fontWeight:700,color:COLOR,textAlign:"right"}}>{eur(totalesProd.reduce((a,p)=>a+p.importe,0))}</span>
+                </div>
+              </div>
+            )}
+
+            {!cargando&&tabP==="pedidos"&&filtrados.map(p=>(
+              <div key={p.id} style={{background:"#fff",border:"1px solid #eee",borderRadius:14,padding:"14px 16px",marginBottom:10}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+                  <div>
+                    <div style={{fontWeight:600,fontSize:14,color:"#222"}}>{p.nombre}</div>
+                    <div style={{fontSize:12,color:"#888",marginTop:2}}>{p.telefono}{p.email?` · ${p.email}`:""} · {p.fecha}</div>
+                    {p.entrega_elegida&&<div style={{fontSize:12,color:COLOR,fontWeight:600,marginTop:3}}>📦 Entrega: {p.entrega_elegida}</div>}
+                  </div>
+                  <span style={{display:"inline-block",padding:"3px 12px",borderRadius:20,fontSize:11,fontWeight:600,background:p.estado==="listo"?"#eafaf1":p.estado==="preparando"?"#fff8e1":COLOR_LIGHT,color:p.estado==="listo"?"#1a7a3c":p.estado==="preparando"?"#b8860b":COLOR}}>{p.estado}</span>
+                </div>
+                <div style={{fontSize:13,color:"#555",marginTop:8}}>
+                  {(p.productos||[]).map((pr,i)=>(
+                    <div key={i} style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
+                      <span>• {pr.nombre}{pr.opcion?` · ${pr.opcion}`:""} — {pr.bandejas} {pr.esLote?"lote(s)":"bandeja(s)"}{pr.kgTotal?` (≈${pr.kgTotal} kg)`:""}</span>
+                      {pr.subtotal?<span style={{color:COLOR,fontWeight:600}}>{eur(pr.subtotal)}</span>:null}
+                    </div>
+                  ))}
+                </div>
+                {p.nota&&<div style={{fontSize:12,color:"#999",marginTop:4}}>Nota: {p.nota}</div>}
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:10}}>
+                  <div style={{display:"flex",gap:6}}>
+                    {["pendiente","preparando","listo"].map(e=>(
+                      <button key={e} onClick={()=>cambiarEstado(p.id,e)} style={{padding:"4px 12px",borderRadius:20,border:`1.5px solid ${p.estado===e?COLOR:"#ddd"}`,background:p.estado===e?COLOR_LIGHT:"#fff",color:p.estado===e?COLOR:"#888",fontSize:12,cursor:"pointer",fontWeight:p.estado===e?600:400}}>{e}</button>
+                    ))}
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:14,fontWeight:700,color:COLOR}}>{eur(p.total)}</span>
+                    <button onClick={()=>eliminarPedido(p.id)} style={{background:"none",border:"none",color:"#ccc",fontSize:16,cursor:"pointer"}}>🗑</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {tabP==="fechas"&&(
+              <PanelFechas entregas={entregas} setEntregas={setEntregas}/>
+            )}
+
+            {tabP==="gestionar"&&(
+              <div>
+                {editando&&(
+                  <div style={{background:"#fff",border:`1.5px solid ${COLOR}`,borderRadius:14,padding:"16px",marginBottom:16}}>
+                    <div style={{fontSize:14,fontWeight:700,color:"#222",marginBottom:4}}>{editando.nuevo?"➕ Novo produto":"✏️ Editar produto"}</div>
+                    <div style={{fontSize:12,color:"#888",marginBottom:12}}>Categoría: <strong>{cats.find(c=>c.id===editando.catId)?.nombre}</strong></div>
+                    {CAMPOS.map(c=>(
+                      <div key={c.key} style={{marginBottom:10}}>
+                        <div style={{fontSize:12,color:"#555",marginBottom:3}}>{c.label}</div>
+                        <input type={c.type} step="0.01" value={formProd[c.key]||""} onChange={e=>setFormProd(prev=>({...prev,[c.key]:e.target.value}))} style={{width:"100%",padding:"9px 12px",borderRadius:8,border:"1.5px solid #ddd",fontSize:13,outline:"none",boxSizing:"border-box"}}/>
+                      </div>
+                    ))}
+                    <div style={{display:"flex",gap:8,marginTop:8}}>
+                      <button onClick={guardar} style={{flex:1,background:COLOR,color:"#fff",border:"none",borderRadius:10,padding:"11px",fontSize:14,fontWeight:600,cursor:"pointer"}}>Gardar</button>
+                      <button onClick={()=>setEditando(null)} style={{flex:1,background:"#f5f5f5",color:"#555",border:"none",borderRadius:10,padding:"11px",fontSize:14,cursor:"pointer"}}>Cancelar</button>
+                    </div>
+                  </div>
+                )}
+                {cats.map(cat=>(
+                  <div key={cat.id} style={{marginBottom:20}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+                      <div style={{fontSize:14,fontWeight:700,color:cat.activa!==false?COLOR:"#aaa"}}>
+                        {cat.emoji} {cat.nombre} {cat.activa===false&&<span style={{fontSize:11,fontWeight:400}}>(oculta)</span>}
+                      </div>
+                      <div style={{display:"flex",gap:6}}>
+                        <button onClick={()=>toggleCategoria(cat.id)} style={{fontSize:12,background:cat.activa!==false?"#fff8e1":COLOR_LIGHT,color:cat.activa!==false?"#b8860b":COLOR,border:`1px solid ${cat.activa!==false?"#FFE082":COLOR}`,borderRadius:8,padding:"4px 12px",cursor:"pointer"}}>
+                          {cat.activa!==false?"🙈 Ocultar":"👁 Mostrar"}
+                        </button>
+                        <button onClick={()=>abrirNuevo(cat.id)} style={{fontSize:12,background:COLOR,color:"#fff",border:"none",borderRadius:8,padding:"5px 14px",cursor:"pointer"}}>+ Engadir</button>
+                      </div>
+                    </div>
+                    {cat.productos.map(prod=>(
+                      <div key={prod.id} style={{background:"#fff",border:"1px solid #eee",borderRadius:10,padding:"10px 14px",marginBottom:6,display:"flex",alignItems:"center",gap:8,opacity:cat.activa===false?0.5:1}}>
+                        <div style={{flex:1}}>
+                          <div style={{fontSize:13,fontWeight:500,color:"#222"}}>{prod.nombre}</div>
+                          <div style={{fontSize:11,color:"#888"}}>{prod.bandeja?`${prod.bandeja} kg · `:""}{eur(prod.pBandeja)}/bandeja · {eur(prod.pKilo)}/kg{prod.nota?` · ${prod.nota}`:""}</div>
+                        </div>
+                        <button onClick={()=>abrirEditar(cat.id,prod)} style={{background:"none",border:`1px solid ${COLOR}`,color:COLOR,borderRadius:8,padding:"4px 10px",fontSize:12,cursor:"pointer"}}>✏️</button>
+                        <button onClick={()=>eliminarProd(cat.id,prod.id)} style={{background:"none",border:"1px solid #e8b5b2",color:"#c0392b",borderRadius:8,padding:"4px 10px",fontSize:12,cursor:"pointer"}}>🗑</button>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function App(){
+      const [cats,setCatsState]=useState(CATEGORIAS_INIT);
+      const [catsId,setCatsId]=useState(null);
+      const [bandejas,setBandejas]=useState({});
+      const [opcionesLote,setOpcionesLote]=useState({});
+      const [catActiva,setCatActiva]=useState("todas");
+      const [modal,setModal]=useState(false);
+      const [enviado,setEnviado]=useState(false);
+      const [form,setForm]=useState({nombre:"",telefono:"",email:"",nota:""});
+      const [entregaElegida,setEntregaElegida]=useState("");
+      const [panel,setPanel]=useState(false);
+      const [panelPass,setPanelPass]=useState(false);
+      const [passInput,setPassInput]=useState("");
+      const [passError,setPassError]=useState(false);
+      const [entregas,setEntregas]=useState([]);
+
+      useEffect(()=>{
+        window.db.from("categorias").select("*").limit(1).then(({data})=>{
+          if(data&&data.length>0){setCatsState(data[0].data);setCatsId(data[0].id);}
+        });
+        window.db.from("config").select("*").then(({data})=>{
+          if(data) data.forEach(r=>{
+            if(r.clave==="entregas_multiples"){
+              try{setEntregas(JSON.parse(r.valor)||[]);}catch(e){}
+            }
+            if(r.clave==="fecha_entrega"&&r.valor){
+              setEntregas(prev=>{
+                if(prev.length>0) return prev;
+                return [{fechaEntrega:r.valor,fechaLimite:"",fechaLimiteISO:""}];
+              });
+            }
+          });
+        });
+      },[]);
+
+      const setCats=async(nc)=>{
+        setCatsState(nc);
+        if(catsId){await window.db.from("categorias").update({data:nc}).eq("id",catsId);}
+        else{const{data}=await window.db.from("categorias").insert([{data:nc}]).select();if(data?.[0])setCatsId(data[0].id);}
+      };
+
+      const abrirModal=()=>{
+        const ahora=new Date();
+        const vigentes=entregas.filter(e=>!e.fechaLimiteISO||new Date(e.fechaLimiteISO+"T23:59:59")>=ahora);
+        if(vigentes.length===1) setEntregaElegida(vigentes[0].fechaEntrega);
+        else setEntregaElegida("");
+        setModal(true);setEnviado(false);
+      };
+
+      const catsActivas=cats.filter(c=>c.activa!==false);
+      const allProds=cats.flatMap(c=>c.productos);
+      const seleccionados=allProds.filter(p=>(bandejas[p.id]||0)>0);
+      const totalPedido=useMemo(()=>seleccionados.reduce((acc,p)=>acc+(bandejas[p.id]||0)*p.pBandeja,0),[seleccionados,bandejas]);
+      const catsOrdenadas=catsActivas.map(c=>({...c,productos:[...c.productos].sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"))}));
+      const catsFiltradas=catActiva==="todas"?catsOrdenadas:catsOrdenadas.filter(c=>c.id===catActiva);
+      const setCant=(id,val)=>setBandejas(prev=>({...prev,[id]:Math.max(0,Math.round(parseFloat(val)||0))}));
+
+      const ahora=new Date();
+      const entregasVigentes=entregas.filter(e=>!e.fechaLimiteISO||new Date(e.fechaLimiteISO+"T23:59:59")>=ahora);
+      const requiereEntrega=entregasVigentes.length>1;
+      const puedeEnviar=form.nombre&&form.telefono&&form.email&&(!requiereEntrega||entregaElegida);
+
+      const enviar=async()=>{
+        if(!puedeEnviar) return;
+        const nuevo={
+          nombre:form.nombre,telefono:form.telefono,email:form.email,nota:form.nota,
+          fecha:new Date().toLocaleString("es-ES"),iso_date:new Date().toISOString().slice(0,10),
+          estado:"pendiente",total:totalPedido,
+          entrega_elegida:entregaElegida||null,
+          productos:seleccionados.map(p=>({
+            nombre:p.nombre,bandejas:bandejas[p.id],esLote:!!p.opciones,
+            kgTotal:p.bandeja?+(bandejas[p.id]*p.bandeja).toFixed(2):null,
+            subtotal:+(bandejas[p.id]*p.pBandeja).toFixed(2),
+            opcion:opcionesLote[p.id]?Object.values(opcionesLote[p.id]).join(" + "):null
+          }))
+        };
+        await window.db.from("pedidos").insert([nuevo]);
+        sendEmail({...nuevo,entregaElegida:nuevo.entrega_elegida});
+        setEnviado(true);
+      };
+
+      const entrarPanel=()=>{
+        if(passInput===PASS){setPanel(true);setPassError(false);setPanelPass(false);setPassInput("");}
+        else setPassError(true);
+      };
+
+      if(panel) return <Panel cats={cats} setCats={setCats} entregas={entregas} setEntregas={setEntregas} onBack={()=>setPanel(false)}/>;
+
+      const C=COLOR;
+      return(
+        <div style={{fontFamily:"system-ui,sans-serif",maxWidth:780,margin:"0 auto",paddingBottom:80}}>
+          <div style={{background:C,padding:"22px 20px 18px",borderRadius:"0 0 16px 16px"}}>
+            <div style={{color:"#fff",fontSize:22,fontWeight:600}}>🌿 Carnes Ecológicas Mundo Verde</div>
+            <div style={{color:"rgba(255,255,255,0.82)",fontSize:13,marginTop:4}}>Reserva de carnes frescas de producción ecológica · Pontevedra</div>
+            <span style={{display:"inline-block",background:"rgba(255,255,255,0.18)",color:"#fff",fontSize:11,padding:"2px 10px",borderRadius:20,marginTop:10}}>Producción 100% ecológica</span>
+          </div>
+
+          <div style={{display:"flex",justifyContent:"flex-end",padding:"10px 16px 0"}}>
+            <span onClick={()=>setPanelPass(v=>!v)} style={{fontSize:12,color:"#aaa",cursor:"pointer",textDecoration:"underline"}}>Acceso panel</span>
+          </div>
+
+          {panelPass&&(
+            <div style={{margin:"8px 16px",background:"#fff",border:"1px solid #eee",borderRadius:12,padding:"14px 16px"}}>
+              <div style={{fontSize:13,fontWeight:600,marginBottom:8,color:"#333"}}>Contraseña del panel</div>
+              <div style={{display:"flex",gap:8}}>
+                <input type="password" value={passInput} onChange={e=>setPassInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&entrarPanel()} placeholder="Contraseña" style={{flex:1,padding:"10px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,outline:"none"}}/>
+                <button onClick={entrarPanel} style={{background:C,color:"#fff",border:"none",borderRadius:10,padding:"0 16px",cursor:"pointer",fontSize:14}}>Entrar</button>
+              </div>
+              {passError&&<div style={{fontSize:12,color:"#c0392b",marginTop:6}}>Contraseña incorrecta</div>}
+            </div>
+          )}
+
+          <div style={{margin:"12px 16px 0"}}><Aviso/></div>
+          {entregasVigentes.length>0&&<div style={{margin:"10px 16px 0"}}><BannerFechas entregas={entregas}/></div>}
+
+          <div style={{display:"flex",gap:8,overflowX:"auto",padding:"14px 16px 4px",scrollbarWidth:"none"}}>
+            {[{id:"todas",nombre:"Todas",emoji:""},...catsActivas].map(c=>(
+              <button key={c.id} onClick={()=>setCatActiva(c.id)} style={{flexShrink:0,padding:"6px 14px",borderRadius:20,border:`1.5px solid ${catActiva===c.id?C:"#ddd"}`,background:catActiva===c.id?C:"#fff",color:catActiva===c.id?"#fff":"#555",fontSize:13,cursor:"pointer",fontWeight:catActiva===c.id?600:400}}>
+                {c.emoji?`${c.emoji} `:""}{c.nombre}
+              </button>
+            ))}
+          </div>
+
+          {catsFiltradas.map(cat=>(
+            <div key={cat.id} style={{margin:"18px 16px 0"}}>
+              <div style={{fontSize:15,fontWeight:600,color:C,marginBottom:10}}>{cat.emoji} {cat.nombre} · producción ecológica</div>
+              {cat.productos.map(prod=>(
+                <ProductCard key={prod.id} prod={prod} qty={bandejas[prod.id]||0} setCant={setCant} opcionesLote={opcionesLote} setOpcionesLote={setOpcionesLote}/>
+              ))}
+            </div>
+          ))}
+
+          {seleccionados.length>0&&(
+            <button onClick={abrirModal} style={{position:"fixed",bottom:16,left:"50%",transform:"translateX(-50%)",background:C,color:"#fff",border:"none",borderRadius:24,padding:"13px 28px",fontSize:15,fontWeight:600,cursor:"pointer",boxShadow:"0 4px 16px rgba(45,106,79,0.35)",zIndex:100,whiteSpace:"nowrap"}}>
+              Ver reserva ({seleccionados.length} prod.) · {eur(totalPedido)} →
+            </button>
+          )}
+
+          {modal&&(
+            <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.45)",display:"flex",alignItems:"flex-end",justifyContent:"center",zIndex:200}} onClick={e=>e.target===e.currentTarget&&setModal(false)}>
+              <div style={{background:"#fff",borderRadius:"20px 20px 0 0",padding:"24px 20px 32px",width:"100%",maxWidth:780,maxHeight:"85vh",overflowY:"auto"}}>
+                {!enviado?(
+                  <>
+                    <div style={{fontSize:17,fontWeight:700,color:"#222",marginBottom:16}}>A túa reserva</div>
+                    {seleccionados.map(p=>{
+                      const qty=bandejas[p.id],kg=p.bandeja?+(qty*p.bandeja).toFixed(2):null,sub=+(qty*p.pBandeja).toFixed(2),opcion=opcionesLote[p.id]?Object.values(opcionesLote[p.id]).join(" + "):null;
+                      return(
+                        <div key={p.id} style={{padding:"8px 0",borderBottom:"1px solid #f2f2f2"}}>
+                          <div style={{display:"flex",justifyContent:"space-between",gap:8}}>
+                            <div style={{flex:1}}>
+                              <div style={{color:"#333",fontSize:13.5}}>{p.nombre}</div>
+                              <div style={{fontSize:11,color:"#888"}}>{qty} {p.opciones?"lote(s)":`bandeja${qty>1?"s":""}`}{kg?` · ≈${kg} kg`:""}</div>
+                              {opcion&&<div style={{fontSize:11,color:C,fontWeight:600,marginTop:2}}>→ {opcion}</div>}
+                            </div>
+                            <span style={{color:C,fontWeight:600,flexShrink:0}}>{eur(sub)}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div style={{display:"flex",justifyContent:"space-between",padding:"12px 0 4px",fontSize:15,fontWeight:700,borderTop:"2px solid #eee",marginTop:4}}>
+                      <span style={{color:"#333"}}>Total orientativo</span>
+                      <span style={{color:C}}>{eur(totalPedido)}</span>
+                    </div>
+                    <div style={{margin:"12px 0 8px"}}><Aviso/></div>
+
+                    {entregasVigentes.length>0&&(
+                      <div style={{marginBottom:4,marginTop:8}}>
+                        <SelectorEntrega entregas={entregas} entregaElegida={entregaElegida} setEntregaElegida={setEntregaElegida}/>
+                        {requiereEntrega&&!entregaElegida&&<div style={{fontSize:12,color:"#c0392b",marginTop:-8,marginBottom:8}}>* Debes escoller unha data de entrega</div>}
+                      </div>
+                    )}
+
+                    <div style={{marginBottom:6,fontSize:14,fontWeight:600,color:"#333"}}>Os teus datos</div>
+                    {["nombre","telefono","email","nota"].map(f=>(
+                      <input key={f} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,marginBottom:12,boxSizing:"border-box",outline:"none"}}
+                        placeholder={f==="nombre"?"Nome *":f==="telefono"?"Teléfono *":f==="email"?"Email *":"Nota ou indicación (opcional)"}
+                        value={form[f]} onChange={e=>setForm(prev=>({...prev,[f]:e.target.value}))}/>
+                    ))}
+                    <button onClick={enviar} disabled={!puedeEnviar} style={{width:"100%",background:puedeEnviar?C:"#ccc",color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:puedeEnviar?"pointer":"not-allowed"}}>Confirmar reserva</button>
+                    <button onClick={()=>setModal(false)} style={{width:"100%",background:"#f5f5f5",color:"#555",border:"none",borderRadius:12,padding:"12px",fontSize:14,cursor:"pointer",marginTop:8}}>Seguir escollendo</button>
+                  </>
+                ):(
+                  <div style={{textAlign:"center",padding:"20px 10px"}}>
+                    <div style={{fontSize:48,marginBottom:12}}>✅</div>
+                    <div style={{fontSize:20,fontWeight:700,color:C,marginBottom:8}}>Reserva confirmada!</div>
+                    {entregaElegida&&<div style={{fontSize:14,color:C,fontWeight:600,marginBottom:8}}>📦 Entrega: {entregaElegida}</div>}
+                    <div style={{fontSize:14,color:"#666"}}>Xa recibimos o teu pedido, {form.nombre}. Enviámosche un email de confirmación. En breve poñerémonos en contacto contigo para coordinar a recollida.</div>
+                    <button onClick={()=>{setModal(false);setBandejas({});setOpcionesLote({});setForm({nombre:"",telefono:"",email:"",nota:""});setEntregaElegida("");}} style={{width:"100%",background:C,color:"#fff",border:"none",borderRadius:12,padding:"14px",fontSize:15,fontWeight:700,cursor:"pointer",marginTop:20}}>Nova reserva</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+  </script>
 </body>
 </html>
