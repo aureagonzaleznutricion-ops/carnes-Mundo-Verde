@@ -6,7 +6,7 @@
   <title>Carnes Ecológicas Mundo Verde</title>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -619,18 +619,23 @@
         window.db.from("categorias").select("*").limit(1).then(({data})=>{
           if(data&&data.length>0){setCatsState(data[0].data);setCatsId(data[0].id);}
         });
-        window.db.from("config").select("*").then(({data})=>{
-          if(data) data.forEach(r=>{
-            if(r.clave==="entregas_multiples"){
-              try{setEntregas(JSON.parse(r.valor)||[]);}catch(e){}
-            }
-            if(r.clave==="fecha_entrega"&&r.valor){
-              setEntregas(prev=>{
-                if(prev.length>0) return prev;
-                return [{fechaEntrega:r.valor,fechaLimite:"",fechaLimiteISO:""}];
-              });
-            }
-          });
+        window.db.from("config").select("*").order("id",{ascending:false}).then(({data})=>{
+          if(data){
+            const seen={};
+            data.forEach(r=>{
+              if(seen[r.clave]) return;
+              seen[r.clave]=true;
+              if(r.clave==="entregas_multiples"){
+                try{setEntregas(JSON.parse(r.valor)||[]);}catch(e){}
+              }
+              if(r.clave==="fecha_entrega"&&r.valor){
+                setEntregas(prev=>{
+                  if(prev.length>0) return prev;
+                  return [{fechaEntrega:r.valor,fechaLimite:"",fechaLimiteISO:""}];
+                });
+              }
+            });
+          }
         });
       },[]);
 
@@ -796,7 +801,7 @@
       );
     }
 
-    ReactDOM.render(<App/>, document.getElementById("root"));
+    ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
   </script>
 </body>
 </html>
