@@ -680,7 +680,8 @@
             opcion:opcionesLote[p.id]?Object.values(opcionesLote[p.id]).join(" + "):null
           }))
         };
-        await window.db.from("pedidos").insert([nuevo]);
+        const{error:errIns}=await window.db.from("pedidos").insert([nuevo]);
+        if(errIns){alert("Error al guardar o pedido: "+errIns.message);return;}
         sendEmail({...nuevo,entregaElegida:nuevo.entrega_elegida});
         setEnviado(true);
       };
