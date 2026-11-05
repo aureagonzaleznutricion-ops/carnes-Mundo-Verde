@@ -159,7 +159,7 @@
       ]},
     ];
 
-    const COLOR="#2D6A4F", COLOR_LIGHT="#E1F5EE", PASS="carnes2024";
+    const COLOR="#2D6A4F", COLOR_LIGHT="#E1F5EE";
     const todayISO=new Date().toISOString().slice(0,10);
     const eur=n=>n.toFixed(2).replace(".",",")+" €";
     const EMAILJS_SERVICE="service_lobqqc4", EMAILJS_TIENDA="mundo_verde_tenda", EMAILJS_CLIENTE="mundo_verde_cliente";
@@ -355,7 +355,7 @@
       );
     }
 
-    function Panel({cats,setCats,entregas,setEntregas,onBack}){
+    function Panel({cats,setCats,entregas,setEntregas,onBack,onSalir}){
       const [tabP,setTabP]=useState("totales");
       const [filtroEstado,setFiltroEstado]=useState("todos");
       const [filtroDia,setFiltroDia]=useState(todayISO);
@@ -453,6 +453,7 @@
               <button onClick={cargarPedidos} style={{background:"rgba(255,255,255,0.18)",border:"none",color:"#fff",borderRadius:20,padding:"7px 14px",cursor:"pointer",fontSize:13}}>🔄</button>
               <button onClick={exportCSV} style={{background:"rgba(255,255,255,0.18)",border:"none",color:"#fff",borderRadius:20,padding:"7px 14px",cursor:"pointer",fontSize:13}}>⬇ CSV</button>
               <button onClick={onBack} style={{background:"rgba(255,255,255,0.18)",border:"none",color:"#fff",borderRadius:20,padding:"7px 14px",cursor:"pointer",fontSize:13}}>← Tienda</button>
+              <button onClick={onSalir} style={{background:"rgba(255,255,255,0.18)",border:"none",color:"#fff",borderRadius:20,padding:"7px 14px",cursor:"pointer",fontSize:13,marginLeft:6}}>Saír</button>
             </div>
           </div>
 
@@ -612,6 +613,8 @@
       const [panel,setPanel]=useState(false);
       const [panelPass,setPanelPass]=useState(false);
       const [passInput,setPassInput]=useState("");
+      const [emailInput,setEmailInput]=useState("");
+      const [entrando,setEntrando]=useState(false);
       const [passError,setPassError]=useState(false);
       const [entregas,setEntregas]=useState([]);
 
@@ -686,12 +689,23 @@
         setEnviado(true);
       };
 
-      const entrarPanel=()=>{
-        if(passInput===PASS){setPanel(true);setPassError(false);setPanelPass(false);setPassInput("");}
-        else setPassError(true);
+      const entrarPanel=async()=>{
+        setEntrando(true);setPassError(false);
+        const{error}=await window.db.auth.signInWithPassword({email:emailInput.trim(),password:passInput});
+        setEntrando(false);
+        if(error){setPassError(true);return;}
+        setPanel(true);setPanelPass(false);setPassInput("");
       };
 
-      if(panel) return <Panel cats={cats} setCats={setCats} entregas={entregas} setEntregas={setEntregas} onBack={()=>setPanel(false)}/>;
+      const abrirAcceso=async()=>{
+        const{data}=await window.db.auth.getSession();
+        if(data.session){setPanel(true);return;}
+        setPanelPass(v=>!v);
+      };
+
+      const salirPanel=async()=>{await window.db.auth.signOut();setPanel(false);};
+
+      if(panel) return <Panel cats={cats} setCats={setCats} entregas={entregas} setEntregas={setEntregas} onBack={()=>setPanel(false)} onSalir={salirPanel}/>;
 
       const C=COLOR;
       return(
@@ -703,17 +717,18 @@
           </div>
 
           <div style={{display:"flex",justifyContent:"flex-end",padding:"10px 16px 0"}}>
-            <span onClick={()=>setPanelPass(v=>!v)} style={{fontSize:12,color:"#aaa",cursor:"pointer",textDecoration:"underline"}}>Acceso panel</span>
+            <span onClick={abrirAcceso} style={{fontSize:12,color:"#aaa",cursor:"pointer",textDecoration:"underline"}}>Acceso panel</span>
           </div>
 
           {panelPass&&(
             <div style={{margin:"8px 16px",background:"#fff",border:"1px solid #eee",borderRadius:12,padding:"14px 16px"}}>
-              <div style={{fontSize:13,fontWeight:600,marginBottom:8,color:"#333"}}>Contraseña del panel</div>
+              <div style={{fontSize:13,fontWeight:600,marginBottom:8,color:"#333"}}>Acceso ao panel da tenda</div>
+              <input type="email" autoComplete="username" value={emailInput} onChange={e=>setEmailInput(e.target.value)} placeholder="Email" style={{width:"100%",boxSizing:"border-box",padding:"10px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,outline:"none",marginBottom:8}}/>
               <div style={{display:"flex",gap:8}}>
-                <input type="password" value={passInput} onChange={e=>setPassInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&entrarPanel()} placeholder="Contraseña" style={{flex:1,padding:"10px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,outline:"none"}}/>
-                <button onClick={entrarPanel} style={{background:C,color:"#fff",border:"none",borderRadius:10,padding:"0 16px",cursor:"pointer",fontSize:14}}>Entrar</button>
+                <input type="password" autoComplete="current-password" value={passInput} onChange={e=>setPassInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&entrarPanel()} placeholder="Contraseña" style={{flex:1,padding:"10px 14px",borderRadius:10,border:"1.5px solid #ddd",fontSize:14,outline:"none"}}/>
+                <button onClick={entrarPanel} disabled={entrando} style={{background:C,color:"#fff",border:"none",borderRadius:10,padding:"0 16px",cursor:"pointer",fontSize:14}}>{entrando?"...":"Entrar"}</button>
               </div>
-              {passError&&<div style={{fontSize:12,color:"#c0392b",marginTop:6}}>Contraseña incorrecta</div>}
+              {passError&&<div style={{fontSize:12,color:"#c0392b",marginTop:6}}>Email ou contrasinal incorrectos</div>}
             </div>
           )}
 
