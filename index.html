@@ -367,6 +367,19 @@
 
       useEffect(()=>{cargarPedidos();},[]);
 
+      // Stock de ClassicGes: solo o ve a conta da tenda (os clientes non poden lelo)
+      const [stockCG,setStockCG]=useState({});
+      const [sincCG,setSincCG]=useState("");
+      useEffect(()=>{ if(tabP==="gestionar") cargarStockCG(); },[tabP]);
+      const cargarStockCG=async()=>{
+        const{data,error}=await window.db.from("cg_stock_productos").select("producto_id,stock,ultima_sincronizacion");
+        if(error||!data) return;
+        const m={}; let sinc="";
+        data.forEach(r=>{ m[r.producto_id]=r.stock===null?null:Number(r.stock); if(r.ultima_sincronizacion) sinc=r.ultima_sincronizacion; });
+        setStockCG(m);
+        setSincCG(sinc?new Date(sinc).toLocaleString("es-ES",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):"");
+      };
+
       const cargarPedidos=async()=>{
         setCargando(true);
         const{data,error}=await window.db.from("pedidos").select("*").order("id",{ascending:false});
@@ -552,6 +565,7 @@
 
             {tabP==="gestionar"&&(
               <div>
+                {sincCG&&<div style={{fontSize:12,color:"#888",marginBottom:10}}>📦 Stock de ClassicGes do {sincCG}</div>}
                 {editando&&(
                   <div style={{background:"#fff",border:`1.5px solid ${COLOR}`,borderRadius:14,padding:"16px",marginBottom:16}}>
                     <div style={{fontSize:14,fontWeight:700,color:"#222",marginBottom:4}}>{editando.nuevo?"➕ Novo produto":"✏️ Editar produto"}</div>
@@ -586,6 +600,11 @@
                         <div style={{flex:1}}>
                           <div style={{fontSize:13,fontWeight:500,color:"#222"}}>{prod.nombre}</div>
                           <div style={{fontSize:11,color:"#888"}}>{prod.bandeja?`${prod.bandeja} kg · `:""}{eur(prod.pBandeja)}/bandeja · {eur(prod.pKilo)}/kg{prod.nota?` · ${prod.nota}`:""}</div>
+                          {prod.id in stockCG&&(
+                            <div style={{fontSize:11,fontWeight:600,color:(stockCG[prod.id]??0)<=0?"#c0392b":COLOR}}>
+                              📦 Stock ClassicGes: {stockCG[prod.id]===null?"sen dato":`${Number(stockCG[prod.id]).toLocaleString("es-ES",{maximumFractionDigits:2})} kg`}
+                            </div>
+                          )}
                         </div>
                         <button onClick={()=>abrirEditar(cat.id,prod)} style={{background:"none",border:`1px solid ${COLOR}`,color:COLOR,borderRadius:8,padding:"4px 10px",fontSize:12,cursor:"pointer"}}>✏️</button>
                         <button onClick={()=>eliminarProd(cat.id,prod.id)} style={{background:"none",border:"1px solid #e8b5b2",color:"#c0392b",borderRadius:8,padding:"4px 10px",fontSize:12,cursor:"pointer"}}>🗑</button>
